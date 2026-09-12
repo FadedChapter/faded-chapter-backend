@@ -1,0 +1,42 @@
+{
+  "name": "faded-chapter-backend",
+  "version": "1.0.0",
+  "description": "Faded Chapter Express Backend API",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
+  },
+  "keywords": ["faded-chapter", "backend", "express", "api"],
+  "author": "Faded Chapter",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.0.0",
+    "helmet": "^7.2.0",
+    "cookie-parser": "^1.4.6",
+    "bcryptjs": "^2.4.3",
+    "@faded-chapter/types": "file:../faded-chapter-types"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.9",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.7",
+    "typescript": "^5.7.2",
+    "tsx": "^4.7.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "vitest": "^1.6.0",
+    "prettier": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
