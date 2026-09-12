@@ -35,7 +35,10 @@ export async function hashPassword(plaintext: string): Promise<string> {
     return hash;
   } catch (error) {
     console.error('[PasswordHashing] Hash failed:', error instanceof Error ? error.message : error);
-    throw new Error('Password hashing failed', { cause: error });
+    const err = new Error('Password hashing failed');
+    // @ts-ignore cause property not in TS lib yet
+    err.cause = error;
+    throw err;
   }
 }
 
