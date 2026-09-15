@@ -5,6 +5,7 @@
  * Phase 4: Catalog Domain
  */
 
+import { IsNull } from 'typeorm';
 import { BaseRepository } from '../repository/base-repository';
 import { ProductEntity } from '../entities/product.entity';
 
@@ -14,8 +15,116 @@ export class ProductRepository extends BaseRepository<ProductEntity> {
   }
 
   /**
-   * Find product by slug (scoped to store)
+   * Catalogue search for the admin product list.
+   *
+   * The existing finders return only active products or a single status with no
+   * total, which cannot express what catalogue management needs — drafts and
+   * archived products are exactly what an operator is looking for when curating.
+   * Soft-deleted rows stay excluded in every case.
    */
+  async searchCatalogue(
+    storeId: string,
+    options: {
+      status?: string;
+      categoryId?: string;
+      search?: string;
+      limit?: number;
+      offset?: number;
+    } = {},
+  ): Promise<{ rows: ProductEntity[]; total: number }> {
+    const { status, categoryId, search, limit = 25, offset = 0 } = options;
+
+    const qb = this.repository
+      .createQueryBuilder('p')
+      .where('p.store_id = :storeId', { storeId })
+      .andWhere('p.deleted_at IS NULL');
+
+    if (status) qb.andWhere('p.status = :status', { status });
+    if (categoryId) qb.andWhere('p.category_id = :categoryId', { categoryId });
+
+    if (search?.trim()) {
+      const term = `%${search.trim()}%`;
+      qb.andWhere('(p.name ILIKE :term OR p.sku ILIKE :term OR p.slug ILIKE :term)', { term });
+    }
+
+    qb.orderBy('p.display_order', 'ASC')
+      .addOrderBy('p.name', 'ASC')
+      .take(Math.min(Math.max(limit, 1), 100))
+      .skip(Math.max(offset, 0));
+
+    const [rows, total] = await qb.getManyAndCount();
+    return { rows, total };
+  }
+
+  /** Product counts per status, for the catalogue tabs. */
+  async countByStatuses(storeId: string): Promise<Record<string, number>> {
+    const rows = await this.repository
+      .createQueryBuilder('p')
+      .select('p.status', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .where('p.store_id = :storeId', { storeId })
+      .andWhere('p.deleted_at IS NULL')
+      .groupBy('p.status')
+      .getRawMany<{ status: string; count: string }>();
+
+    return rows.reduce<Record<string, number>>((acc, row) => {
+      acc[row.status] = Number(row.count);
+      return acc;
+    }, {});
+  }
+
+  /**
+   * Variant and stock rollups for a page of products.
+   *
+   * One aggregate over the page rather than loading every variant and its
+   * inventory row: the list shows counts and a stock total, not the variants
+   * themselves. `priceFrom` drives the "from ₹x" display.
+   */
+  async rollupsFor(
+    storeId: string,
+    productIds: string[],
+  ): Promise<Map<string, { variantCount: number; stock: number; priceFrom: number | null }>> {
+    const result = new Map<string, { variantCount: number; stock: number; priceFrom: number | null }>();
+    if (productIds.length === 0) return result;
+
+    const rows = await this.repository.manager
+      .createQueryBuilder()
+      .select('v.product_id', 'productId')
+      .addSelect('COUNT(DISTINCT v.id)', 'variantCount')
+      .addSelect('COALESCE(SUM(i.quantity_available), 0)', 'stock')
+      .addSelect('MIN(v.price)', 'priceFrom')
+      .from('product_variants', 'v')
+      .leftJoin('inventory', 'i', 'i.variant_id = v.id AND i.store_id = v.store_id')
+      .where('v.product_id IN (:...ids)', { ids: productIds })
+      .andWhere('v.store_id = :storeId', { storeId })
+      .andWhere('v.deleted_at IS NULL')
+      .groupBy('v.product_id')
+      .getRawMany<{ productId: string; variantCount: string; stock: string; priceFrom: string | null }>();
+
+    for (const row of rows) {
+      result.set(row.productId, {
+        variantCount: Number(row.variantCount),
+        stock: Number(row.stock),
+        priceFrom: row.priceFrom === null ? null : Number(row.priceFrom),
+      });
+    }
+    return result;
+  }
+
+  /**
+   * Fetch one product scoped to its store, excluding soft-deleted rows.
+   *
+   * IsNull() rather than `deleted_at: null` — TypeORM rejects a literal null in
+   * a where condition and throws rather than matching SQL NULL. The same
+   * mistake currently breaks the storefront's category listing.
+   */
+  async findOneScoped(productId: string, storeId: string): Promise<ProductEntity | null> {
+    return this.repository.findOne({
+      where: { id: productId, store_id: storeId, deleted_at: IsNull() } as any,
+    });
+  }
+
+  /** Find product by slug (scoped to store) */
   async findBySlug(slug: string, storeId: string): Promise<ProductEntity | null> {
     try {
       return await this.repository.findOne({

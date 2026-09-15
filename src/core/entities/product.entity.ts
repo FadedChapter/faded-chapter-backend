@@ -56,10 +56,15 @@ export class ProductEntity {
   @Column('timestamptz', { nullable: true })
   deleted_at: Date;
 
+  // Category assignment.
+  // Previously declared without a @Column decorator, so TypeORM never selected
+  // or persisted it and any category assignment silently did nothing.
+  @Column('uuid', { nullable: true })
+  category_id?: string;
+
   // Relationships (lazy loaded)
   variants?: ProductVariantEntity[];
   images?: ProductImageEntity[];
-  category_id?: string;
 }
 
 import { ProductVariantEntity } from './product-variant.entity.js';

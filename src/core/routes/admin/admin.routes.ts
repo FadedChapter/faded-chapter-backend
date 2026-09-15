@@ -27,9 +27,17 @@ import { apiRateLimit } from '../../middleware/rate-limit.middleware';
 import { auditLog } from '../../middleware/audit-log.middleware';
 import { PaymentRepository, RefundRepository } from '../../repositories/payment.repositories';
 import { OrderRepository, OrderLineRepository } from '../../repositories/order.repositories';
+import { ProductRepository } from '../../repositories/product.repository';
+import {
+  CategoryRepository,
+  VariantRepository,
+  InventoryRepository,
+  ProductImageRepository,
+} from '../../repositories/catalog.repositories';
 import { DashboardService } from '../../services/dashboard.service';
 import { DashboardController } from '../../controllers/dashboard.controller';
 import { AdminOrderController } from '../../controllers/admin-order.controller';
+import { AdminProductController } from '../../controllers/admin-product.controller';
 
 /**
  * Build the admin router.
@@ -145,6 +153,58 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/orders', ordersRouter);
+
+  // ---------------------------------------------------------------------------
+  // Products / catalogue (Phase 3)
+  //
+  // products.view is held by admin and support; products.update by admin only,
+  // so support can confirm what a customer ordered without being able to change
+  // pricing or availability.
+  // ---------------------------------------------------------------------------
+  const products = new AdminProductController(
+    new ProductRepository(),
+    new VariantRepository(),
+    new InventoryRepository(),
+    new ProductImageRepository(),
+    new CategoryRepository(),
+  );
+
+  const productsRouter = Router({ mergeParams: true });
+  productsRouter.use(checkStoreOwnership);
+
+  productsRouter.get(
+    '/',
+    requirePermission('products.view'),
+    (req: Request, res: Response) => products.list(req, res),
+  );
+
+  // Static segments must precede '/:productId', or they are captured as ids.
+  productsRouter.get(
+    '/status-counts',
+    requirePermission('products.view'),
+    (req: Request, res: Response) => products.statusCounts(req, res),
+  );
+
+  productsRouter.get(
+    '/categories',
+    requirePermission('products.view'),
+    (req: Request, res: Response) => products.listCategories(req, res),
+  );
+
+  productsRouter.get(
+    '/:productId',
+    requirePermission('products.view'),
+    (req: Request, res: Response) => products.detail(req, res),
+  );
+
+  productsRouter.post(
+    '/:productId/status',
+    requirePermission('products.update'),
+    auditLog('product.status_change', 'products'),
+    (req: Request, res: Response) => products.updateStatus(req, res),
+  );
+
+  router.use('/stores/:storeId/products', productsRouter);
 
   return router;
 }

@@ -227,6 +227,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     'orders.update',
     'orders.fulfill',
     'orders.cancel',
+    // Catalogue (Phase 3)
+    'products.view',
+    'products.update',
   ],
 
   support: [
@@ -238,6 +241,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // move money or change fulfilment state. Least privilege: read only until
     // there is a demonstrated need.
     'orders.view',
+    // Read-only catalogue access, so support can confirm what a customer
+    // ordered without being able to change pricing or availability.
+    'products.view',
   ],
 
   system: [
