@@ -36,16 +36,21 @@ const UUID_PATTERN =
  * there; such actions are still logged to the structured logger.
  */
 function resolveRecordId(req: Request): string | null {
-  const candidates = [
-    req.params.refundId,
-    req.params.orderId,
-    req.params.paymentId,
-    req.params.productId,
-    req.params.customerId,
-    req.params.id,
-  ];
-  const found = candidates.find((value) => typeof value === 'string' && UUID_PATTERN.test(value));
-  return found ?? null;
+  // Any uuid-shaped route param identifies the record, excluding storeId which
+  // is the scope rather than the subject.
+  //
+  // This was previously a hardcoded list of param names (orderId, productId,
+  // …). Every new module had to remember to add its own, and Phase 4's
+  // :variantId was missed — so inventory adjustments produced no audit rows at
+  // all. Silence in an audit trail is the worst failure mode available, so the
+  // rule is now structural rather than a list someone must maintain.
+  for (const [name, value] of Object.entries(req.params)) {
+    if (name === 'storeId') continue;
+    if (typeof value === 'string' && UUID_PATTERN.test(value)) {
+      return value;
+    }
+  }
+  return null;
 }
 
 /**

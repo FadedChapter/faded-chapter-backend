@@ -262,11 +262,25 @@ export class CategoryController {
 export class InventoryController {
   constructor(private inventoryService: InventoryService) {}
 
+  /**
+   * GET /inventory/:variantId — public storefront availability.
+   *
+   * SECURITY: this previously serialised the InventoryEntity directly, so an
+   * anonymous caller received exact available and reserved counts plus the
+   * reorder level and reorder quantity. Polled over time those counts disclose
+   * sales velocity, and the reorder policy discloses purchasing strategy.
+   *
+   * The storefront needs one bit — can this be bought — so that is all it gets.
+   * Operators read the real figures through /api/admin/.../inventory.
+   */
   async getInventory(req: Request, res: Response): Promise<void> {
     try {
       const { storeId, variantId } = req.params;
       const inventory = await this.inventoryService.getInventory(storeId, variantId);
-      res.status(200).json(inventory);
+      res.status(200).json({
+        variantId,
+        inStock: Number(inventory?.quantity_available ?? 0) > 0,
+      });
     } catch (error) {
       res.status(404).json({ error: 'Inventory not found' });
     }

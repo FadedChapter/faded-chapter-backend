@@ -144,6 +144,213 @@ export class InventoryRepository extends BaseRepository<InventoryEntity> {
       .andWhere('i.quantity_available <= i.reorder_level')
       .getMany();
   }
+
+  // ==========================================================================
+  // Operations console (Phase 4)
+  // ==========================================================================
+
+  /**
+   * Stock list for the inventory console.
+   *
+   * Joins variant and product because inventory rows are meaningless on their
+   * own — an operator searches by SKU or product name, not by variant uuid.
+   * Returns raw rows rather than entities: the console needs a flat row shape
+   * spanning three tables, and hydrating entity graphs to then flatten them
+   * would cost more for no benefit.
+   *
+   * store_id is applied unconditionally as the first predicate.
+   */
+  async searchStock(
+    storeId: string,
+    options: {
+      /** 'low' = at or below reorder level; 'out' = nothing sellable. */
+      filter?: 'all' | 'low' | 'out';
+      search?: string;
+      limit?: number;
+      offset?: number;
+    } = {},
+  ): Promise<{ rows: InventoryStockRow[]; total: number }> {
+    const { filter = 'all', search, limit = 25, offset = 0 } = options;
+
+    const qb = this.repository
+      .createQueryBuilder('i')
+      .innerJoin('product_variants', 'v', 'v.id = i.variant_id')
+      .innerJoin('products', 'p', 'p.id = v.product_id')
+      .where('i.store_id = :storeId', { storeId });
+
+    if (filter === 'low') {
+      // At or below the reorder threshold but not yet empty — the set worth
+      // acting on. Out-of-stock is past acting on and has its own filter.
+      qb.andWhere('i.quantity_available <= i.reorder_level').andWhere(
+        'i.quantity_available > 0',
+      );
+    } else if (filter === 'out') {
+      qb.andWhere('i.quantity_available <= 0');
+    }
+
+    if (search?.trim()) {
+      const term = `%${search.trim()}%`;
+      qb.andWhere('(v.sku ILIKE :term OR p.name ILIKE :term)', { term });
+    }
+
+    const total = await qb.getCount();
+
+    const rows = await qb
+      .select([
+        'i.id AS id',
+        'i.variant_id AS "variantId"',
+        'v.sku AS sku',
+        'v.name AS "variantName"',
+        'p.id AS "productId"',
+        'p.name AS "productName"',
+        'p.status AS "productStatus"',
+        'i.quantity_available AS available',
+        'i.quantity_reserved AS reserved',
+        'i.reorder_level AS "reorderLevel"',
+        'i.reorder_quantity AS "reorderQuantity"',
+        'i.last_counted_at AS "lastCountedAt"',
+        'i.updated_at AS "updatedAt"',
+      ])
+      // Scarcest first: the console's job is to surface what needs attention,
+      // so the default order is the work queue rather than alphabetical.
+      .orderBy('i.quantity_available', 'ASC')
+      .addOrderBy('p.name', 'ASC')
+      .limit(Math.min(Math.max(limit, 1), 100))
+      .offset(Math.max(offset, 0))
+      .getRawMany<InventoryStockRow>();
+
+    return { rows, total };
+  }
+
+  /**
+   * One joined stock row by variant.
+   * Used after a mutation so the response can name the SKU and product without
+   * the client making a second call.
+   */
+  async findStockRow(variantId: string, storeId: string): Promise<InventoryStockRow | null> {
+    const row = await this.repository
+      .createQueryBuilder('i')
+      .innerJoin('product_variants', 'v', 'v.id = i.variant_id')
+      .innerJoin('products', 'p', 'p.id = v.product_id')
+      .where('i.store_id = :storeId', { storeId })
+      .andWhere('i.variant_id = :variantId', { variantId })
+      .select([
+        'i.id AS id',
+        'i.variant_id AS "variantId"',
+        'v.sku AS sku',
+        'v.name AS "variantName"',
+        'p.id AS "productId"',
+        'p.name AS "productName"',
+        'p.status AS "productStatus"',
+        'i.quantity_available AS available',
+        'i.quantity_reserved AS reserved',
+        'i.reorder_level AS "reorderLevel"',
+        'i.reorder_quantity AS "reorderQuantity"',
+        'i.last_counted_at AS "lastCountedAt"',
+        'i.updated_at AS "updatedAt"',
+      ])
+      .getRawOne<InventoryStockRow>();
+
+    return row ?? null;
+  }
+
+  /** Counts for the console's tabs, in one round trip. */
+  async stockCounts(storeId: string): Promise<{ all: number; low: number; out: number }> {
+    const row = await this.repository
+      .createQueryBuilder('i')
+      .select('COUNT(*)', 'all')
+      .addSelect(
+        'COUNT(*) FILTER (WHERE i.quantity_available <= i.reorder_level AND i.quantity_available > 0)',
+        'low',
+      )
+      .addSelect('COUNT(*) FILTER (WHERE i.quantity_available <= 0)', 'out')
+      .where('i.store_id = :storeId', { storeId })
+      .getRawOne<{ all: string; low: string; out: string }>();
+
+    return {
+      all: Number(row?.all ?? 0),
+      low: Number(row?.low ?? 0),
+      out: Number(row?.out ?? 0),
+    };
+  }
+
+  /**
+   * Apply a stock adjustment atomically.
+   *
+   * The arithmetic happens in SQL rather than in JS. reserveStock and
+   * releaseStock above read-then-write without a transaction, which loses
+   * updates under concurrency: two simultaneous reserves both read
+   * available=5, both write 5-3=2, and six units get committed from five.
+   * Adjustments are an operator correcting the books, so they must not be
+   * capable of introducing the very drift they exist to fix.
+   *
+   * Returns null when the guard rejects the write — either the row does not
+   * belong to this store, or the delta would drive available stock negative.
+   */
+  async adjustStock(
+    variantId: string,
+    storeId: string,
+    delta: number,
+  ): Promise<InventoryEntity | null> {
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(InventoryEntity)
+      .set({
+        quantity_available: () => 'quantity_available + :delta',
+        last_counted_at: new Date(),
+        updated_at: new Date(),
+      } as any)
+      .where('variant_id = :variantId', { variantId })
+      .andWhere('store_id = :storeId', { storeId })
+      // Floor guard in the same statement as the write, so it cannot be
+      // raced between a check and an update.
+      .andWhere('quantity_available + :delta >= 0')
+      .setParameter('delta', delta)
+      .execute();
+
+    if (!result.affected) {
+      return null;
+    }
+    return this.findByVariantId(variantId, storeId);
+  }
+
+  /** Set the reorder threshold and suggested reorder quantity. */
+  async setReorderPolicy(
+    variantId: string,
+    storeId: string,
+    reorderLevel: number,
+    reorderQuantity: number,
+  ): Promise<InventoryEntity | null> {
+    const result = await this.repository.update(
+      { variant_id: variantId, store_id: storeId } as any,
+      {
+        reorder_level: reorderLevel,
+        reorder_quantity: reorderQuantity,
+        updated_at: new Date(),
+      } as any,
+    );
+    if (!result.affected) {
+      return null;
+    }
+    return this.findByVariantId(variantId, storeId);
+  }
+}
+
+/** Flat row spanning inventory + variant + product, for the console list. */
+export interface InventoryStockRow {
+  id: string;
+  variantId: string;
+  sku: string;
+  variantName: string;
+  productId: string;
+  productName: string;
+  productStatus: string;
+  available: number;
+  reserved: number;
+  reorderLevel: number;
+  reorderQuantity: number;
+  lastCountedAt: Date | null;
+  updatedAt: Date;
 }
 
 /**

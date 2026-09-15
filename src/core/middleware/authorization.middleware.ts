@@ -230,6 +230,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Catalogue (Phase 3)
     'products.view',
     'products.update',
+    // Inventory (Phase 4)
+    'inventory.view',
+    'inventory.adjust',
   ],
 
   support: [
@@ -244,6 +247,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Read-only catalogue access, so support can confirm what a customer
     // ordered without being able to change pricing or availability.
     'products.view',
+    // Support answers "is it back in stock yet"; adjusting stock is an
+    // accounting action and stays with admin.
+    'inventory.view',
   ],
 
   system: [

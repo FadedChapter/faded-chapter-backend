@@ -131,10 +131,23 @@ export function createCatalogRoutes(): Router {
   router.get('/inventory/:variantId/check', (req, res) => inventoryController.checkStock(req, res));
 
   // Reserve stock
-  router.post('/inventory/:variantId/reserve', (req, res) => inventoryController.reserveStock(req, res));
+  // Phase 0 remainder, closed in Phase 4.
+  //
+  // These were unauthenticated: any anonymous caller could reserve stock until
+  // the catalogue read as sold out, or release reservations they did not own.
+  // They were left open earlier on the assumption they sat in the guest
+  // checkout path, but nothing calls them except this route — no service, no
+  // client — so requiring staff breaks nothing.
+  //
+  // They remain a poor fit for a public HTTP surface: reserve/release belong to
+  // the cart/checkout lifecycle and should be invoked internally by that
+  // service once it exists. Note also that both are read-then-write without a
+  // transaction and lose updates under concurrency (two reservations against
+  // the same five units can both succeed).
+  router.post('/inventory/:variantId/reserve', requireStaff, (req, res) => inventoryController.reserveStock(req, res));
 
   // Release reserved stock
-  router.post('/inventory/:variantId/release', (req, res) => inventoryController.releaseStock(req, res));
+  router.post('/inventory/:variantId/release', requireStaff, (req, res) => inventoryController.releaseStock(req, res));
 
   // Get low stock items
 

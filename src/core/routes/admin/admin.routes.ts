@@ -38,6 +38,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { DashboardController } from '../../controllers/dashboard.controller';
 import { AdminOrderController } from '../../controllers/admin-order.controller';
 import { AdminProductController } from '../../controllers/admin-product.controller';
+import { AdminInventoryController } from '../../controllers/admin-inventory.controller';
 
 /**
  * Build the admin router.
@@ -205,6 +206,47 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/products', productsRouter);
+
+  // ---------------------------------------------------------------------------
+  // Inventory (Phase 4)
+  //
+  // inventory.view is held by admin and support; inventory.adjust by admin
+  // only. Adjustments change sellable stock, so every one is audited.
+  // ---------------------------------------------------------------------------
+  const inventoryRepo = new InventoryRepository();
+  const inventory = new AdminInventoryController(inventoryRepo);
+
+  const inventoryRouter = Router({ mergeParams: true });
+  inventoryRouter.use(checkStoreOwnership);
+
+  inventoryRouter.get(
+    '/',
+    requirePermission('inventory.view'),
+    (req: Request, res: Response) => inventory.list(req, res),
+  );
+
+  // Static segment before any ':variantId' route.
+  inventoryRouter.get(
+    '/counts',
+    requirePermission('inventory.view'),
+    (req: Request, res: Response) => inventory.counts(req, res),
+  );
+
+  inventoryRouter.post(
+    '/:variantId/adjust',
+    requirePermission('inventory.adjust'),
+    auditLog('inventory.adjust', 'inventory'),
+    (req: Request, res: Response) => inventory.adjust(req, res),
+  );
+
+  inventoryRouter.patch(
+    '/:variantId/reorder-policy',
+    requirePermission('inventory.adjust'),
+    auditLog('inventory.reorder_policy', 'inventory'),
+    (req: Request, res: Response) => inventory.setReorderPolicy(req, res),
+  );
+
+  router.use('/stores/:storeId/inventory', inventoryRouter);
 
   return router;
 }
