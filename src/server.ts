@@ -20,9 +20,10 @@ import { DEFAULT_SESSION_CONFIG } from './core/session/session.types.js';
 import { InMemoryUserStore } from './core/user/adapters/inmemory-user-store.js';
 import { createCsrfMiddleware } from './core/security/middleware/csrf.middleware.js';
 
-// Routes
+// Routes & Services (Phase 9 & 10a: Payment Processing & Admin Dashboard)
 import { createAuthRoutes } from './routes/auth.routes.js';
 import { createOrdersRoutes } from './routes/orders.routes.js';
+import { registerCoreRoutes } from './core/routes/index.js';
 
 // ============================================================================
 // Initialize Stores
@@ -49,8 +50,49 @@ const userStore = new InMemoryUserStore();
 const app: Express = express();
 const PORT = process.env['PORT'] ? parseInt(process.env['PORT']) : 3000;
 
-// Security headers
-app.use(helmet());
+// ============================================================================
+// Initialize Core Systems (MUST happen before routes)
+// ============================================================================
+import { initializeLogger } from './core/logging/logger.js';
+import { loadConfig } from './core/config/env.js';
+
+// Load environment configuration
+loadConfig();
+
+// Initialize logger
+initializeLogger();
+
+// Initialize TypeORM DataSource for payment/refund services
+import { initializeDatabase } from './core/database/postgres-data-source.js';
+try {
+  initializeDatabase().catch(err => {
+    console.error('Warning: Database initialization failed, some features may not work:', err);
+  });
+} catch (err) {
+  console.error('Warning: Could not initialize database:', err);
+}
+
+// Security headers (with CORS support for development)
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+
+// CORS middleware - Allow frontend to communicate with backend
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const origin = req.headers.origin || 'http://localhost:4201';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token, X-Request-Timestamp, X-Request-Nonce');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+
+  next();
+});
 
 // Request body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -89,6 +131,11 @@ app.use('/api/auth', createAuthRoutes(userStore, sessionStore, DEFAULT_SESSION_C
 
 // Orders routes (Phase 3F.4)
 app.use('/api/orders', createOrdersRoutes());
+
+// Payment & Dashboard routes (Phase 9 & 10a)
+// Includes: payments, refunds, dashboard, webhooks
+// Note: Payment services use PostgreSQL (separate from session SQLite store)
+registerCoreRoutes(app);
 
 // ============================================================================
 // Error Handling
