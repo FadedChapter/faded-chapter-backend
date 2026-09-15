@@ -11,7 +11,7 @@
  * - Never log passwords or hashes
  */
 
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 /**
  * Hashing configuration.

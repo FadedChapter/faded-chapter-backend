@@ -18,7 +18,7 @@ import { createSessionMiddleware } from './core/session/middleware/session.middl
 import { InMemorySessionStore } from './core/session/adapters/inmemory-session-store.js';
 import { DEFAULT_SESSION_CONFIG } from './core/session/session.types.js';
 import { InMemoryUserStore } from './core/user/adapters/inmemory-user-store.js';
-import { createCsrfMiddleware } from './core/security/middleware/csrf.middleware.js';
+import { createCsrfMiddleware, csrfTokenHandler } from './core/security/middleware/csrf.middleware.js';
 
 // Routes & Services (Phase 9 & 10a: Payment Processing & Admin Dashboard)
 import { createAuthRoutes } from './routes/auth.routes.js';
@@ -114,7 +114,10 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 // Session middleware (Phase 3F.1)
 app.use(createSessionMiddleware(sessionStore, DEFAULT_SESSION_CONFIG));
 
-// CSRF middleware (Phase 3F.1)
+// CSRF middleware (Phase 3F.1, hardened in Phase 0).
+// Double-submit cookie: state-changing cookie-authenticated requests must echo
+// the csrf-token cookie in X-CSRF-Token. Bearer-authenticated calls are exempt
+// (no ambient credential to abuse).
 app.use(createCsrfMiddleware());
 
 // ============================================================================
@@ -125,6 +128,9 @@ app.use(createCsrfMiddleware());
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
 });
+
+// CSRF bootstrap: lets a client obtain a token before its first mutation.
+app.get('/api/csrf-token', csrfTokenHandler);
 
 // Auth routes (Phase 3F.2)
 app.use('/api/auth', createAuthRoutes(userStore, sessionStore, DEFAULT_SESSION_CONFIG));

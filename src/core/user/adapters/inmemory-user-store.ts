@@ -30,18 +30,21 @@ export class InMemoryUserStore implements UserStore {
   }
 
   /**
-   * Seed a demo user for testing.
-   * Email: demo@faded.test
-   * Password: Password123!
+   * Seed demo users for testing.
+   *
+   * User Credentials:
+   * - Email: demo@faded.test | Password: Password123! | Role: customer
+   * - Email: admin@faded.test | Password: Admin123! | Role: admin
    */
   private async seedDemoUser(): Promise<void> {
-    const email = normalizeEmail('demo@faded.test');
-    const passwordHash = await hashPassword('Password123!');
+    // Regular customer user
+    const customerEmail = normalizeEmail('demo@faded.test');
+    const customerPasswordHash = await hashPassword('Password123!');
 
-    const user: UserRecord = {
+    const customerUser: UserRecord = {
       id: 'user-demo',
-      email,
-      passwordHash,
+      email: customerEmail,
+      passwordHash: customerPasswordHash,
       firstName: 'Demo',
       lastName: 'User',
       marketingOptIn: false,
@@ -51,8 +54,28 @@ export class InMemoryUserStore implements UserStore {
       updatedAt: new Date(),
     };
 
-    this.users.set(email, user);
-    this.usersById.set(user.id, user);
+    this.users.set(customerEmail, customerUser);
+    this.usersById.set(customerUser.id, customerUser);
+
+    // Admin user
+    const adminEmail = normalizeEmail('admin@faded.test');
+    const adminPasswordHash = await hashPassword('Admin123!');
+
+    const adminUser: UserRecord = {
+      id: 'user-admin',
+      email: adminEmail,
+      passwordHash: adminPasswordHash,
+      firstName: 'Admin',
+      lastName: 'User',
+      marketingOptIn: false,
+      emailVerified: true,
+      roles: ['admin'],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    this.users.set(adminEmail, adminUser);
+    this.usersById.set(adminUser.id, adminUser);
   }
 
   async findByEmail(email: string): Promise<UserRecord | null> {

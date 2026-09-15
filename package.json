@@ -11,7 +11,11 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "db:migrate": "typeorm migration:run -d dist/core/database/migrations-datasource.js",
+    "db:migration:create": "typeorm migration:create",
+    "db:migration:generate": "typeorm migration:generate -d dist/core/database/migrations-datasource.js",
+    "test:security": "vitest run --config vitest.security.config.ts"
   },
   "keywords": [
     "faded-chapter",
@@ -23,10 +27,22 @@
   "license": "MIT",
   "dependencies": {
     "@faded-chapter/types": "file:../faded-chapter-types",
+    "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^12.11.1",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^5.0.0",
-    "helmet": "^7.2.0"
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.11.3",
+    "razorpay": "^2.9.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^1.1.1",
+    "uuid": "^14.0.2",
+    "winston": "^3.13.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -39,7 +55,8 @@
     "prettier": "^3.3.3",
     "tsx": "^4.7.0",
     "typescript": "^5.7.2",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.0",
+    "@types/pg": "^8.11.6"
   },
   "engines": {
     "node": ">=18.0.0"

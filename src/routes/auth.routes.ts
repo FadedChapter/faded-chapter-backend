@@ -15,11 +15,13 @@
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import type { UserStore } from '../core/user/user-store.port.js';
-import type { SessionStore } from '../core/session/session-store.port.js';
-import type { SessionConfig, CustomerId } from '../core/session/session.types.js';
-import { hashPassword, verifyPassword, isValidEmail, normalizeEmail } from '../core/user/index.js';
-import { setSessionCookie, clearSessionCookie, requireSession } from '../core/session/middleware/session.middleware.js';
+import type { UserStore } from '../core/user/user-store.port';
+import type { SessionStore } from '../core/session/session-store.port';
+import type { SessionConfig, CustomerId } from '../core/session/session.types';
+import { hashPassword, verifyPassword, isValidEmail, normalizeEmail } from '../core/user/index';
+import { setSessionCookie, clearSessionCookie, requireSession } from '../core/session/middleware/session.middleware';
+import { generateToken, verifyToken, extractTokenFromHeader } from '../core/auth/services/jwt.service';
+import { env } from '../core/config/env';
 import type { AuthActionResult, SignInSuccessData, SignUpSuccessData, EmailActionSuccessData } from '@faded-chapter/types';
 
 export function createAuthRoutes(userStore: UserStore, sessionStore: SessionStore, config: SessionConfig): Router {
@@ -60,20 +62,30 @@ export function createAuthRoutes(userStore: UserStore, sessionStore: SessionStor
         } as AuthActionResult<SignInSuccessData>);
       }
 
-      // Create session
-      const session = await sessionStore.create({
-        customerId: user.id as CustomerId,
+      // Generate JWT token (Phase 3F.2 - JWT auth)
+      // roles + storeId are signed claims — they are the only server-trusted
+      // source of authority for the authorization middleware.
+      const token = generateToken({
+        userId: user.id,
         email: user.email,
-        userAgent: req.get('user-agent'),
-        ipAddress: req.ip,
+        emailVerified: user.emailVerified,
+        roles: user.roles,
+        storeId: env.get('DEFAULT_STORE_ID') as string,
       });
-
-      setSessionCookie(res, session.id, config);
 
       return res.json({
         ok: true,
-        data: { user: { id: user.id, email: user.email, emailVerified: user.emailVerified } },
-      } as AuthActionResult<SignInSuccessData>);
+        data: {
+          token,
+          user: {
+            id: user.id,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            displayName: `${user.firstName} ${user.lastName}`.trim(),
+            roles: user.roles,
+          },
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -126,20 +138,25 @@ export function createAuthRoutes(userStore: UserStore, sessionStore: SessionStor
         passwordHash,
       );
 
-      // Create session
-      const session = await sessionStore.create({
-        customerId: user.id as CustomerId,
+      // Generate JWT token for new user (Phase 3F.2 - JWT auth)
+      const token = generateToken({
+        userId: user.id,
         email: user.email,
-        userAgent: req.get('user-agent'),
-        ipAddress: req.ip,
+        emailVerified: user.emailVerified,
+        roles: user.roles,
+        storeId: env.get('DEFAULT_STORE_ID') as string,
       });
-
-      setSessionCookie(res, session.id, config);
 
       return res.json({
         ok: true,
-        data: { email: user.email, emailVerified: user.emailVerified },
-      } as AuthActionResult<SignUpSuccessData>);
+        data: {
+          token,
+          email: user.email,
+          emailVerified: user.emailVerified,
+          displayName: `${user.firstName} ${user.lastName}`.trim(),
+          roles: user.roles,
+        },
+      });
     } catch (error) {
       next(error);
     }
