@@ -61,16 +61,13 @@ export function registerCoreRoutes(
   // Absence is now explicit in the startup log rather than invisible.
   if (services?.payment && services?.refund) {
     router.use('/stores/:storeId/payments', createPaymentRoutes(services.payment, services.refund));
-    // NOTE: createSecurePaymentRoutes is intentionally NOT mounted here.
-    // Two blockers, both tracked as remaining Phase 0 work:
-    //   1. It mixes customer endpoints (POST /intents) with admin-only ones
-    //      (refund approve/reject, audit trail). The admin half belongs under
-    //      /api/admin, so mounting it wholesale on /api/v1 would put admin
-    //      operations back on the customer prefix.
-    //   2. payment-secure.controller.ts reads AuditLogEntity.actor_email /
-    //      .resource_type / .resource_id, none of which exist on that entity.
-    // Mounting it as-is would surface a broken endpoint, so it stays unmounted
-    // until it is split and the controller is reconciled with the entity.
+    // NOTE: createSecurePaymentRoutes used to be referenced here and never
+    // mounted, because it mixed customer endpoints with admin-only ones and its
+    // controller read AuditLogEntity fields that do not exist. Both halves are
+    // now resolved rather than deferred: the admin operations live in
+    // AdminPaymentController under /api/admin, behind role, permission and
+    // audit; the two audit-reading endpoints duplicated the dashboard's working
+    // /dashboard/admin-actions. The dead files were removed in Phase 6.
   } else {
     console.warn(
       '[routes] Payment routes NOT mounted: registerCoreRoutes() received no payment/refund services.',

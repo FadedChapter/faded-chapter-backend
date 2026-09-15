@@ -40,6 +40,7 @@ import { AdminOrderController } from '../../controllers/admin-order.controller';
 import { AdminProductController } from '../../controllers/admin-product.controller';
 import { AdminInventoryController } from '../../controllers/admin-inventory.controller';
 import { AdminCustomerController } from '../../controllers/admin-customer.controller';
+import { AdminPaymentController } from '../../controllers/admin-payment.controller';
 import { CustomerRepository } from '../../repositories/customer.repository';
 
 /**
@@ -289,6 +290,60 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/customers', customersRouter);
+
+  // ---------------------------------------------------------------------------
+  // Payments (Phase 6)
+  //
+  // Reading transactions requires payment.view-all (admin + support, since
+  // support answers "did my payment go through"). Approving or rejecting a
+  // refund moves money and requires refund.approve / refund.reject, which only
+  // admin holds. Both decisions are audited.
+  // ---------------------------------------------------------------------------
+  const paymentsAdmin = new AdminPaymentController(paymentRepo, refundRepo);
+
+  const paymentsRouter = Router({ mergeParams: true });
+  paymentsRouter.use(checkStoreOwnership);
+
+  paymentsRouter.get(
+    '/',
+    requirePermission('payment.view-all'),
+    (req: Request, res: Response) => paymentsAdmin.listTransactions(req, res),
+  );
+
+  // Static segments before ':paymentId', or they are captured as ids.
+  paymentsRouter.get(
+    '/summary',
+    requirePermission('payment.view-all'),
+    (req: Request, res: Response) => paymentsAdmin.summary(req, res),
+  );
+
+  paymentsRouter.get(
+    '/refunds/pending',
+    requirePermission('refund.view-all'),
+    (req: Request, res: Response) => paymentsAdmin.pendingRefunds(req, res),
+  );
+
+  paymentsRouter.post(
+    '/refunds/:refundId/approve',
+    requirePermission('refund.approve'),
+    auditLog('refund.approve', 'refunds'),
+    (req: Request, res: Response) => paymentsAdmin.approveRefund(req, res),
+  );
+
+  paymentsRouter.post(
+    '/refunds/:refundId/reject',
+    requirePermission('refund.reject'),
+    auditLog('refund.reject', 'refunds'),
+    (req: Request, res: Response) => paymentsAdmin.rejectRefund(req, res),
+  );
+
+  paymentsRouter.get(
+    '/:paymentId',
+    requirePermission('payment.view-all'),
+    (req: Request, res: Response) => paymentsAdmin.detail(req, res),
+  );
+
+  router.use('/stores/:storeId/payments', paymentsRouter);
 
   return router;
 }
