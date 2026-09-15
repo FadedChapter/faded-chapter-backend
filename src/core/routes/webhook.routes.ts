@@ -5,7 +5,8 @@
  * Phase 9: Payment Processing
  */
 
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
+import { requireStaff } from '../middleware/require-staff.middleware';
 import { WebhookHandlerService } from '../services/webhook-handler.service';
 import { RazorpayIntegrationService } from '../services/razorpay-integration.service';
 import { WebhookController } from '../controllers/webhook.controller';
@@ -32,10 +33,30 @@ export function createWebhookRoutes(
   });
 
   // POST /webhooks/razorpay/test
-  // Test webhook endpoint (no signature validation, development only)
-  router.post('/razorpay/test', (req: Request, res: Response) => {
-    return controller.testRazorpayWebhook(req, res);
-  });
+  //
+  // SECURITY: this calls the same handler as the signed endpoint above but
+  // skips signature validation, so a forged payment.captured event would be
+  // processed as genuine — marking payments captured and orders paid.
+  // "Development only" was a comment, not an enforcement.
+  //
+  // Now enforced two ways: refused outright when NODE_ENV is production, and
+  // staff-only otherwise. The real endpoint is unaffected — it authenticates by
+  // HMAC signature, which is the correct mechanism for a machine caller and the
+  // reason this router does not sit behind the admin boundary.
+  router.post(
+    '/razorpay/test',
+    (req: Request, res: Response, next: NextFunction) => {
+      if (process.env['NODE_ENV'] === 'production') {
+        res.status(404).json({ success: false, error: 'Not found' });
+        return;
+      }
+      next();
+    },
+    requireStaff,
+    (req: Request, res: Response) => {
+      return controller.testRazorpayWebhook(req, res);
+    },
+  );
 
   // GET /webhooks/health
   // Health check

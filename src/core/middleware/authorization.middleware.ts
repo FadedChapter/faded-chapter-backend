@@ -248,6 +248,10 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // under-charged comes off the order — so rate changes stay with admin.
     'shipping.view',
     'shipping.manage',
+    // Alerts (Phase 10). Reading them is operational; changing what the system
+    // watches for, or silencing a rule, is an admin decision.
+    'alerts.view',
+    'alerts.manage',
   ],
 
   support: [
@@ -271,6 +275,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Support is asked "when will it arrive" and needs delivery options and
     // estimates. Changing what shipping costs is not a support decision.
     'shipping.view',
+    // Support sees what needs attention. Silencing an alert is not their call —
+    // a rule turned off stops the whole team seeing the condition.
+    'alerts.view',
     // Support needs to identify the person they are helping. Changing a
     // customer's status — banning in particular — is a decision about someone's
     // access to the store, so it stays with admin.

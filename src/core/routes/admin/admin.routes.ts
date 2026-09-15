@@ -44,6 +44,8 @@ import { AdminPaymentController } from '../../controllers/admin-payment.controll
 import { AdminAnalyticsController } from '../../controllers/admin-analytics.controller';
 import { AdminDiscountController } from '../../controllers/admin-discount.controller';
 import { AdminShippingController } from '../../controllers/admin-shipping.controller';
+import { AdminAlertsController } from '../../controllers/admin-alerts.controller';
+import { AlertsService } from '../../services/alerts.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CustomerRepository } from '../../repositories/customer.repository';
 
@@ -456,6 +458,33 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/shipping', shippingRouter);
+
+  // ---------------------------------------------------------------------------
+  // Alerts (Phase 10)
+  //
+  // alerts.view is held by admin and support. alerts.manage is admin-only:
+  // silencing a rule stops the whole team seeing the condition, which is a
+  // different weight of decision from reading it.
+  // ---------------------------------------------------------------------------
+  const alerts = new AdminAlertsController(new AlertsService());
+
+  const alertsRouter = Router({ mergeParams: true });
+  alertsRouter.use(checkStoreOwnership);
+
+  alertsRouter.get(
+    '/',
+    requirePermission('alerts.view'),
+    (req: Request, res: Response) => alerts.overview(req, res),
+  );
+
+  alertsRouter.patch(
+    '/rules/:ruleKey',
+    requirePermission('alerts.manage'),
+    auditLog('alert.rule_change', 'notification_rules'),
+    (req: Request, res: Response) => alerts.updateRule(req, res),
+  );
+
+  router.use('/stores/:storeId/alerts', alertsRouter);
 
   return router;
 }
