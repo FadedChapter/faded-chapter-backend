@@ -41,6 +41,8 @@ import { AdminProductController } from '../../controllers/admin-product.controll
 import { AdminInventoryController } from '../../controllers/admin-inventory.controller';
 import { AdminCustomerController } from '../../controllers/admin-customer.controller';
 import { AdminPaymentController } from '../../controllers/admin-payment.controller';
+import { AdminAnalyticsController } from '../../controllers/admin-analytics.controller';
+import { AnalyticsService } from '../../services/analytics.service';
 import { CustomerRepository } from '../../repositories/customer.repository';
 
 /**
@@ -344,6 +346,32 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/payments', paymentsRouter);
+
+  // ---------------------------------------------------------------------------
+  // Analytics (Phase 7)
+  //
+  // analytics.view is admin-only. Exports are logged: they move data out of the
+  // audited console onto someone's laptop, which is worth recording even though
+  // nothing is mutated.
+  // ---------------------------------------------------------------------------
+  const analytics = new AdminAnalyticsController(new AnalyticsService());
+
+  const analyticsRouter = Router({ mergeParams: true });
+  analyticsRouter.use(checkStoreOwnership);
+
+  analyticsRouter.get(
+    '/',
+    requirePermission('analytics.view'),
+    (req: Request, res: Response) => analytics.overview(req, res),
+  );
+
+  analyticsRouter.get(
+    '/export',
+    requirePermission('analytics.view'),
+    (req: Request, res: Response) => analytics.exportCsv(req, res),
+  );
+
+  router.use('/stores/:storeId/analytics', analyticsRouter);
 
   return router;
 }

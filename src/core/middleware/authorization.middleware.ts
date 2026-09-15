@@ -236,6 +236,10 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Customers (Phase 5)
     'customers.view',
     'customers.update',
+    // Analytics (Phase 7). Not granted to support: this is revenue and
+    // category-margin data across the whole business, and answering a customer
+    // question never requires it.
+    'analytics.view',
   ],
 
   support: [
