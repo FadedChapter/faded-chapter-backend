@@ -240,6 +240,10 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // category-margin data across the whole business, and answering a customer
     // question never requires it.
     'analytics.view',
+    // Discounts (Phase 8). Issuing a code is closer to issuing credit than to
+    // editing a product, so creation and status changes stay with admin.
+    'discounts.view',
+    'discounts.manage',
   ],
 
   support: [
@@ -257,6 +261,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Support answers "is it back in stock yet"; adjusting stock is an
     // accounting action and stays with admin.
     'inventory.view',
+    // Support is asked "why was my code rejected" and needs to see a code's
+    // terms and remaining uses. Issuing or withdrawing one is not their call.
+    'discounts.view',
     // Support needs to identify the person they are helping. Changing a
     // customer's status — banning in particular — is a decision about someone's
     // access to the store, so it stays with admin.

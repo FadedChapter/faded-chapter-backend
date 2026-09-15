@@ -35,9 +35,18 @@ const UUID_PATTERN =
  * audit_logs.record_id is a non-null uuid, so a non-uuid id cannot be stored
  * there; such actions are still logged to the structured logger.
  */
-function resolveRecordId(req: Request): string | null {
-  // Any uuid-shaped route param identifies the record, excluding storeId which
-  // is the scope rather than the subject.
+function resolveRecordId(req: Request, res: Response): string | null {
+  // A create has no record id in its route params — the id is generated inside
+  // the handler — so handlers publish it on res.locals and it is preferred
+  // here. Without this, every create operation in the console audited nothing
+  // at all, which for discounts meant minting spendable value left no trace.
+  const published = (res.locals as { auditRecordId?: unknown }).auditRecordId;
+  if (typeof published === 'string' && UUID_PATTERN.test(published)) {
+    return published;
+  }
+
+  // Otherwise any uuid-shaped route param identifies the record, excluding
+  // storeId which is the scope rather than the subject.
   //
   // This was previously a hardcoded list of param names (orderId, productId,
   // …). Every new module had to remember to add its own, and Phase 4's
@@ -93,7 +102,7 @@ export function auditLog(action: string, tableName: string) {
         return;
       }
 
-      const recordId = resolveRecordId(req);
+      const recordId = resolveRecordId(req, res);
       if (!recordId) {
         logWarn('admin_action_no_record_id', context);
         return;

@@ -6,6 +6,12 @@
  */
 
 import { Router } from 'express';
+// Phase 8: every promo route was unauthenticated, including code creation.
+// Anyone could mint themselves a 100%-off code, rewrite an existing code's
+// value, deactivate a live campaign, or enumerate all active codes. It was
+// latent only because promo_codes did not exist as a table; creating it
+// without this guard would have made it live.
+import { requireStaff } from '../middleware/require-staff.middleware';
 import { PromoCodeController, DiscountController } from '../controllers/promo.controller';
 import { PromoCodeService, DiscountService } from '../services/promo.service';
 import { PromoCodeRepository, DiscountApplicationRepository } from '../repositories/promo.repositories';
@@ -33,22 +39,30 @@ export function createPromoRoutes(): Router {
    */
 
   // List active promo codes
-  router.get('/promo-codes/active', (req, res) => promoController.listActivePromos(req, res));
+  // Staff-only, despite sounding like storefront data. This returns every
+  // active code together with its discount value, so exposing it publicly means
+  // any visitor can enumerate and redeem every campaign — which defeats
+  // influencer codes, email-only offers and per-segment usage limits, since a
+  // code's whole value is that not everyone has it.
+  //
+  // The storefront's legitimate need is POST /validate-code: check the code a
+  // customer actually typed. That stays public.
+  router.get('/promo-codes/active', requireStaff, (req, res) => promoController.listActivePromos(req, res));
 
   // Get expiring promo codes
-  router.get('/promo-codes/expiring', (req, res) => promoController.getExpiringPromos(req, res));
+  router.get('/promo-codes/expiring', requireStaff, (req, res) => promoController.getExpiringPromos(req, res));
 
   // Create promo code
-  router.post('/promo-codes', (req, res) => promoController.createPromoCode(req, res));
+  router.post('/promo-codes', requireStaff, (req, res) => promoController.createPromoCode(req, res));
 
   // Get promo code
-  router.get('/promo-codes/:codeId', (req, res) => promoController.getPromoCode(req, res));
+  router.get('/promo-codes/:codeId', requireStaff, (req, res) => promoController.getPromoCode(req, res));
 
   // Update promo code
-  router.put('/promo-codes/:codeId', (req, res) => promoController.updatePromoCode(req, res));
+  router.put('/promo-codes/:codeId', requireStaff, (req, res) => promoController.updatePromoCode(req, res));
 
   // Deactivate promo code
-  router.post('/promo-codes/:codeId/deactivate', (req, res) =>
+  router.post('/promo-codes/:codeId/deactivate', requireStaff, (req, res) =>
     promoController.deactivatePromoCode(req, res)
   );
 
@@ -69,7 +83,7 @@ export function createPromoRoutes(): Router {
   router.get('/carts/:cartId/discounts', (req, res) => discountController.getCartDiscounts(req, res));
 
   // Get order discounts
-  router.get('/orders/:orderId/discounts', (req, res) =>
+  router.get('/orders/:orderId/discounts', requireStaff, (req, res) =>
     discountController.getOrderDiscounts(req, res)
   );
 
@@ -79,7 +93,7 @@ export function createPromoRoutes(): Router {
    */
 
   // Get promo analytics
-  router.get('/analytics/promos', (req, res) => promoController.getPromoAnalytics(req, res));
+  router.get('/analytics/promos', requireStaff, (req, res) => promoController.getPromoAnalytics(req, res));
 
   return router;
 }

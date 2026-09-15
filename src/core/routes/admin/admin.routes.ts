@@ -42,6 +42,7 @@ import { AdminInventoryController } from '../../controllers/admin-inventory.cont
 import { AdminCustomerController } from '../../controllers/admin-customer.controller';
 import { AdminPaymentController } from '../../controllers/admin-payment.controller';
 import { AdminAnalyticsController } from '../../controllers/admin-analytics.controller';
+import { AdminDiscountController } from '../../controllers/admin-discount.controller';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CustomerRepository } from '../../repositories/customer.repository';
 
@@ -372,6 +373,48 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/analytics', analyticsRouter);
+
+  // ---------------------------------------------------------------------------
+  // Discounts (Phase 8)
+  //
+  // discounts.view is held by admin and support, since support is asked why a
+  // code was rejected. discounts.manage is admin-only: a promo code is
+  // spendable value, and issuing one is closer to issuing credit than to
+  // editing a product. Every mutation is audited.
+  // ---------------------------------------------------------------------------
+  const discounts = new AdminDiscountController();
+
+  const discountsRouter = Router({ mergeParams: true });
+  discountsRouter.use(checkStoreOwnership);
+
+  discountsRouter.get(
+    '/',
+    requirePermission('discounts.view'),
+    (req: Request, res: Response) => discounts.list(req, res),
+  );
+
+  // Static segment before any ':discountId' route.
+  discountsRouter.get(
+    '/redemptions',
+    requirePermission('discounts.view'),
+    (req: Request, res: Response) => discounts.redemptions(req, res),
+  );
+
+  discountsRouter.post(
+    '/',
+    requirePermission('discounts.manage'),
+    auditLog('discount.create', 'promo_codes'),
+    (req: Request, res: Response) => discounts.create(req, res),
+  );
+
+  discountsRouter.post(
+    '/:discountId/status',
+    requirePermission('discounts.manage'),
+    auditLog('discount.status_change', 'promo_codes'),
+    (req: Request, res: Response) => discounts.updateStatus(req, res),
+  );
+
+  router.use('/stores/:storeId/discounts', discountsRouter);
 
   return router;
 }
