@@ -252,6 +252,11 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // watches for, or silencing a rule, is an admin decision.
     'alerts.view',
     'alerts.manage',
+    // Staff & roles. Deliberately NOT granted to support at any level: this
+    // module governs who can use every other module, and read access alone
+    // discloses the full roster and who holds administrator rights.
+    'staff.view',
+    'staff.manage',
   ],
 
   support: [

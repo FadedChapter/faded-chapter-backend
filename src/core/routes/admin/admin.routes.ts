@@ -45,6 +45,7 @@ import { AdminAnalyticsController } from '../../controllers/admin-analytics.cont
 import { AdminDiscountController } from '../../controllers/admin-discount.controller';
 import { AdminShippingController } from '../../controllers/admin-shipping.controller';
 import { AdminAlertsController } from '../../controllers/admin-alerts.controller';
+import { AdminStaffController } from '../../controllers/admin-staff.controller';
 import { AlertsService } from '../../services/alerts.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CustomerRepository } from '../../repositories/customer.repository';
@@ -485,6 +486,50 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/alerts', alertsRouter);
+
+  // ---------------------------------------------------------------------------
+  // Staff & roles (Settings)
+  //
+  // Admin-only at every level, including read. This module governs who can use
+  // every other module; the roster and who holds administrator rights is not
+  // information support needs, and knowing it is a useful first step for anyone
+  // trying to escalate.
+  //
+  // Not store-scoped: staff accounts are platform-level, not per-store, so
+  // checkStoreOwnership does not apply here.
+  // ---------------------------------------------------------------------------
+  const staff = new AdminStaffController();
+
+  const staffRouter = Router({ mergeParams: true });
+
+  staffRouter.get(
+    '/',
+    requirePermission('staff.view'),
+    (req: Request, res: Response) => staff.list(req, res),
+  );
+
+  staffRouter.post(
+    '/',
+    requirePermission('staff.manage'),
+    auditLog('staff.create', 'staff_users'),
+    (req: Request, res: Response) => staff.create(req, res),
+  );
+
+  staffRouter.post(
+    '/:staffId/role',
+    requirePermission('staff.manage'),
+    auditLog('staff.role_change', 'staff_users'),
+    (req: Request, res: Response) => staff.setRole(req, res),
+  );
+
+  staffRouter.post(
+    '/:staffId/status',
+    requirePermission('staff.manage'),
+    auditLog('staff.status_change', 'staff_users'),
+    (req: Request, res: Response) => staff.setStatus(req, res),
+  );
+
+  router.use('/staff', staffRouter);
 
   return router;
 }

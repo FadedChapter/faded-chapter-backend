@@ -17,7 +17,7 @@ import { randomBytes } from 'node:crypto';
 import { createSessionMiddleware } from './core/session/middleware/session.middleware.js';
 import { InMemorySessionStore } from './core/session/adapters/inmemory-session-store.js';
 import { DEFAULT_SESSION_CONFIG } from './core/session/session.types.js';
-import { InMemoryUserStore } from './core/user/adapters/inmemory-user-store.js';
+import { PostgresUserStore } from './core/user/adapters/postgres-user-store.js';
 import { createCsrfMiddleware, csrfTokenHandler } from './core/security/middleware/csrf.middleware.js';
 
 // Routes & Services (Phase 9 & 10a: Payment Processing & Admin Dashboard)
@@ -37,11 +37,16 @@ import { registerCoreRoutes } from './core/routes/index.js';
 const sessionStore = new InMemorySessionStore(DEFAULT_SESSION_CONFIG);
 
 /**
- * Phase 3F.2: User Store
- * Using in-memory store for development with real password hashing.
- * TODO: Replace with database-backed store for production.
+ * Staff/user store.
+ *
+ * Database-backed as of the staff module. The in-memory adapter it replaces
+ * lost every account on restart, which was tolerable while the only accounts
+ * were two hardcoded demo users but not once colleagues can be invited.
+ *
+ * Seeding is idempotent and runs after the datasource connects; the demo
+ * accounts keep their original uuids because existing audit rows reference them.
  */
-const userStore = new InMemoryUserStore();
+const userStore = new PostgresUserStore();
 
 // ============================================================================
 // Express App Setup
@@ -65,9 +70,11 @@ initializeLogger();
 // Initialize TypeORM DataSource for payment/refund services
 import { initializeDatabase } from './core/database/postgres-data-source.js';
 try {
-  initializeDatabase().catch(err => {
-    console.error('Warning: Database initialization failed, some features may not work:', err);
-  });
+  initializeDatabase()
+    .then(() => userStore.ensureSeeded())
+    .catch(err => {
+      console.error('Warning: Database initialization failed, some features may not work:', err);
+    });
 } catch (err) {
   console.error('Warning: Could not initialize database:', err);
 }
