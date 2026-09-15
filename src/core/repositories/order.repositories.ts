@@ -132,10 +132,6 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
   ): Promise<OrderEntity | null> {
     // TypeORM v1 removed the string-array relations syntax and now requires the
     // object form. Converted here so callers keep the simpler array API.
-    // NOTE: the older finders in this file (findByOrderNumber, findByStatus,
-    // findByCustomer, findByFulfillmentStatus) still pass `relations: ['lines']`
-    // and will throw at runtime for the same reason — they are unrelated to the
-    // admin order queue but need the same fix.
     const relationsObject = relations.reduce<Record<string, boolean>>((acc, name) => {
       acc[name] = true;
       return acc;
@@ -206,17 +202,22 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
     }, {});
   }
 
+  // NOTE: these finders used the string-array `relations: ['lines']` form that
+  // TypeORM v1 removed, so every one of them threw at runtime. Flagged when
+  // findOneScoped was added in Phase 2; fixed here in Phase 5, when
+  // findByCustomer gained its first caller (the customer record's purchase
+  // history).
   async findByOrderNumber(orderNumber: string, storeId: string): Promise<OrderEntity | null> {
     return this.repository.findOne({
       where: { order_number: orderNumber, store_id: storeId } as any,
-      relations: ['lines'],
+      relations: { lines: true },
     });
   }
 
   async findByCustomer(customerId: string, storeId: string, limit = 50, offset = 0): Promise<OrderEntity[]> {
     return this.repository.find({
       where: { customer_id: customerId, store_id: storeId } as any,
-      relations: ['lines'],
+      relations: { lines: true },
       order: { created_at: 'DESC' } as any,
       skip: offset,
       take: limit,
@@ -226,7 +227,7 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
   async findByStatus(status: string, storeId: string, limit = 50, offset = 0): Promise<OrderEntity[]> {
     return this.repository.find({
       where: { status, store_id: storeId } as any,
-      relations: ['lines'],
+      relations: { lines: true },
       order: { created_at: 'DESC' } as any,
       skip: offset,
       take: limit,
@@ -250,7 +251,7 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
   ): Promise<OrderEntity[]> {
     return this.repository.find({
       where: { fulfillment_status: fulfillmentStatus, store_id: storeId } as any,
-      relations: ['lines'],
+      relations: { lines: true },
       order: { created_at: 'DESC' } as any,
       skip: offset,
       take: limit,
@@ -283,7 +284,7 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
   async getPendingOrders(storeId: string): Promise<OrderEntity[]> {
     return this.repository.find({
       where: { status: 'pending', store_id: storeId } as any,
-      relations: ['lines'],
+      relations: { lines: true },
       order: { created_at: 'ASC' } as any,
     });
   }

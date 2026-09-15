@@ -233,6 +233,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Inventory (Phase 4)
     'inventory.view',
     'inventory.adjust',
+    // Customers (Phase 5)
+    'customers.view',
+    'customers.update',
   ],
 
   support: [
@@ -250,6 +253,10 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Support answers "is it back in stock yet"; adjusting stock is an
     // accounting action and stays with admin.
     'inventory.view',
+    // Support needs to identify the person they are helping. Changing a
+    // customer's status — banning in particular — is a decision about someone's
+    // access to the store, so it stays with admin.
+    'customers.view',
   ],
 
   system: [

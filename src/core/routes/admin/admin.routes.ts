@@ -39,6 +39,8 @@ import { DashboardController } from '../../controllers/dashboard.controller';
 import { AdminOrderController } from '../../controllers/admin-order.controller';
 import { AdminProductController } from '../../controllers/admin-product.controller';
 import { AdminInventoryController } from '../../controllers/admin-inventory.controller';
+import { AdminCustomerController } from '../../controllers/admin-customer.controller';
+import { CustomerRepository } from '../../repositories/customer.repository';
 
 /**
  * Build the admin router.
@@ -247,6 +249,46 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/inventory', inventoryRouter);
+
+  // ---------------------------------------------------------------------------
+  // Customers (Phase 5)
+  //
+  // customers.view is held by admin and support; customers.update by admin
+  // only. Status changes are decisions about a person's access to the store, so
+  // every one is audited.
+  // ---------------------------------------------------------------------------
+  const customers = new AdminCustomerController(new CustomerRepository(), orderRepo);
+
+  const customersRouter = Router({ mergeParams: true });
+  customersRouter.use(checkStoreOwnership);
+
+  customersRouter.get(
+    '/',
+    requirePermission('customers.view'),
+    (req: Request, res: Response) => customers.list(req, res),
+  );
+
+  // Static segment before ':customerId'.
+  customersRouter.get(
+    '/status-counts',
+    requirePermission('customers.view'),
+    (req: Request, res: Response) => customers.statusCounts(req, res),
+  );
+
+  customersRouter.get(
+    '/:customerId',
+    requirePermission('customers.view'),
+    (req: Request, res: Response) => customers.detail(req, res),
+  );
+
+  customersRouter.post(
+    '/:customerId/status',
+    requirePermission('customers.update'),
+    auditLog('customer.status_change', 'customers'),
+    (req: Request, res: Response) => customers.updateStatus(req, res),
+  );
+
+  router.use('/stores/:storeId/customers', customersRouter);
 
   return router;
 }
