@@ -24,9 +24,12 @@ import {
   checkStoreOwnership,
 } from '../../middleware/authorization.middleware';
 import { apiRateLimit } from '../../middleware/rate-limit.middleware';
+import { auditLog } from '../../middleware/audit-log.middleware';
 import { PaymentRepository, RefundRepository } from '../../repositories/payment.repositories';
+import { OrderRepository, OrderLineRepository } from '../../repositories/order.repositories';
 import { DashboardService } from '../../services/dashboard.service';
 import { DashboardController } from '../../controllers/dashboard.controller';
+import { AdminOrderController } from '../../controllers/admin-order.controller';
 
 /**
  * Build the admin router.
@@ -93,6 +96,55 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/dashboard', dashboardRouter);
+
+  // ---------------------------------------------------------------------------
+  // Orders (Phase 2)
+  //
+  // Reads require orders.view (admin + support). Mutations require a narrower
+  // permission that support does not hold, and are recorded in the audit trail.
+  // ---------------------------------------------------------------------------
+  const orderRepo = new OrderRepository();
+  const orderLineRepo = new OrderLineRepository();
+  const orders = new AdminOrderController(orderRepo, orderLineRepo);
+
+  const ordersRouter = Router({ mergeParams: true });
+  ordersRouter.use(checkStoreOwnership);
+
+  ordersRouter.get(
+    '/',
+    requirePermission('orders.view'),
+    (req: Request, res: Response) => orders.list(req, res),
+  );
+
+  // Static segment before '/:orderId', otherwise 'status-counts' is captured as
+  // an order id and this route becomes unreachable.
+  ordersRouter.get(
+    '/status-counts',
+    requirePermission('orders.view'),
+    (req: Request, res: Response) => orders.statusCounts(req, res),
+  );
+
+  ordersRouter.get(
+    '/:orderId',
+    requirePermission('orders.view'),
+    (req: Request, res: Response) => orders.detail(req, res),
+  );
+
+  ordersRouter.post(
+    '/:orderId/status',
+    requirePermission('orders.update'),
+    auditLog('order.status_change', 'orders'),
+    (req: Request, res: Response) => orders.updateStatus(req, res),
+  );
+
+  ordersRouter.patch(
+    '/:orderId/notes',
+    requirePermission('orders.update'),
+    auditLog('order.notes_update', 'orders'),
+    (req: Request, res: Response) => orders.updateNotes(req, res),
+  );
+
+  router.use('/stores/:storeId/orders', ordersRouter);
 
   return router;
 }

@@ -12,6 +12,7 @@ import { UserStore } from '../user-store.port';
 import { UserRecord, CreateUserInput } from '../user.types';
 import { hashPassword, verifyPassword } from '../services/password-hashing.service';
 import { normalizeEmail } from '../utils/email.util';
+import { randomUUID } from 'node:crypto';
 
 /**
  * Development in-memory user store.
@@ -22,9 +23,6 @@ export class InMemoryUserStore implements UserStore {
   private readonly users = new Map<string, UserRecord>();
   // Map: user ID → user record (for findById)
   private readonly usersById = new Map<string, UserRecord>();
-  // Counter for generating user IDs
-  private nextUserId = 1;
-
   constructor() {
     this.seedDemoUser();
   }
@@ -42,7 +40,9 @@ export class InMemoryUserStore implements UserStore {
     const customerPasswordHash = await hashPassword('Password123!');
 
     const customerUser: UserRecord = {
-      id: 'user-demo',
+      // UUID, not a slug: actor_id in audit_logs is a uuid column, so a
+      // non-uuid user id silently breaks the admin audit trail.
+      id: '550e8400-e29b-41d4-a716-4466554400d1',
       email: customerEmail,
       passwordHash: customerPasswordHash,
       firstName: 'Demo',
@@ -62,7 +62,7 @@ export class InMemoryUserStore implements UserStore {
     const adminPasswordHash = await hashPassword('Admin123!');
 
     const adminUser: UserRecord = {
-      id: 'user-admin',
+      id: '550e8400-e29b-41d4-a716-4466554400a1',
       email: adminEmail,
       passwordHash: adminPasswordHash,
       firstName: 'Admin',
@@ -97,7 +97,8 @@ export class InMemoryUserStore implements UserStore {
 
     // Create new user
     const user: UserRecord = {
-      id: `user-${this.nextUserId++}`,
+      // UUID for the same reason as the seeded users — audit_logs.actor_id is uuid.
+      id: randomUUID(),
       email,
       passwordHash,
       firstName: input.firstName.trim(),

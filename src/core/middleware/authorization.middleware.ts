@@ -222,6 +222,11 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     'refund.reject',
     'refund.view-all',
     'audit.view',
+    // Orders (Phase 2)
+    'orders.view',
+    'orders.update',
+    'orders.fulfill',
+    'orders.cancel',
   ],
 
   support: [
@@ -229,6 +234,10 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     'refund.view-all',
     'refund.request',
     'audit.view',
+    // Support reads the order queue to answer customer questions, but does not
+    // move money or change fulfilment state. Least privilege: read only until
+    // there is a demonstrated need.
+    'orders.view',
   ],
 
   system: [

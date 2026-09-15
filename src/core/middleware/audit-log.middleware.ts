@@ -98,7 +98,10 @@ export function auditLog(action: string, tableName: string) {
         action,
         tableName,
         recordId,
-        actorId: actor?.userId ?? null,
+        // actor_id is a uuid column. A non-uuid actor id is recorded as null
+        // rather than thrown away with the whole record — the actor's identity
+        // is still preserved in the structured log above.
+        actorId: actor?.userId && UUID_PATTERN.test(actor.userId) ? actor.userId : null,
         ip: req.ip ?? null,
         userAgent: req.headers['user-agent'] ?? null,
         context,
