@@ -6,6 +6,16 @@
  */
 
 import { Router } from 'express';
+// Phase 9: these were unauthenticated. POST /rates/import in particular let an
+// anonymous caller overwrite the entire rate table in one request — zeroing
+// every shipping charge in the shop. GET /methods/:methodId returned the full
+// commercial rate card (weight bands, zones, per-unit rates), and the carrier
+// endpoints let anyone enumerate the rate structure and, where they front a
+// real carrier API, spend money doing it.
+//
+// Latent only because shipping_methods did not exist as a table; the guards go
+// on before the tables, not after.
+import { requireStaff } from '../middleware/require-staff.middleware';
 import { ShippingController } from '../controllers/shipping.controller';
 import {
   ShippingMethodService,
@@ -44,13 +54,13 @@ export function createShippingRoutes(): Router {
   router.get('/methods', (req, res) => controller.listMethods(req, res));
 
   // Get shipping method details
-  router.get('/methods/:methodId', (req, res) => controller.getMethod(req, res));
+  router.get('/methods/:methodId', requireStaff, (req, res) => controller.getMethod(req, res));
 
   // Create new shipping method (admin)
-  router.post('/methods', (req, res) => controller.createMethod(req, res));
+  router.post('/methods', requireStaff, (req, res) => controller.createMethod(req, res));
 
   // Update shipping method (admin)
-  router.put('/methods/:methodId', (req, res) => controller.updateMethod(req, res));
+  router.put('/methods/:methodId', requireStaff, (req, res) => controller.updateMethod(req, res));
 
   /**
    * Shipping Rates Routes
@@ -58,7 +68,7 @@ export function createShippingRoutes(): Router {
    */
 
   // Bulk import shipping rates (admin)
-  router.post('/rates/import', (req, res) => controller.importRates(req, res));
+  router.post('/rates/import', requireStaff, (req, res) => controller.importRates(req, res));
 
   /**
    * Shipping Calculation Routes
@@ -85,10 +95,10 @@ export function createShippingRoutes(): Router {
    */
 
   // Get real-time rates from specific carrier (admin)
-  router.get('/carriers/:carrier/rates', (req, res) => controller.getCarrierRates(req, res));
+  router.get('/carriers/:carrier/rates', requireStaff, (req, res) => controller.getCarrierRates(req, res));
 
   // Get rates from all carriers (admin)
-  router.get('/carriers/rates/multi', (req, res) => controller.getMultiCarrierRates(req, res));
+  router.get('/carriers/rates/multi', requireStaff, (req, res) => controller.getMultiCarrierRates(req, res));
 
   return router;
 }

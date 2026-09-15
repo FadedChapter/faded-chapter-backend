@@ -244,6 +244,10 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // editing a product, so creation and status changes stay with admin.
     'discounts.view',
     'discounts.manage',
+    // Shipping (Phase 9). Delivery pricing is margin — every rupee
+    // under-charged comes off the order — so rate changes stay with admin.
+    'shipping.view',
+    'shipping.manage',
   ],
 
   support: [
@@ -264,6 +268,9 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // Support is asked "why was my code rejected" and needs to see a code's
     // terms and remaining uses. Issuing or withdrawing one is not their call.
     'discounts.view',
+    // Support is asked "when will it arrive" and needs delivery options and
+    // estimates. Changing what shipping costs is not a support decision.
+    'shipping.view',
     // Support needs to identify the person they are helping. Changing a
     // customer's status — banning in particular — is a decision about someone's
     // access to the store, so it stays with admin.

@@ -43,6 +43,7 @@ import { AdminCustomerController } from '../../controllers/admin-customer.contro
 import { AdminPaymentController } from '../../controllers/admin-payment.controller';
 import { AdminAnalyticsController } from '../../controllers/admin-analytics.controller';
 import { AdminDiscountController } from '../../controllers/admin-discount.controller';
+import { AdminShippingController } from '../../controllers/admin-shipping.controller';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CustomerRepository } from '../../repositories/customer.repository';
 
@@ -415,6 +416,46 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/stores/:storeId/discounts', discountsRouter);
+
+  // ---------------------------------------------------------------------------
+  // Shipping (Phase 9)
+  //
+  // shipping.view is held by admin and support, since support is asked when an
+  // order will arrive. shipping.manage is admin-only: delivery pricing is
+  // margin. Every mutation is audited.
+  // ---------------------------------------------------------------------------
+  const shipping = new AdminShippingController();
+
+  const shippingRouter = Router({ mergeParams: true });
+  shippingRouter.use(checkStoreOwnership);
+
+  shippingRouter.get(
+    '/',
+    requirePermission('shipping.view'),
+    (req: Request, res: Response) => shipping.list(req, res),
+  );
+
+  shippingRouter.get(
+    '/:methodId/rates',
+    requirePermission('shipping.view'),
+    (req: Request, res: Response) => shipping.rateCard(req, res),
+  );
+
+  shippingRouter.post(
+    '/',
+    requirePermission('shipping.manage'),
+    auditLog('shipping.method_create', 'shipping_methods'),
+    (req: Request, res: Response) => shipping.create(req, res),
+  );
+
+  shippingRouter.post(
+    '/:methodId/availability',
+    requirePermission('shipping.manage'),
+    auditLog('shipping.availability_change', 'shipping_methods'),
+    (req: Request, res: Response) => shipping.setAvailability(req, res),
+  );
+
+  router.use('/stores/:storeId/shipping', shippingRouter);
 
   return router;
 }

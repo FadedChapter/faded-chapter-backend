@@ -18,6 +18,9 @@ import {
   ImportShippingRatesDto,
   CalculateShippingDto,
 } from '../dtos/shipping.dto';
+// Response shape for the public methods list (note: dto/, not dtos/ — the
+// former holds response shapes, the latter request shapes).
+import { toCustomerShippingMethodDTO } from '../dto/shipping.dto';
 
 /**
  * Shipping Controller
@@ -39,9 +42,12 @@ export class ShippingController {
     try {
       const storeId = req.params.storeId;
       const methods = await this.methodService.listActiveMethods(storeId);
+      // Public endpoint: the storefront must list delivery options, but a
+      // shopper needs a name, a price and an estimate — not the carrier and
+      // service codes sitting in metadata.
       res.status(200).json({
         ok: true,
-        data: methods,
+        data: methods.map(toCustomerShippingMethodDTO),
       });
     } catch (error) {
       res.status(400).json({
