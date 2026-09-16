@@ -7,12 +7,11 @@
 
 import { PaymentEntity } from '../entities/payment.entity';
 import { RefundEntity } from '../entities/refund.entity';
-import { AuditLogEntity } from '../entities/audit-log.entity';
 import {
   PaymentRepository,
   RefundRepository,
 } from '../repositories/payment.repositories';
-import { AuditService } from './audit.service';
+import { AuditService, type AdminActionRecord } from './audit.service';
 
 /**
  * KPI Metrics for Dashboard
@@ -227,7 +226,7 @@ export class DashboardService {
     },
     page: number = 1,
     limit: number = 50
-  ): Promise<{ actions: AuditLogEntity[]; total: number; hasMore: boolean }> {
+  ): Promise<{ actions: AdminActionRecord[]; total: number; hasMore: boolean }> {
     // Query admin actions from audit service
     const auditLogs = await AuditService.getAdminActions(
       storeId,

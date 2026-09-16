@@ -112,6 +112,11 @@ export function auditLog(action: string, tableName: string) {
         action,
         tableName,
         recordId,
+        // The scope of the change. The audit endpoint is store-scoped, so
+        // without this the query could not honour the store it was asked for.
+        // Falls back to the token's binding when the route carries no :storeId
+        // (the staff module is platform-level rather than per-store).
+        storeId: req.params['storeId'] ?? actor?.storeId ?? null,
         // actor_id is a uuid column. A non-uuid actor id is recorded as null
         // rather than thrown away with the whole record — the actor's identity
         // is still preserved in the structured log above.
@@ -130,6 +135,7 @@ async function persistAuditRecord(input: {
   action: string;
   tableName: string;
   recordId: string;
+  storeId: string | null;
   actorId: string | null;
   ip: string | null;
   userAgent: string | null;
@@ -148,6 +154,7 @@ async function persistAuditRecord(input: {
     const repository = dataSource.getRepository(AuditLogEntity);
     await repository.insert({
       id: randomUUID(),
+      store_id: input.storeId,
       table_name: input.tableName,
       record_id: input.recordId,
       actor_id: input.actorId,

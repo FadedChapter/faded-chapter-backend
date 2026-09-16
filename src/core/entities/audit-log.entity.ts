@@ -39,6 +39,17 @@ export class AuditLogEntity {
   // What Was Changed
   // ============================================================================
 
+  /**
+   * The store the change belongs to.
+   *
+   * Nullable on purpose: the audit trail must never refuse a row. A NOT NULL
+   * store scope previously meant every insert failed silently and the trail
+   * stayed empty, which is a far worse outcome than a row whose scope is
+   * unknown.
+   */
+  @Column('uuid', { nullable: true })
+  store_id: string | null;
+
   @Column('varchar', { length: 100, nullable: false })
   table_name: string;
 

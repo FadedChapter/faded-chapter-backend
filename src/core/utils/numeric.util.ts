@@ -40,6 +40,15 @@ export function fixNumericValues<T>(obj: T, numericFields: string[] = []): T {
     return obj;
   }
 
+  // Dates are objects, but spreading one produces {} — a Date carries no
+  // enumerable own properties. Every timestamp passing through here was being
+  // flattened into an empty object, which is why the dashboard's "last updated"
+  // could not render and DatePipe reported being handed [object Object].
+  // Other wrapper types (Buffer, RegExp) would flatten the same way.
+  if (obj instanceof Date || Buffer.isBuffer(obj) || obj instanceof RegExp) {
+    return obj;
+  }
+
   if (Array.isArray(obj)) {
     return obj.map((item) => fixNumericValues(item, numericFields)) as any;
   }

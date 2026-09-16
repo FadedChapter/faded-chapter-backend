@@ -1,263 +1,153 @@
 /**
  * Audit Service
- * Logs all sensitive payment operations for compliance and debugging
  *
- * Phase 9d: Security & Authorization
+ * Reads the administrative audit trail.
+ *
+ * This file previously described a second, parallel audit system writing to and
+ * reading from `audit_logs_payment` — a table that exists in no migration and
+ * in no database. Its four write methods had no callers, so nothing was ever
+ * lost; its two read methods were wrapped in try/catch and returned [] on the
+ * "relation does not exist" error, which is why the dashboard's admin-actions
+ * panel showed nothing and never reported a problem.
+ *
+ * The real trail is `audit_logs`, written by audit-log.middleware on every
+ * successful admin mutation. This service now reads that.
+ *
+ * The write methods are gone rather than repointed. The middleware is the
+ * writer — it is mounted on every admin route and already records actor,
+ * action, target and outcome — and a second writer that silently swallowed
+ * everything is precisely the failure being fixed here.
  */
 
-import { AuditLogEntity } from '../entities/audit-log.entity';
-import { AuthContext } from '../middleware/authorization.middleware';
 import { getDataSource } from '../database/postgres-data-source';
+import { logError } from '../logging/logger';
 
 /**
- * Audit Log Entry
+ * A recorded administrative action.
+ *
+ * Shaped for the dashboard rather than mirroring the table: the columns are
+ * named for rows and tables, and the reader thinks in resources and people.
  */
-export interface AuditEntry {
-  storeId: string;
-  actor?: AuthContext;
-  resourceType: 'payment' | 'refund' | 'webhook';
-  resourceId: string;
+export interface AdminActionRecord {
+  id: string;
+  created_at: Date;
+  actor_id: string | null;
+  actor_email: string | null;
   action: string;
-  oldState?: Record<string, any>;
-  newState: Record<string, any>;
-  reason?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  context?: Record<string, any>;
-  status: 'success' | 'failure';
-  errorMessage?: string;
-  source: 'api' | 'webhook' | 'batch' | 'manual';
+  resource_type: string;
+  resource_id: string;
+  status: 'success';
 }
 
 /**
- * Audit Service
- * Appends immutable audit trail for all payment operations
+ * Columns common to both reads.
+ *
+ * actor_email is joined from staff_users: audit_logs stores only the actor's
+ * id, and an audit trail that shows a uuid instead of a person is not much of
+ * an audit trail. A left join, so a row whose actor has since been deleted is
+ * still returned — losing the record would be worse than losing the name.
+ *
+ * status is a literal rather than a column, and it is accurate rather than
+ * assumed: the middleware writes a row only when the response succeeded, and
+ * records denied or failed attempts in the structured log instead. Every row in
+ * this table is by construction a committed change.
  */
+const SELECT_COLUMNS = `
+  a.id,
+  a.created_at,
+  a.actor_id,
+  s.email                AS actor_email,
+  a.action,
+  a.table_name           AS resource_type,
+  a.record_id            AS resource_id,
+  'success'::text        AS status
+`;
+
+const FROM_CLAUSE = `
+  FROM audit_logs a
+  LEFT JOIN staff_users s ON s.id = a.actor_id
+`;
+
 export class AuditService {
   /**
-   * Log Payment Operation
-   * Records payment creation, confirmation, capture, status updates
-   */
-  static async logPaymentOperation(entry: AuditEntry): Promise<void> {
-    await this.logAudit({
-      ...entry,
-      resourceType: 'payment',
-      action: entry.action,
-    });
-  }
-
-  /**
-   * Log Refund Operation
-   * Records refund requests, approvals, rejections, processing
-   */
-  static async logRefundOperation(entry: AuditEntry): Promise<void> {
-    await this.logAudit({
-      ...entry,
-      resourceType: 'refund',
-      action: entry.action,
-    });
-  }
-
-  /**
-   * Log Webhook Event
-   * Records incoming webhook events and processing
-   */
-  static async logWebhookEvent(entry: AuditEntry): Promise<void> {
-    await this.logAudit({
-      ...entry,
-      resourceType: 'webhook',
-      source: 'webhook',
-    });
-  }
-
-  /**
-   * Log Admin Action
-   * Records admin approvals, rejections, manual operations
-   */
-  static async logAdminAction(entry: AuditEntry): Promise<void> {
-    if (!entry.actor || entry.actor.role !== 'admin') {
-      throw new Error('Admin action requires admin authorization context');
-    }
-
-    await this.logAudit({
-      ...entry,
-      source: 'api',
-    });
-  }
-
-  /**
-   * Base Log Method
-   * Appends immutable audit entry
-   */
-  private static async logAudit(entry: AuditEntry): Promise<void> {
-    try {
-      const dataSource = getDataSource();
-      if (!dataSource.isInitialized) {
-        console.warn('Audit log skipped: database not initialized');
-        return;
-      }
-
-      // Create audit log entity
-      const auditLog = new AuditLogEntity();
-      auditLog.id = this.generateId();
-      auditLog.actor_id = entry.actor?.userId || null;
-      auditLog.actor_email = entry.actor?.email || null;
-      auditLog.actor_role = entry.actor?.role || 'system';
-      auditLog.resource_type = entry.resourceType;
-      auditLog.resource_id = entry.resourceId;
-      auditLog.action = entry.action;
-      auditLog.old_state = entry.oldState || null;
-      auditLog.new_state = entry.newState;
-      auditLog.reason = entry.reason || null;
-      auditLog.ip_address = entry.ipAddress || null;
-      auditLog.user_agent = entry.userAgent || null;
-      auditLog.context = entry.context || null;
-      auditLog.status = entry.status;
-      auditLog.error_message = entry.errorMessage || null;
-      auditLog.source = entry.source;
-
-      // Insert into audit_logs_payment table
-      const query = `
-        INSERT INTO audit_logs_payment (
-          id, store_id, actor_id, actor_email, actor_role,
-          resource_type, resource_id, action,
-          old_state, new_state, reason,
-          ip_address, user_agent, context,
-          status, error_message, source,
-          created_at
-        ) VALUES (
-          $1, $2, $3, $4, $5,
-          $6, $7, $8,
-          $9, $10, $11,
-          $12, $13, $14,
-          $15, $16, $17,
-          NOW()
-        )
-      `;
-
-      const values = [
-        auditLog.id,
-        entry.storeId,
-        auditLog.actor_id,
-        auditLog.actor_email,
-        auditLog.actor_role,
-        auditLog.resource_type,
-        auditLog.resource_id,
-        auditLog.action,
-        auditLog.old_state ? JSON.stringify(auditLog.old_state) : null,
-        JSON.stringify(auditLog.new_state),
-        auditLog.reason,
-        auditLog.ip_address,
-        auditLog.user_agent,
-        auditLog.context ? JSON.stringify(auditLog.context) : null,
-        auditLog.status,
-        auditLog.error_message,
-        auditLog.source,
-      ];
-
-      await dataSource.query(query, values);
-
-      console.log(`[Audit] ${entry.resourceType.toUpperCase()} ${entry.action.toUpperCase()}: ${entry.resourceId}`);
-    } catch (error) {
-      console.error('Failed to write audit log', {
-        error: (error as Error).message,
-        entry,
-      });
-      // Don't throw - audit logging shouldn't block main operations
-    }
-  }
-
-  /**
-   * Get Audit Trail
-   * Retrieve audit logs for a resource or time period
+   * Audit trail for a store, optionally narrowed to one record or table.
    */
   static async getAuditTrail(
     storeId: string,
     resourceId?: string,
     resourceType?: string,
-    limit = 100
-  ): Promise<AuditLogEntity[]> {
-    try {
-      const dataSource = getDataSource();
-      if (!dataSource.isInitialized) {
-        return [];
-      }
+    limit = 100,
+  ): Promise<AdminActionRecord[]> {
+    const conditions = ['a.store_id = $1'];
+    const params: unknown[] = [storeId];
 
-      let query = `
-        SELECT * FROM audit_logs_payment
-        WHERE store_id = $1
-      `;
-
-      const params: any[] = [storeId];
-
-      if (resourceId) {
-        query += ` AND resource_id = $${params.length + 1}`;
-        params.push(resourceId);
-      }
-
-      if (resourceType) {
-        query += ` AND resource_type = $${params.length + 1}`;
-        params.push(resourceType);
-      }
-
-      query += ` ORDER BY created_at DESC LIMIT $${params.length + 1}`;
-      params.push(limit);
-
-      const results = await dataSource.query(query, params);
-      return results || [];
-    } catch (error) {
-      console.error('Failed to retrieve audit trail', {
-        error: (error as Error).message,
-      });
-      return [];
+    if (resourceId) {
+      conditions.push(`a.record_id = $${params.length + 1}`);
+      params.push(resourceId);
     }
+    if (resourceType) {
+      conditions.push(`a.table_name = $${params.length + 1}`);
+      params.push(resourceType);
+    }
+
+    return this.run(conditions, params, limit, 'audit_trail');
   }
 
   /**
-   * Get Admin Actions
-   * Retrieve all admin approvals and rejections
+   * Administrative actions for a store, newest first.
+   *
+   * Deliberately not filtered down to approvals and rejections the way the
+   * previous version was. Every admin mutation is recorded — a price change, a
+   * stock adjustment, a customer being banned — and an audit view that hides
+   * all but two payment actions answers the wrong question.
    */
   static async getAdminActions(
     storeId: string,
     resourceType?: string,
-    limit = 100
-  ): Promise<AuditLogEntity[]> {
-    try {
-      const dataSource = getDataSource();
-      if (!dataSource.isInitialized) {
-        return [];
-      }
+    limit = 100,
+  ): Promise<AdminActionRecord[]> {
+    const conditions = ['a.store_id = $1'];
+    const params: unknown[] = [storeId];
 
-      let query = `
-        SELECT * FROM audit_logs_payment
-        WHERE store_id = $1 AND actor_role = 'admin'
-        AND action IN ('approve', 'reject')
-      `;
-
-      const params: any[] = [storeId];
-
-      if (resourceType) {
-        query += ` AND resource_type = $${params.length + 1}`;
-        params.push(resourceType);
-      }
-
-      query += ` ORDER BY created_at DESC LIMIT $${params.length + 1}`;
-      params.push(limit);
-
-      const results = await dataSource.query(query, params);
-      return results || [];
-    } catch (error) {
-      console.error('Failed to retrieve admin actions', {
-        error: (error as Error).message,
-      });
-      return [];
+    if (resourceType) {
+      conditions.push(`a.table_name = $${params.length + 1}`);
+      params.push(resourceType);
     }
+
+    return this.run(conditions, params, limit, 'admin_actions');
   }
 
   /**
-   * Generate unique ID for audit log
+   * Failures return an empty list rather than throwing — an audit panel that
+   * cannot load must not take the dashboard down with it. Unlike the version
+   * this replaces, the error is logged rather than swallowed into a bare [],
+   * so a broken query is visible instead of looking like an empty trail.
    */
-  private static generateId(): string {
-    return `audit-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+  private static async run(
+    conditions: string[],
+    params: unknown[],
+    limit: number,
+    marker: string,
+  ): Promise<AdminActionRecord[]> {
+    try {
+      const dataSource = getDataSource();
+      if (!dataSource.isInitialized) {
+        logError(`audit_read_failed_${marker}`, undefined, { reason: 'datasource_not_initialized' });
+        return [];
+      }
+
+      const query = `
+        SELECT ${SELECT_COLUMNS}
+        ${FROM_CLAUSE}
+        WHERE ${conditions.join(' AND ')}
+        ORDER BY a.created_at DESC
+        LIMIT $${params.length + 1}
+      `;
+
+      return (await dataSource.query(query, [...params, limit])) ?? [];
+    } catch (error) {
+      logError(`audit_read_failed_${marker}`, error instanceof Error ? error : undefined, {});
+      return [];
+    }
   }
 }
