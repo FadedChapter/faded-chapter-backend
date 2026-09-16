@@ -18,6 +18,60 @@ import {
   FulfillLineDto,
 } from '../dtos/order.dto';
 
+/** Postgres unique-violation. */
+const UNIQUE_VIOLATION = '23505';
+
+/** The unique index that order numbers collide on. */
+const ORDER_NUMBER_INDEX = 'idx_orders_number';
+
+/**
+ * Whether an error is specifically a duplicate order number.
+ *
+ * Has to cope with two shapes. The raw driver error carries `code` 23505 and a
+ * `constraint`, but BaseRepository.save catches it and rethrows a plain
+ * `Error("Duplicate entry: …")` — losing both, and keeping only the original
+ * text. Matching on the code alone made this function always return false, so
+ * the retry below never ran.
+ *
+ * The index name is required either way. That is what keeps this narrow: a
+ * duplicate primary key names orders_pkey, is a real bug, and must surface
+ * rather than be quietly retried under a different order number.
+ */
+export function isOrderNumberConflict(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const candidate = error as {
+    code?: unknown;
+    constraint?: unknown;
+    message?: unknown;
+    driverError?: unknown;
+    cause?: unknown;
+  };
+  const message = typeof candidate.message === 'string' ? candidate.message : '';
+
+  const namesOrderNumberIndex =
+    candidate.constraint === ORDER_NUMBER_INDEX || message.includes(ORDER_NUMBER_INDEX);
+
+  if (namesOrderNumberIndex) {
+    const isUniqueViolation =
+      candidate.code === UNIQUE_VIOLATION || /unique constraint|duplicate key/i.test(message);
+    if (isUniqueViolation) {
+      return true;
+    }
+  }
+
+  // TypeORM nests the driver error; check one level in as well.
+  for (const nested of [candidate.driverError, candidate.cause]) {
+    if (nested && nested !== error && isOrderNumberConflict(nested)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 /**
  * Order Service
  */
@@ -28,7 +82,11 @@ export class OrderService {
   ) {}
 
   async createOrder(storeId: string, dto: CreateOrderDto): Promise<OrderEntity> {
-    // Get next order number
+    // Reserve an order number. Allocation is atomic, so this is not a race —
+    // but the counter and the orders table can still drift apart (a restored
+    // backup, a hand-inserted row), and the only symptom is a unique-violation
+    // on insert. saveWithNumberRetry realigns them and tries again rather than
+    // failing a customer's checkout over bookkeeping.
     const orderNumber = await this.orderRepo.getNextOrderNumber(storeId);
 
     // Calculate totals
@@ -58,7 +116,7 @@ export class OrderService {
     order.updated_at = new Date();
 
     // Save order first
-    const savedOrder = await this.orderRepo.save(order);
+    const savedOrder = await this.saveWithNumberRetry(storeId, order);
 
     // Create order lines
     if (lines && lines.length > 0) {
@@ -87,6 +145,35 @@ export class OrderService {
     }
 
     return savedOrder;
+  }
+
+  /**
+   * Insert the order, recovering from an order-number collision.
+   *
+   * Allocation is atomic, so a collision here means the counter has drifted
+   * behind the orders table rather than that two callers raced. Resyncing lifts
+   * it past the highest real number and the next allocation succeeds.
+   *
+   * Deliberately bounded and narrow: only a unique violation on the order
+   * number is retried, and only a few times. Retrying anything else, or
+   * retrying forever, would turn a visible failure into a hang.
+   */
+  private async saveWithNumberRetry(
+    storeId: string,
+    order: OrderEntity,
+    attempts = 3,
+  ): Promise<OrderEntity> {
+    for (let attempt = 1; ; attempt += 1) {
+      try {
+        return await this.orderRepo.save(order);
+      } catch (error) {
+        if (attempt >= attempts || !isOrderNumberConflict(error)) {
+          throw error;
+        }
+        await this.orderRepo.resyncOrderNumberCounter(storeId);
+        order.order_number = await this.orderRepo.getNextOrderNumber(storeId);
+      }
+    }
   }
 
   async getOrder(storeId: string, orderId: string): Promise<OrderEntity> {

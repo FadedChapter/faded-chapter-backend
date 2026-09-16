@@ -10,6 +10,45 @@ import { OrderEntity } from '../entities/order.entity';
 import { OrderLineEntity } from '../entities/order-line.entity';
 
 /**
+ * Order number format.
+ *
+ * ORDER_NUMBER_MIN_DIGITS is 4 because every existing order uses four
+ * (ORD-1001 … ORD-1026). It is a *minimum*, not a fixed width: past ORD-9999
+ * the numbers simply grow to five digits, which is safe now that nothing sorts
+ * or compares them as strings. The previous code padded to five while the data
+ * used four, and that mismatch is what broke ordering.
+ */
+const ORDER_NUMBER_PREFIX = 'ORD-';
+const ORDER_NUMBER_MIN_DIGITS = 4;
+
+/**
+ * The numeric tail of an order number, as SQL.
+ *
+ * Kept in one place because getting it wrong is silent: comparing order_number
+ * directly is a string comparison, which is exactly the bug this replaces.
+ */
+const ORDER_NUMBER_SQL_SUFFIX = `CAST(substring(order_number from '[0-9]+$') AS integer)`;
+
+/** Render an allocated counter value as a customer-facing order number. */
+export function formatOrderNumber(value: number): string {
+  return `${ORDER_NUMBER_PREFIX}${String(value).padStart(ORDER_NUMBER_MIN_DIGITS, '0')}`;
+}
+
+/**
+ * Read the numeric tail back out of an order number.
+ * Returns null for anything that does not end in digits, so callers decide
+ * what to do rather than silently receiving NaN.
+ */
+export function parseOrderNumber(orderNumber: string): number | null {
+  const match = /(\d+)$/.exec(orderNumber);
+  if (!match) {
+    return null;
+  }
+  const value = Number.parseInt(match[1], 10);
+  return Number.isSafeInteger(value) ? value : null;
+}
+
+/**
  * Order Repository
  */
 export class OrderRepository extends BaseRepository<OrderEntity> {
@@ -258,27 +297,82 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
     });
   }
 
+  /**
+   * Reserve the next order number for a store.
+   *
+   * This previously read MAX from `orders` and added one, which was broken in
+   * two ways that combined into a permanent outage:
+   *
+   *   - It picked the "last" order with `order_number DESC`, a *string* sort.
+   *   - It padded to five digits while every existing row used four.
+   *
+   * So the first new order became ORD-01027. On the next call the string sort
+   * still returned ORD-1026 — 'ORD-1026' > 'ORD-01027' lexically, because '1'
+   * beats '0' at the fifth character — and it computed ORD-01027 again, which
+   * idx_orders_number rejects. Every order after the first would have failed.
+   *
+   * Both halves are fixed here: the counter is a real integer, so no string
+   * ordering is involved anywhere, and formatting is centralised in
+   * formatOrderNumber with a width that matches the existing data.
+   *
+   * It is also no longer a read-then-write. The upsert below increments under
+   * a row lock and returns the value it reserved, so concurrent checkouts get
+   * distinct numbers instead of racing for the same one.
+   */
   async getNextOrderNumber(storeId: string): Promise<string> {
-    const lastOrder = await this.repository.findOne({
-      where: { store_id: storeId } as any,
-      order: { order_number: 'DESC' } as any,
-    });
+    const rows = await this.repository.manager.query(
+      `
+      INSERT INTO order_number_counters AS c (store_id, next_value)
+      SELECT
+        $1,
+        -- Seed on first use from the highest number this store actually has,
+        -- read numerically. +2 because the row stores the *next* number to
+        -- hand out and this statement is simultaneously handing out the first.
+        COALESCE(MAX(${ORDER_NUMBER_SQL_SUFFIX}), 0) + 2
+      FROM orders
+      WHERE store_id = $1
+      ON CONFLICT (store_id) DO UPDATE
+        SET next_value = c.next_value + 1,
+            updated_at = now()
+      RETURNING c.next_value - 1 AS allocated
+      `,
+      [storeId],
+    );
 
-    if (!lastOrder) {
-      return 'ORD-0001';
+    const allocated = Number(rows?.[0]?.allocated);
+    if (!Number.isInteger(allocated) || allocated < 1) {
+      throw new Error(`Could not allocate an order number for store ${storeId}`);
     }
 
-    // Parse order number (e.g., "ORD-00123" -> 123)
-    const match = lastOrder.order_number.match(/\d+$/);
-    if (!match) {
-      return 'ORD-0001';
-    }
+    return formatOrderNumber(allocated);
+  }
 
-    const lastNumber = parseInt(match[0]);
-    const nextNumber = lastNumber + 1;
-
-    // Pad with zeros (5 digits for ORD-00001)
-    return `ORD-${String(nextNumber).padStart(5, '0')}`;
+  /**
+   * Realign the counter with the orders table.
+   *
+   * The counter is the allocator, but `orders` is the source of truth. They can
+   * drift — a restored backup, a row inserted by hand, a seed script — and the
+   * symptom is a unique-violation on insert. Raising the counter to just past
+   * the highest real order number clears that without ever moving it backwards,
+   * which would hand out a number twice.
+   */
+  async resyncOrderNumberCounter(storeId: string): Promise<void> {
+    await this.repository.manager.query(
+      `
+      INSERT INTO order_number_counters AS c (store_id, next_value)
+      SELECT $1, COALESCE(MAX(${ORDER_NUMBER_SQL_SUFFIX}), 0) + 1
+      FROM orders
+      WHERE store_id = $1
+      ON CONFLICT (store_id) DO UPDATE
+        SET next_value = GREATEST(
+              c.next_value,
+              (SELECT COALESCE(MAX(${ORDER_NUMBER_SQL_SUFFIX}), 0) + 1
+                 FROM orders WHERE store_id = $1)
+            ),
+            updated_at = now()
+      `,
+      [storeId],
+    );
   }
 
   async getPendingOrders(storeId: string): Promise<OrderEntity[]> {
