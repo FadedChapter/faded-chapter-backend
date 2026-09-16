@@ -5,7 +5,7 @@
  * Phase 4: Catalog Domain
  */
 
-import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Relation } from 'typeorm';
 import { ProductVariantEntity } from './product-variant.entity.js';
 
 @Entity('inventory')
@@ -24,7 +24,8 @@ export class InventoryEntity {
     { name: 'variant_id', referencedColumnName: 'id' },
     { name: 'store_id', referencedColumnName: 'store_id' },
   ])
-  variant: ProductVariantEntity;
+  /** Relation<T> breaks the ESM circular-import metadata cycle — see cart.entity.ts. */
+  variant: Relation<ProductVariantEntity>;
 
   @Column('integer', { default: 0 })
   quantity_available: number;

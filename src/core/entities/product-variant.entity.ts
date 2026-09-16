@@ -5,7 +5,7 @@
  * Phase 4: Catalog Domain
  */
 
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Relation } from 'typeorm';
 import { ProductEntity } from './product.entity.js';
 import { InventoryEntity } from './inventory.entity.js';
 
@@ -25,7 +25,8 @@ export class ProductVariantEntity {
     { name: 'product_id', referencedColumnName: 'id' },
     { name: 'store_id', referencedColumnName: 'store_id' },
   ])
-  product: ProductEntity;
+  /** Relation<T> breaks the ESM circular-import metadata cycle — see cart.entity.ts. */
+  product: Relation<ProductEntity>;
 
   @Column('varchar', { length: 100 })
   sku: string; // SKU must be unique per store

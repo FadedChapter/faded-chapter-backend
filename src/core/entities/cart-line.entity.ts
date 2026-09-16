@@ -5,7 +5,7 @@
  * Phase 6: Cart & Checkout Domain
  */
 
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Index, Relation } from 'typeorm';
 import { CartEntity } from './cart.entity.js';
 
 @Entity('cart_lines')
@@ -60,5 +60,6 @@ export class CartLineEntity {
     { name: 'cart_id', referencedColumnName: 'id' },
     { name: 'store_id', referencedColumnName: 'store_id' },
   ])
-  cart: CartEntity;
+  /** Relation<T> breaks the ESM circular-import metadata cycle — see cart.entity.ts. */
+  cart: Relation<CartEntity>;
 }

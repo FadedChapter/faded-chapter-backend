@@ -5,7 +5,7 @@
  * Phase 5: Order Management Domain
  */
 
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Index, Relation } from 'typeorm';
 import { OrderEntity } from './order.entity.js';
 
 @Entity('order_lines')
@@ -64,5 +64,6 @@ export class OrderLineEntity {
     { name: 'order_id', referencedColumnName: 'id' },
     { name: 'store_id', referencedColumnName: 'store_id' },
   ])
-  order: OrderEntity;
+  /** Relation<T> breaks the ESM circular-import metadata cycle — see cart.entity.ts. */
+  order: Relation<OrderEntity>;
 }

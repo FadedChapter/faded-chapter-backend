@@ -5,7 +5,7 @@
  * Phase 5: Order Management Domain
  */
 
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index, Relation } from 'typeorm';
 import { StoreEntity } from './store.entity.js';
 import { CustomerEntity } from './customer.entity.js';
 import { OrderLineEntity } from './order-line.entity.js';
@@ -93,5 +93,6 @@ export class OrderEntity {
   customer: CustomerEntity;
 
   @OneToMany(() => OrderLineEntity, (line) => line.order, { cascade: ['soft-remove'] })
-  lines: OrderLineEntity[];
+  /** Relation<T> breaks the ESM circular-import metadata cycle — see cart.entity.ts. */
+  lines: Relation<OrderLineEntity>[];
 }
