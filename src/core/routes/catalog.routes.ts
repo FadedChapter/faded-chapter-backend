@@ -9,6 +9,7 @@ import { Router } from 'express';
 // Phase 0: administrative catalog operations were unauthenticated.
 import { requireStaff } from '../middleware/require-staff.middleware';
 import { ProductController } from '../controllers/catalog.controller';
+import { StorefrontCatalogController } from '../controllers/storefront-catalog.controller';
 import { CategoryController } from '../controllers/catalog.controller';
 import { InventoryController } from '../controllers/catalog.controller';
 import { ProductService } from '../services/catalog.service';
@@ -50,6 +51,18 @@ export function createCatalogRoutes(): Router {
    */
 
   // List all products
+  /*
+   * Storefront catalogue — the shape the shop renders, built from an allowlist.
+   *
+   * Separate from /products, which returns raw rows and exists for internal
+   * callers. This one filters to active products, folds in variants, stock
+   * bands and per-colour imagery, and never exposes store_id, cost, exact
+   * stock counts or soft-delete state.
+   */
+  const storefrontCatalog = new StorefrontCatalogController();
+  router.get('/catalog', (req, res) => storefrontCatalog.list(req, res));
+  router.get('/catalog/:slug', (req, res) => storefrontCatalog.getBySlug(req, res));
+
   router.get('/products', (req, res) => productController.listProducts(req, res));
 
   // Search products

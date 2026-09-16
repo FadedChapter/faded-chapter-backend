@@ -16,7 +16,8 @@
     "db:migration:create": "typeorm migration:create",
     "db:migration:generate": "typeorm migration:generate -d dist/core/database/migrations-datasource.js",
     "test:security": "vitest run --config vitest.security.config.ts",
-    "test:db": "vitest run --config vitest.db.config.ts"
+    "test:db": "vitest run --config vitest.db.config.ts",
+    "seed:catalog": "tsx src/scripts/seed-catalog.ts"
   },
   "keywords": [
     "faded-chapter",
