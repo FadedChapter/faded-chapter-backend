@@ -27,13 +27,17 @@ import { isOrderNumberConflict } from '../../core/services/order.service';
 
 /** Isolated from every real store, so the suite cannot disturb live orders. */
 const TEST_STORE = randomUUID();
+const TEST_CUSTOMER = randomUUID();
 
 let orders: OrderRepository;
 
 /**
  * Insert a bare order row carrying only what numbering cares about.
- * customer_id is NOT NULL but carries no foreign key, so a synthetic id keeps
- * these tests from depending on customer fixtures.
+ *
+ * orders now carries foreign keys to both stores and customers, so the test
+ * fixtures below create a real store and customer rather than synthetic ids.
+ * That is the constraint doing its job: an order for a customer who does not
+ * exist should not be insertable, in a test any more than in production.
  */
 async function seedOrder(orderNumber: string): Promise<void> {
   await getDataSource().query(
@@ -41,8 +45,29 @@ async function seedOrder(orderNumber: string): Promise<void> {
                          fulfillment_status, subtotal, tax_amount, shipping_amount,
                          discount_amount, total, created_at, updated_at)
      VALUES ($1, $2, $3, $4, 'pending', 'unpaid', 'unfulfilled', 0, 0, 0, 0, 0, now(), now())`,
-    [randomUUID(), TEST_STORE, randomUUID(), orderNumber],
+    [randomUUID(), TEST_STORE, TEST_CUSTOMER, orderNumber],
   );
+}
+
+/** A store and customer the foreign keys can point at, removed afterwards. */
+async function createFixtures(): Promise<void> {
+  await getDataSource().query(
+    `INSERT INTO stores (id, name, slug, owner_email, owner_name, status, created_at, updated_at)
+     VALUES ($1, 'Numbering Test Store', $2, 'numbering@test.local', 'Test', 'active', now(), now())
+     ON CONFLICT (id) DO NOTHING`,
+    [TEST_STORE, `numbering-test-${TEST_STORE.slice(0, 8)}`],
+  );
+  await getDataSource().query(
+    `INSERT INTO customers (id, store_id, email, email_normalized, status, created_at, updated_at)
+     VALUES ($1, $2, 'numbering@test.local', 'numbering@test.local', 'active', now(), now())
+     ON CONFLICT DO NOTHING`,
+    [TEST_CUSTOMER, TEST_STORE],
+  );
+}
+
+async function removeFixtures(): Promise<void> {
+  await getDataSource().query(`DELETE FROM customers WHERE store_id = $1`, [TEST_STORE]);
+  await getDataSource().query(`DELETE FROM stores WHERE id = $1`, [TEST_STORE]);
 }
 
 async function clearStore(): Promise<void> {
@@ -55,12 +80,14 @@ beforeAll(async () => {
   initializeLogger();
   await initializeDatabase();
   orders = new OrderRepository();
+  await createFixtures();
 });
 
 beforeEach(clearStore);
 
 afterAll(async () => {
   await clearStore();
+  await removeFixtures();
   await closeDatabase();
 });
 

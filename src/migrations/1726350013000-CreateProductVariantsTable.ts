@@ -142,6 +142,19 @@ export class CreateProductVariantsTable1726350013000 implements MigrationInterfa
         name: 'idx_product_variants_status',
       })
     );
+
+    // Referenced by a foreign key elsewhere. The primary key here is
+    // composite, so Postgres needs a unique constraint on exactly the
+    // referenced columns before any FK can point at them.
+    await queryRunner.createIndex(
+      'product_variants',
+      new TableIndex({
+        columnNames: ['id', 'store_id'],
+        isUnique: true,
+        name: 'uq_product_variants_id_store',
+      })
+    );
+
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

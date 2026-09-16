@@ -22,7 +22,6 @@ export class CreateShippingMethodsTable1726350022000 implements MigrationInterfa
           {
             name: 'store_id',
             type: 'uuid',
-            isPrimary: true,
             isNullable: false,
           },
           {

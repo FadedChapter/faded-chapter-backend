@@ -22,13 +22,11 @@ export class CreateOrderLinesTable1726350017000 implements MigrationInterface {
           {
             name: 'order_id',
             type: 'uuid',
-            isPrimary: true,
             isNullable: false,
           },
           {
             name: 'store_id',
             type: 'uuid',
-            isPrimary: true,
             isNullable: false,
           },
           {

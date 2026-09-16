@@ -21,12 +21,14 @@ export class CreateInventoryTable1726350014000 implements MigrationInterface {
           },
           {
             name: 'variant_id',
+            isPrimary: true,
             type: 'uuid',
             isNullable: false,
             isUnique: true,
           },
           {
             name: 'store_id',
+            isPrimary: true,
             type: 'uuid',
             isNullable: false,
           },

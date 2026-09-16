@@ -22,7 +22,6 @@ export class CreatePromoCodesTable1726350020000 implements MigrationInterface {
           {
             name: 'store_id',
             type: 'uuid',
-            isPrimary: true,
             isNullable: false,
           },
           {

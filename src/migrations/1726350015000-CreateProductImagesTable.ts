@@ -21,11 +21,13 @@ export class CreateProductImagesTable1726350015000 implements MigrationInterface
           },
           {
             name: 'product_id',
+            isPrimary: true,
             type: 'uuid',
             isNullable: false,
           },
           {
             name: 'store_id',
+            isPrimary: true,
             type: 'uuid',
             isNullable: false,
           },

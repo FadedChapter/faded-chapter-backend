@@ -214,6 +214,19 @@ export class CreatePaymentsTable1726350024000 implements MigrationInterface {
         name: 'idx_payments_created_at',
       })
     );
+
+    // Referenced by a foreign key elsewhere. The primary key here is
+    // composite, so Postgres needs a unique constraint on exactly the
+    // referenced columns before any FK can point at them.
+    await queryRunner.createIndex(
+      'payments',
+      new TableIndex({
+        columnNames: ['id'],
+        isUnique: true,
+        name: 'uq_payments_id',
+      })
+    );
+
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

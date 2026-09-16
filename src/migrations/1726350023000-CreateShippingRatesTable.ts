@@ -22,7 +22,6 @@ export class CreateShippingRatesTable1726350023000 implements MigrationInterface
           {
             name: 'store_id',
             type: 'uuid',
-            isPrimary: true,
             isNullable: false,
           },
           {

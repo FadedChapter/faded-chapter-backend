@@ -7,6 +7,20 @@
 
 import { MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex } from 'typeorm';
 
+/*
+ * Reconciliation note: store_id was removed from this table.
+ *
+ * It was declared NOT NULL with a foreign key, but nothing ever wrote it — the
+ * audit middleware treats the store as the scope of a request rather than the
+ * subject of a record, and its insert omits the column entirely. On a fresh
+ * database built from this migration, every audit write would therefore have
+ * violated the NOT NULL constraint, been swallowed by the middleware's
+ * try/catch, and left the audit trail silently empty. The live table has never
+ * had the column, which is why auditing works there.
+ *
+ * Store-scoped auditing is worth having, but it needs the middleware to supply
+ * the value. Add the column back in a new migration alongside that change.
+ */
 export class CreateAuditLogsTable1726350010000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
@@ -18,11 +32,6 @@ export class CreateAuditLogsTable1726350010000 implements MigrationInterface {
             type: 'uuid',
             isPrimary: true,
             default: 'gen_random_uuid()',
-          },
-          {
-            name: 'store_id',
-            type: 'uuid',
-            isNullable: false,
           },
           {
             name: 'table_name',
@@ -79,27 +88,7 @@ export class CreateAuditLogsTable1726350010000 implements MigrationInterface {
       true
     );
 
-    // Add foreign key for store_id
-    await queryRunner.createForeignKey(
-      'audit_logs',
-      new TableForeignKey({
-        columnNames: ['store_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'stores',
-        onDelete: 'CASCADE',
-        name: 'fk_audit_logs_store_id',
-      })
-    );
-
     // Create indexes for efficient querying
-    await queryRunner.createIndex(
-      'audit_logs',
-      new TableIndex({
-        columnNames: ['store_id'],
-        name: 'idx_audit_logs_store',
-      })
-    );
-
     await queryRunner.createIndex(
       'audit_logs',
       new TableIndex({

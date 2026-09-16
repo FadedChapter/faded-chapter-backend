@@ -138,6 +138,19 @@ export class CreateCustomersTable1726350002000 implements MigrationInterface {
         name: 'idx_customers_email_normalized_active',
       })
     );
+
+    // Referenced by a foreign key elsewhere. The primary key here is
+    // composite, so Postgres needs a unique constraint on exactly the
+    // referenced columns before any FK can point at them.
+    await queryRunner.createIndex(
+      'customers',
+      new TableIndex({
+        columnNames: ['id'],
+        isUnique: true,
+        name: 'uq_customers_id',
+      })
+    );
+
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

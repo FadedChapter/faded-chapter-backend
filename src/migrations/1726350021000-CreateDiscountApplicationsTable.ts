@@ -22,7 +22,6 @@ export class CreateDiscountApplicationsTable1726350021000 implements MigrationIn
           {
             name: 'store_id',
             type: 'uuid',
-            isPrimary: true,
             isNullable: false,
           },
           {

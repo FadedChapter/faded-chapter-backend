@@ -210,9 +210,26 @@ export class CreateOrdersTable1726350016000 implements MigrationInterface {
       new TableIndex({
         columnNames: ['store_id', 'order_number'],
         isUnique: true,
-        name: 'idx_orders_order_number_unique',
+        // The name is load-bearing: OrderService.isOrderNumberConflict matches on
+        // it to tell a duplicate order number apart from any other unique
+        // violation, so that a collision can be retried and a genuine bug
+        // cannot be. Renaming this index silently disables that retry.
+        name: 'idx_orders_number',
       })
     );
+
+    // Referenced by a foreign key elsewhere. The primary key here is
+    // composite, so Postgres needs a unique constraint on exactly the
+    // referenced columns before any FK can point at them.
+    await queryRunner.createIndex(
+      'orders',
+      new TableIndex({
+        columnNames: ['id'],
+        isUnique: true,
+        name: 'uq_orders_id',
+      })
+    );
+
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
