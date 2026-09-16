@@ -257,6 +257,12 @@ export const ROLE_PERMISSIONS: Record<AuthContext['role'], string[]> = {
     // discloses the full roster and who holds administrator rights.
     'staff.view',
     'staff.manage',
+    // Settings (Phase 12). Not granted to support: the security page names this
+    // deployment's weaknesses and their file locations, which is exactly the
+    // reconnaissance an attacker with a support account would want. Store
+    // configuration changes how every order is numbered and priced.
+    'settings.view',
+    'settings.manage',
   ],
 
   support: [

@@ -46,6 +46,7 @@ import { AdminDiscountController } from '../../controllers/admin-discount.contro
 import { AdminShippingController } from '../../controllers/admin-shipping.controller';
 import { AdminAlertsController } from '../../controllers/admin-alerts.controller';
 import { AdminStaffController } from '../../controllers/admin-staff.controller';
+import { AdminSettingsController } from '../../controllers/admin-settings.controller';
 import { AlertsService } from '../../services/alerts.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CustomerRepository } from '../../repositories/customer.repository';
@@ -530,6 +531,41 @@ export function createAdminRoutes(): Router {
   );
 
   router.use('/staff', staffRouter);
+
+  // ---------------------------------------------------------------------------
+  // Settings — store configuration and security posture
+  //
+  // Admin-only at every level, including read. The security page names this
+  // deployment's known weaknesses and the files that carry them, which is
+  // reconnaissance rather than customer-support information.
+  //
+  // Store-scoped: settings belong to a store, unlike staff accounts.
+  // ---------------------------------------------------------------------------
+  const settings = new AdminSettingsController();
+
+  const settingsRouter = Router({ mergeParams: true });
+  settingsRouter.use(checkStoreOwnership);
+
+  settingsRouter.get(
+    '/store',
+    requirePermission('settings.view'),
+    (req: Request, res: Response) => settings.getStore(req, res),
+  );
+
+  settingsRouter.patch(
+    '/store',
+    requirePermission('settings.manage'),
+    auditLog('settings.store_update', 'stores'),
+    (req: Request, res: Response) => settings.updateStore(req, res),
+  );
+
+  settingsRouter.get(
+    '/security',
+    requirePermission('settings.view'),
+    (req: Request, res: Response) => settings.getSecurity(req, res),
+  );
+
+  router.use('/stores/:storeId/settings', settingsRouter);
 
   return router;
 }
