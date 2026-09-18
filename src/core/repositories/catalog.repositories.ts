@@ -87,6 +87,53 @@ export class VariantRepository extends BaseRepository<ProductVariantEntity> {
       order: { display_order: 'ASC' } as any,
     });
   }
+
+  async createVariant(
+    id: string,
+    productId: string,
+    storeId: string,
+    data: {
+      sku: string;
+      name: string;
+      price: number;
+      cost: number | null;
+      weight: number | null;
+      attributes: Record<string, string>;
+      status: string;
+    },
+  ): Promise<ProductVariantEntity> {
+    const variant = this.repository.create({
+      id,
+      product_id: productId,
+      store_id: storeId,
+      sku: data.sku,
+      name: data.name,
+      price: data.price,
+      cost: data.cost,
+      weight: data.weight,
+      attributes: data.attributes,
+      status: data.status,
+    } as any);
+    await this.repository.save(variant);
+    return variant;
+  }
+
+  async updateVariant(
+    id: string,
+    storeId: string,
+    updates: Record<string, any>,
+  ): Promise<void> {
+    await this.repository.update(
+      { id, store_id: storeId } as any,
+      updates,
+    );
+  }
+
+  async findOneScoped(id: string, storeId: string): Promise<ProductVariantEntity | null> {
+    return this.repository.findOne({
+      where: { id, store_id: storeId } as any,
+    });
+  }
 }
 
 /**
@@ -334,6 +381,35 @@ export class InventoryRepository extends BaseRepository<InventoryEntity> {
     }
     return this.findByVariantId(variantId, storeId);
   }
+
+  async createInventory(
+    id: string,
+    variantId: string,
+    storeId: string,
+  ): Promise<InventoryEntity> {
+    const inventory = this.repository.create({
+      id,
+      variant_id: variantId,
+      store_id: storeId,
+      quantity_available: 0,
+      quantity_reserved: 0,
+      reorder_level: 0,
+      reorder_quantity: 0,
+    } as any);
+    await this.repository.save(inventory);
+    return inventory;
+  }
+
+  async updateInventory(
+    variantId: string,
+    storeId: string,
+    updates: Record<string, any>,
+  ): Promise<void> {
+    await this.repository.update(
+      { variant_id: variantId, store_id: storeId } as any,
+      updates,
+    );
+  }
 }
 
 /** Flat row spanning inventory + variant + product, for the console list. */
@@ -395,5 +471,37 @@ export class ProductImageRepository extends BaseRepository<ProductImageEntity> {
         { display_order: item.order }
       );
     }
+  }
+
+  async createImage(
+    id: string,
+    productId: string,
+    storeId: string,
+    url: string,
+    altText: string | null,
+    displayOrder: number,
+    isPrimary: boolean,
+  ): Promise<ProductImageEntity> {
+    const image = this.repository.create({
+      id,
+      product_id: productId,
+      store_id: storeId,
+      url,
+      alt_text: altText,
+      display_order: displayOrder,
+      is_primary: isPrimary,
+    } as any);
+    await this.repository.save(image);
+    return image;
+  }
+
+  async findOneScoped(id: string, productId: string, storeId: string): Promise<ProductImageEntity | null> {
+    return this.repository.findOne({
+      where: { id, product_id: productId, store_id: storeId } as any,
+    });
+  }
+
+  async deleteImage(id: string, storeId: string): Promise<void> {
+    await this.repository.delete({ id, store_id: storeId } as any);
   }
 }

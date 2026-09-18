@@ -260,12 +260,89 @@ export class ProductRepository extends BaseRepository<ProductEntity> {
     try {
       const product = await this.findByIdOrFail(productId, storeId);
 
-      await this.repository.update(
-        { id: productId, store_id: storeId } as any,
-        { display_order: product.display_order + 1, updated_at: new Date() }
-      );
+      await this.update(productId, storeId, {
+        display_order: product.display_order + 1,
+      } as any);
     } catch (error) {
       throw new Error(`Failed to increment display order: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Create a new product
+   */
+  async createProduct(
+    productId: string,
+    storeId: string,
+    data: {
+      name: string;
+      slug: string;
+      description?: string;
+      sku?: string;
+      status: string;
+      isFeatured: boolean;
+      categoryId?: string;
+    },
+  ): Promise<ProductEntity> {
+    try {
+      const product = this.repository.create({
+        id: productId,
+        store_id: storeId,
+        name: data.name,
+        slug: data.slug,
+        description: data.description ?? null,
+        sku: data.sku ?? null,
+        status: data.status,
+        is_featured: data.isFeatured,
+        category_id: data.categoryId ?? null,
+      } as any);
+
+      await this.repository.save(product);
+      return product;
+    } catch (error) {
+      throw new Error(`Failed to create product: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Update product fields
+   */
+  async updateProduct(
+    productId: string,
+    storeId: string,
+    data: Partial<{
+      name: string;
+      description: string | null;
+      sku: string | null;
+      status: string;
+      isFeatured: boolean;
+      categoryId: string | null;
+    }>,
+  ): Promise<ProductEntity> {
+    try {
+      const updates: any = { updated_at: new Date() };
+      if (data.name !== undefined) updates.name = data.name;
+      if (data.description !== undefined) updates.description = data.description;
+      if (data.sku !== undefined) updates.sku = data.sku;
+      if (data.status !== undefined) updates.status = data.status;
+      if (data.isFeatured !== undefined) updates.is_featured = data.isFeatured;
+      if (data.categoryId !== undefined) updates.category_id = data.categoryId;
+
+      await this.repository.update({ id: productId, store_id: storeId } as any, updates);
+      return this.findByIdOrFail(productId, storeId);
+    } catch (error) {
+      throw new Error(`Failed to update product: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Soft delete a product
+   */
+  async deleteProduct(productId: string, storeId: string): Promise<void> {
+    try {
+      await this.softDelete(productId, storeId);
+    } catch (error) {
+      throw new Error(`Failed to delete product: ${(error as Error).message}`);
     }
   }
 }

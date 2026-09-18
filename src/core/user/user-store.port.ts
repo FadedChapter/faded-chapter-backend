@@ -59,4 +59,17 @@ export interface UserStore {
    * Used during signup to prevent duplicates.
    */
   emailExists(email: string): Promise<boolean>;
+
+  /**
+   * Record a successful sign-in.
+   *
+   * Feeds the staff console's "Last signed in" column, which is how an
+   * operator tells a dormant account from one still in daily use before
+   * deciding whether someone still belongs on the team.
+   *
+   * Callers treat a failure here as non-fatal: the sign-in has already
+   * succeeded by this point, and losing the timestamp must not lose the
+   * session.
+   */
+  touchLastLogin(userId: string): Promise<void>;
 }

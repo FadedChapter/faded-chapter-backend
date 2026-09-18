@@ -46,6 +46,15 @@ function toStaffDTO(row: {
   email_verified: boolean;
   last_login_at: Date | null;
   created_at: Date;
+  /**
+   * Queried on every path that builds this DTO, not just the list.
+   *
+   * It was list-only at first, which made `canDelete` come back false on the
+   * response to a create or a status change — the same account the list called
+   * deletable a second later. A field that contradicts itself between two
+   * responses is worse than one that is simply absent.
+   */
+  audit_events: number;
 }) {
   const name = [row.first_name, row.last_name].filter(Boolean).join(' ').trim();
   return {
@@ -57,6 +66,17 @@ function toStaffDTO(row: {
     emailVerified: Boolean(row.email_verified),
     lastLoginAt: row.last_login_at ?? null,
     createdAt: row.created_at,
+    /*
+     * How many recorded actions this account is responsible for, and whether
+     * it can therefore be erased rather than merely retired.
+     *
+     * Sent so the console can offer the honest action instead of presenting a
+     * delete button that the server will refuse. The server re-counts on the
+     * delete itself, so a row that goes stale between the two costs a 409, not
+     * an orphaned audit trail.
+     */
+    auditEvents: row.audit_events,
+    canDelete: row.audit_events === 0,
     // password_hash is never mapped. There is no admin task that needs it, and
     // its presence in a response is a credential-theft surface.
   };
@@ -70,11 +90,21 @@ export class AdminStaffController {
   /** GET /staff — everyone with an account, and the role catalogue. */
   async list(req: Request, res: Response): Promise<void> {
     try {
+      /*
+       * auditEvents decides whether an account can be erased or only retired.
+       *
+       * An account that has done something is the answer to "who approved this
+       * refund" — deleting the row would leave 61 audit entries pointing at an
+       * id that resolves to nobody. One that has never acted carries no such
+       * meaning and is safe to remove outright, which covers the common case
+       * of an invitation sent to the wrong address.
+       */
       const rows = await this.manager.query(
-        `SELECT id, email, first_name, last_name, roles, status, email_verified,
-                last_login_at, created_at
-         FROM staff_users
-         ORDER BY created_at ASC`,
+        `SELECT s.id, s.email, s.first_name, s.last_name, s.roles, s.status,
+                s.email_verified, s.last_login_at, s.created_at,
+                (SELECT COUNT(*)::int FROM audit_logs a WHERE a.actor_id = s.id) AS audit_events
+         FROM staff_users s
+         ORDER BY s.created_at ASC`,
       );
 
       // The catalogue is derived from ROLE_PERMISSIONS rather than restated, so
@@ -154,7 +184,11 @@ export class AdminStaffController {
             roles, status, email_verified)
          VALUES ($1,$2,$3,$4,$5,$6,$7,'active',false)
          RETURNING id, email, first_name, last_name, roles, status, email_verified,
-                   last_login_at, created_at`,
+                   last_login_at, created_at,
+                   -- Always 0 for a row created a moment ago, but read rather
+                   -- than assumed so every response carries the same shape.
+                   (SELECT COUNT(*)::int FROM audit_logs WHERE actor_id = $1)
+                     AS audit_events`,
         [
           id,
           email,
@@ -254,7 +288,10 @@ export class AdminStaffController {
 
       const [row] = await this.manager.query(
         `SELECT id, email, first_name, last_name, roles, status, email_verified,
-                last_login_at, created_at FROM staff_users WHERE id = $1`,
+                last_login_at, created_at,
+                (SELECT COUNT(*)::int FROM audit_logs WHERE actor_id = staff_users.id)
+                  AS audit_events
+           FROM staff_users WHERE id = $1`,
         [staffId],
       );
       res.status(200).json({ success: true, data: toStaffDTO(row) });
@@ -265,6 +302,76 @@ export class AdminStaffController {
   }
 
   /** POST /staff/:staffId/status — activate or deactivate. */
+  /**
+   * DELETE /:staffId — erase an account that never did anything.
+   *
+   * Deliberately narrow. Retiring a colleague is a status change: it revokes
+   * access immediately (findByEmail only returns active accounts, so a valid
+   * password stops working the moment they are deactivated) while keeping the
+   * record that makes past actions attributable.
+   *
+   * Erasure is offered only where there is nothing to attribute — no audit
+   * history at all. An invitation to a mistyped address, an account created
+   * twice. Anything else is refused with the reason, rather than quietly
+   * leaving audit rows pointing at an id that resolves to nobody.
+   *
+   * There is no foreign key from audit_logs.actor_id to enforce this, so the
+   * check has to be made here.
+   */
+  async remove(req: Request, res: Response): Promise<void> {
+    try {
+      const { staffId } = req.params;
+      const actorId = req.auth?.userId;
+
+      const [target] = await this.manager.query(
+        `SELECT id, email, roles, status FROM staff_users WHERE id = $1`,
+        [staffId],
+      );
+      if (!target) {
+        res.status(404).json({ success: false, error: 'Account not found' });
+        return;
+      }
+
+      // The same two guards every destructive staff action carries.
+      if (staffId === actorId) {
+        res.status(409).json({ success: false, error: 'You cannot delete your own account.' });
+        return;
+      }
+      if ((target.roles ?? []).includes('admin') && (await this.countActiveAdmins()) <= 1) {
+        res.status(409).json({
+          success: false,
+          error: 'This is the only active administrator and cannot be deleted.',
+        });
+        return;
+      }
+
+      const [{ count }] = await this.manager.query(
+        `SELECT COUNT(*)::int AS count FROM audit_logs WHERE actor_id = $1`,
+        [staffId],
+      );
+      if (count > 0) {
+        res.status(409).json({
+          success: false,
+          error:
+            `This account has ${count} recorded ${count === 1 ? 'action' : 'actions'} and cannot be deleted — ` +
+            'the audit trail would no longer say who performed them. Remove them from the team instead, ' +
+            'which revokes access immediately and keeps the history intact.',
+        });
+        return;
+      }
+
+      await this.manager.query(`DELETE FROM staff_users WHERE id = $1`, [staffId]);
+
+      res.locals['auditRecordId'] = staffId;
+      logInfo('staff_deleted', { staffId, email: target.email, actorId: actorId ?? null });
+
+      res.status(200).json({ success: true, data: { id: staffId } });
+    } catch (error) {
+      logError('admin_staff_delete_failed', error as Error, { path: req.path });
+      res.status(500).json({ success: false, error: 'Failed to delete the account' });
+    }
+  }
+
   async setStatus(req: Request, res: Response): Promise<void> {
     try {
       const { staffId } = req.params;
@@ -324,7 +431,10 @@ export class AdminStaffController {
 
       const [row] = await this.manager.query(
         `SELECT id, email, first_name, last_name, roles, status, email_verified,
-                last_login_at, created_at FROM staff_users WHERE id = $1`,
+                last_login_at, created_at,
+                (SELECT COUNT(*)::int FROM audit_logs WHERE actor_id = staff_users.id)
+                  AS audit_events
+           FROM staff_users WHERE id = $1`,
         [staffId],
       );
       res.status(200).json({ success: true, data: toStaffDTO(row) });

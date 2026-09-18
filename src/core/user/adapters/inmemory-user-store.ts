@@ -145,4 +145,16 @@ export class InMemoryUserStore implements UserStore {
     const normalized = normalizeEmail(email);
     return this.users.has(normalized);
   }
+
+  /**
+   * No-op.
+   *
+   * Last-seen is a Postgres column read directly by the staff console; it is
+   * not part of `UserRecord`, so there is nowhere in this store to put it and
+   * nothing that would read it back. This adapter backs tests and local runs
+   * without a database, where the console is not running anyway.
+   */
+  async touchLastLogin(_userId: string): Promise<void> {
+    // Intentionally empty — see above.
+  }
 }

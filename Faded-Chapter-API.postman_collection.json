@@ -1,0 +1,301 @@
+{
+  "info": {
+    "_postman_id": "faded-chapter-api",
+    "name": "Faded Chapter API",
+    "description": "Complete API collection for Faded Chapter Backend\nPhase 3F.2: Authentication endpoints (JWT-based)\n\n**Base URL**: http://localhost:3000\n**Database**: SQLite (persistent)\n\n**Features**:\n- User signup/login/logout\n- JWT token management\n- Session persistence",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "description": "Check if the server is running",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Authentication",
+      "description": "Authentication endpoints",
+      "item": [
+        {
+          "name": "Signup",
+          "description": "Create a new user account\n\n**Parameters**:\n- `email` (required): User email address\n- `password` (required): Strong password (8+ chars, uppercase, lowercase, number/symbol)\n- `firstName` (required): User first name\n- `lastName` (required): User last name\n- `marketingOptIn` (optional): Subscribe to marketing emails\n\n**Response**:\n- Returns JWT token\n- User object with email and verification status\n- Token valid for 24 hours",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"marketingOptIn\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"marketingOptIn\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/signup",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "signup"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"ok\": true,\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"email\": \"newuser@example.com\",\n    \"emailVerified\": false\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "description": "Authenticate with email and password\n\n**Parameters**:\n- `email` (required): Registered email address\n- `password` (required): Account password\n\n**Response**:\n- Returns JWT token (valid 24h)\n- User object with ID and email\n- Email verification status\n\n**Demo User**:\n- Email: demo@faded.test\n- Password: Password123!",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@faded.test\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"demo@faded.test\",\n  \"password\": \"Password123!\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"ok\": true,\n  \"data\": {\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n      \"id\": \"user-demo\",\n      \"email\": \"demo@faded.test\",\n      \"emailVerified\": true\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "description": "Logout and invalidate session\n\n**Headers Required**:\n- `Authorization: Bearer {{auth_token}}`\n\n**Response**:\n- Clears server-side session\n- Client should delete stored JWT token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/logout",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "logout"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"ok\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Forgot Password",
+          "description": "Request password reset link\n\n**Parameters**:\n- `email` (required): Email address for password reset\n\n**Response**:\n- Sends reset email (Phase 3F.5)\n- Currently returns success placeholder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@faded.test\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "forgot-password"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Scenarios",
+      "description": "Pre-configured test scenarios",
+      "item": [
+        {
+          "name": "Full Flow: Signup → Login → Logout",
+          "description": "Complete authentication flow test\n\n1. Creates new user\n2. Logs in with credentials\n3. Logs out\n\n**Step 1: Create a unique email**\nChange the email address to test multiple signups",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test-{{$timestamp}}@faded.test\",\n  \"password\": \"TestPass123!\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"marketingOptIn\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Invalid Password",
+          "description": "Try login with wrong password\n\n**Expected Response**: 401 Unauthorized",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@faded.test\",\n  \"password\": \"WrongPassword\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Duplicate Email Signup",
+          "description": "Try to signup with existing email\n\n**Expected Response**: 409 Conflict\n**Error Code**: emailTaken",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@faded.test\",\n  \"password\": \"NewPass123!\",\n  \"firstName\": \"Another\",\n  \"lastName\": \"User\",\n  \"marketingOptIn\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Weak Password",
+          "description": "Try signup with weak password\n\n**Expected Response**: 400 Bad Request\n**Valid password requirements**:\n- Minimum 8 characters\n- At least one uppercase letter\n- At least one lowercase letter\n- At least one number or symbol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"weak@faded.test\",\n  \"password\": \"weak\",\n  \"firstName\": \"Weak\",\n  \"lastName\": \"Pass\",\n  \"marketingOptIn\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "Backend API base URL"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string",
+      "description": "JWT authentication token (set after login)"
+    }
+  ]
+}

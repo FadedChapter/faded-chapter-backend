@@ -165,6 +165,18 @@ export class SqliteUserStore implements UserStore {
   }
 
   /**
+   * No-op.
+   *
+   * `UserEntity` has no last-login column — last-seen lives on the Postgres
+   * `staff_users` table and is read straight out of it by the staff console,
+   * which never runs against this store. Adding a column here would create a
+   * second place to keep in step for a value nothing in this path reads.
+   */
+  async touchLastLogin(_userId: string): Promise<void> {
+    // Intentionally empty — see above.
+  }
+
+  /**
    * Convert TypeORM entity to UserRecord
    */
   private entityToRecord(entity: UserEntity): UserRecord {

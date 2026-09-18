@@ -62,6 +62,21 @@ export function createAuthRoutes(userStore: UserStore, sessionStore: SessionStor
         } as AuthActionResult<SignInSuccessData>);
       }
 
+      // Record the sign-in that just succeeded.
+      //
+      // `touchLastLogin` existed and was wired to a column and a console
+      // column, but nothing ever called it — so "Last signed in" read "Never"
+      // for every account including one signing in at that moment. That is
+      // worse than showing nothing: an operator deciding who still works here
+      // would read a screen full of "Never" as evidence of inactivity.
+      //
+      // Deliberately not awaited into the failure path: a write that fails
+      // must not turn a valid sign-in into a 500. The column going stale is a
+      // smaller problem than a login outage.
+      void userStore.touchLastLogin(user.id).catch((err: unknown) => {
+        console.warn('[auth] could not record last login', { userId: user.id, err });
+      });
+
       // Generate JWT token (Phase 3F.2 - JWT auth)
       // roles + storeId are signed claims — they are the only server-trusted
       // source of authority for the authorization middleware.

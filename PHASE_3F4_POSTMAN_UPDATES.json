@@ -1,0 +1,163 @@
+{
+  "info": {
+    "name": "Phase 3F.4 - Email Verification Endpoints",
+    "description": "New endpoints for Phase 3F.4 email verification system"
+  },
+  "endpoints": [
+    {
+      "name": "Verify Email",
+      "method": "POST",
+      "path": "/api/email/verify",
+      "description": "Verify user email with verification token",
+      "auth": "None",
+      "request_body": {
+        "token": "verification-token-from-email"
+      },
+      "response_success": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "email": "user@example.com",
+            "verifiedAt": "2026-09-14T07:08:50.038Z"
+          }
+        }
+      },
+      "response_error": {
+        "status": 400,
+        "body": {
+          "ok": false,
+          "error": {
+            "code": "verificationFailed",
+            "message": "Invalid or expired verification token"
+          }
+        }
+      },
+      "notes": "Token must be fresh and not expired (24 hours). One-time use only."
+    },
+    {
+      "name": "Resend Verification Email",
+      "method": "POST",
+      "path": "/api/email/resend-verification",
+      "description": "Request a new verification email to be sent",
+      "auth": "None",
+      "request_body": {
+        "email": "user@example.com"
+      },
+      "response_success": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "email": "user@example.com",
+            "expiresInHours": 24,
+            "message": "Verification email sent. Check your inbox."
+          }
+        }
+      },
+      "response_error": {
+        "status": 429,
+        "body": {
+          "ok": false,
+          "error": {
+            "code": "rateLimited",
+            "message": "Please wait 5 minutes before requesting another verification email",
+            "nextResendAt": "2026-09-14T07:13:00Z"
+          }
+        }
+      },
+      "rate_limits": {
+        "cooldown": "5 minutes between resends",
+        "max_attempts": "5 per verification token"
+      },
+      "notes": "Uses email address (not requires auth). Returns generic message for security."
+    },
+    {
+      "name": "Verification Status",
+      "method": "GET",
+      "path": "/api/email/verification-status",
+      "description": "Check user's email verification status",
+      "auth": "Required (JWT Bearer token)",
+      "headers": {
+        "Authorization": "Bearer {jwt_token}"
+      },
+      "response_success": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "verified": true,
+            "verifiedAt": "2026-09-14T07:08:50.035Z",
+            "pendingEmail": null,
+            "expiresAt": null,
+            "attemptCount": 0,
+            "nextResendAt": null
+          }
+        }
+      },
+      "response_unverified": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "verified": false,
+            "verifiedAt": null,
+            "pendingEmail": "user@example.com",
+            "expiresAt": "2026-09-15T07:08:14Z",
+            "attemptCount": 2,
+            "nextResendAt": "2026-09-14T07:13:14Z"
+          }
+        }
+      },
+      "notes": "Requires authentication. Shows pending verification details if not verified yet."
+    },
+    {
+      "name": "Send Verification Email",
+      "method": "POST",
+      "path": "/api/email/send-verification",
+      "description": "Send initial verification email (called internally after signup)",
+      "auth": "None (internal API)",
+      "request_body": {
+        "userId": "user-id"
+      },
+      "response_success": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "email": "user@example.com",
+            "expiresInHours": 24
+          }
+        }
+      },
+      "notes": "Typically called automatically after signup. Can be called directly for testing."
+    }
+  ],
+  "email_templates": {
+    "verification_email": {
+      "subject": "Verify Your Faded Chapter Email",
+      "contains": "Verification link with token parameter",
+      "link_format": "{{FRONTEND_URL}}/verify-email?token={{TOKEN}}",
+      "expires": "24 hours",
+      "includes": "HTML + plain text versions"
+    }
+  },
+  "testing_flow": {
+    "step_1": "POST /api/auth/signup - Create user (emailVerified: false)",
+    "step_2": "POST /api/email/resend-verification - Send verification email",
+    "step_3": "Extract token from mock email output (in console)",
+    "step_4": "POST /api/email/verify - Verify with token",
+    "step_5": "GET /api/email/verification-status - Confirm verified",
+    "step_6": "User can now access email-gated features"
+  },
+  "environment_variables": {
+    "base_url": "http://localhost:3000",
+    "frontend_url": "http://localhost:4200 (used in email links)",
+    "sendgrid_api_key": "Optional - for production email sending"
+  },
+  "mock_email_behavior": {
+    "development": "MockEmailSender logs to console with full HTML/text",
+    "production": "SendGridEmailSender sends real emails (requires API key)",
+    "how_to_switch": "Set SENDGRID_API_KEY environment variable"
+  }
+}

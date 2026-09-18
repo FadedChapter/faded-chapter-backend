@@ -179,6 +179,7 @@ export function createAdminRoutes(): Router {
     new InventoryRepository(),
     new ProductImageRepository(),
     new CategoryRepository(),
+    dataSource,
   );
 
   const productsRouter = Router({ mergeParams: true });
@@ -214,6 +215,89 @@ export function createAdminRoutes(): Router {
     requirePermission('products.update'),
     auditLog('product.status_change', 'products'),
     (req: Request, res: Response) => products.updateStatus(req, res),
+  );
+
+  productsRouter.post(
+    '/',
+    requirePermission('products.update'),
+    auditLog('product.create', 'products'),
+    (req: Request, res: Response) => products.create(req, res),
+  );
+
+  productsRouter.patch(
+    '/:productId',
+    requirePermission('products.update'),
+    auditLog('product.update', 'products'),
+    (req: Request, res: Response) => products.update(req, res),
+  );
+
+  productsRouter.delete(
+    '/:productId',
+    requirePermission('products.update'),
+    auditLog('product.delete', 'products'),
+    (req: Request, res: Response) => products.delete(req, res),
+  );
+
+  productsRouter.post(
+    '/:productId/variants',
+    requirePermission('products.update'),
+    auditLog('product.variant_create', 'products'),
+    (req: Request, res: Response) => products.createVariant(req, res),
+  );
+
+  productsRouter.patch(
+    '/:productId/variants/:variantId',
+    requirePermission('products.update'),
+    auditLog('product.variant_update', 'products'),
+    (req: Request, res: Response) => products.updateVariant(req, res),
+  );
+
+  productsRouter.delete(
+    '/:productId/variants/:variantId',
+    requirePermission('products.update'),
+    auditLog('product.variant_delete', 'products'),
+    (req: Request, res: Response) => products.deleteVariant(req, res),
+  );
+
+  productsRouter.patch(
+    '/:productId/inventory/:variantId',
+    requirePermission('products.update'),
+    auditLog('product.inventory_adjust', 'products'),
+    (req: Request, res: Response) => products.adjustInventory(req, res),
+  );
+
+  productsRouter.get(
+    '/:productId/images',
+    requirePermission('products.view'),
+    (req: Request, res: Response) => products.listImages(req, res),
+  );
+
+  productsRouter.post(
+    '/:productId/images',
+    requirePermission('products.update'),
+    auditLog('product.image_add', 'products'),
+    (req: Request, res: Response) => products.addImage(req, res),
+  );
+
+  productsRouter.delete(
+    '/:productId/images/:imageId',
+    requirePermission('products.update'),
+    auditLog('product.image_delete', 'products'),
+    (req: Request, res: Response) => products.deleteImage(req, res),
+  );
+
+  productsRouter.patch(
+    '/:productId/images/:imageId/primary',
+    requirePermission('products.update'),
+    auditLog('product.image_primary', 'products'),
+    (req: Request, res: Response) => products.setPrimaryImage(req, res),
+  );
+
+  productsRouter.patch(
+    '/:productId/images/reorder',
+    requirePermission('products.update'),
+    auditLog('product.images_reorder', 'products'),
+    (req: Request, res: Response) => products.reorderImages(req, res),
   );
 
   router.use('/stores/:storeId/products', productsRouter);
@@ -528,6 +612,17 @@ export function createAdminRoutes(): Router {
     requirePermission('staff.manage'),
     auditLog('staff.status_change', 'staff_users'),
     (req: Request, res: Response) => staff.setStatus(req, res),
+  );
+
+  /*
+   * Erasing an account, as opposed to retiring one. The controller refuses
+   * anything with audit history — see AdminStaffController.remove.
+   */
+  staffRouter.delete(
+    '/:staffId',
+    requirePermission('staff.manage'),
+    auditLog('staff.delete', 'staff_users'),
+    (req: Request, res: Response) => staff.remove(req, res),
   );
 
   router.use('/staff', staffRouter);
