@@ -10,7 +10,6 @@
 
 import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
-import { DataSource } from 'typeorm';
 import { ProductRepository } from '../repositories/product.repository';
 import {
   CategoryRepository,
@@ -56,7 +55,6 @@ export class AdminProductController {
     private readonly inventory: InventoryRepository,
     private readonly images: ProductImageRepository,
     private readonly categories: CategoryRepository,
-    private readonly dataSource?: DataSource,
   ) {}
 
   /** GET /products */

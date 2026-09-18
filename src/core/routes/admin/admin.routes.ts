@@ -179,7 +179,6 @@ export function createAdminRoutes(): Router {
     new InventoryRepository(),
     new ProductImageRepository(),
     new CategoryRepository(),
-    dataSource,
   );
 
   const productsRouter = Router({ mergeParams: true });
