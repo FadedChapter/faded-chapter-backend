@@ -62,7 +62,16 @@ export class CustomerPreferencesEntity {
   email_newsletter: boolean;
 
   @Column('boolean', { nullable: false, default: false })
+  email_product_updates: boolean;
+
+  @Column('boolean', { nullable: false, default: true })
+  email_transactional: boolean;
+
+  @Column('boolean', { nullable: false, default: false })
   sms_order_updates: boolean;
+
+  @Column('boolean', { nullable: false, default: false })
+  sms_marketing: boolean;
 
   // ============================================================================
   // Display Preferences

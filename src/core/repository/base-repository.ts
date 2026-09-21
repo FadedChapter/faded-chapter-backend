@@ -12,7 +12,7 @@
  * Phase 1: Used by all 11 Core Domain repositories
  */
 
-import { Repository, SelectQueryBuilder, FindOptions, UpdateResult, DeleteResult } from 'typeorm';
+import { Repository, SelectQueryBuilder, FindManyOptions, UpdateResult, DeleteResult } from 'typeorm';
 import { getDataSource } from '../database/postgres-data-source';
 import { StoreIsolationError, NotFoundError, DatabaseError } from '../errors/app-error';
 import { logError, createChildLogger } from '../logging/logger';
@@ -73,7 +73,7 @@ export abstract class BaseRepository<T extends { id: string; store_id: string }>
   /**
    * Find multiple records by store (excludes soft-deleted)
    */
-  async findByStore(storeId: string, options?: FindOptions<T>): Promise<T[]> {
+  async findByStore(storeId: string, options?: FindManyOptions<T>): Promise<T[]> {
     try {
       return await this.repository.find({
         ...options,
