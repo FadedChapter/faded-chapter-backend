@@ -11,24 +11,25 @@
  */
 
 import { runMigrations, revertMigration, getDataSource } from '../core/database/postgres-data-source.js';
-import { logger } from '../core/logging/logger.js';
+import { getLogger, logInfo, logError } from '../core/logging/logger.js';
 
 async function main(): Promise<void> {
   const command = process.argv[2] || 'run';
+  const logger = getLogger();
 
   try {
-    logger.info('Starting migration process', { command });
+    logInfo('Starting migration process', { command });
 
     switch (command) {
       case 'run': {
         await runMigrations();
-        logger.info('✅ All migrations completed successfully');
+        logInfo('✅ All migrations completed successfully');
         break;
       }
 
       case 'undo': {
         await revertMigration();
-        logger.info('✅ Last migration reverted successfully');
+        logInfo('✅ Last migration reverted successfully');
         break;
       }
 
@@ -38,7 +39,7 @@ async function main(): Promise<void> {
           await source.initialize();
         }
         const pendingMigrations = await source.showMigrations();
-        logger.info('Pending migrations shown');
+        logInfo('Pending migrations shown');
         break;
       }
 
@@ -48,9 +49,7 @@ async function main(): Promise<void> {
 
     process.exit(0);
   } catch (error) {
-    logger.error('Migration failed', {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    logError('Migration failed', error instanceof Error ? error : new Error(String(error)));
     process.exit(1);
   }
 }
