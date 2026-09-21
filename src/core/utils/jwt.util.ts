@@ -6,7 +6,7 @@
  */
 
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env';
+import { getConfig } from '../config/env';
 
 export interface JWTPayload {
   customer_id: string;
@@ -20,6 +20,7 @@ export interface JWTPayload {
  * Generate JWT token
  */
 export function generateToken(customerId: string, storeId: string, sessionId: string): string {
+  const config = getConfig();
   const expiresIn = '24h'; // Same as session duration
 
   return jwt.sign(
@@ -28,7 +29,7 @@ export function generateToken(customerId: string, storeId: string, sessionId: st
       store_id: storeId,
       session_id: sessionId,
     },
-    env.get('JWT_SECRET'),
+    config.JWT_SECRET,
     { expiresIn }
   );
 }
@@ -38,7 +39,8 @@ export function generateToken(customerId: string, storeId: string, sessionId: st
  */
 export function verifyToken(token: string): JWTPayload {
   try {
-    return jwt.verify(token, env.get('JWT_SECRET')) as JWTPayload;
+    const config = getConfig();
+    return jwt.verify(token, config.JWT_SECRET) as JWTPayload;
   } catch (error) {
     throw new Error('Invalid or expired token');
   }

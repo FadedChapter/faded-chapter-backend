@@ -105,11 +105,7 @@ export class ShippingRateService {
 
     const rateEntities = dto.rates.map((rate) => ({
       ...rate,
-      id: crypto.randomUUID(),
-      store_id: storeId,
       active: true,
-      created_at: new Date(),
-      updated_at: new Date(),
     }));
 
     return this.rateRepo.createBatch(storeId, rateEntities);
