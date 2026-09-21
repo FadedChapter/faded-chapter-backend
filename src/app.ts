@@ -6,6 +6,7 @@
  */
 
 import express, { Express, Request, Response } from 'express';
+// @ts-ignore - cors types not available
 import cors from 'cors';
 import helmet from 'helmet';
 import { getConfig } from './core/config/env.js';
@@ -79,12 +80,8 @@ export function createApp(): Express {
   try {
     const dataSource = getDataSource();
     if (dataSource.isInitialized) {
-      const paymentRepo = dataSource.getRepository('payments').manager.getCustomRepository(
-        PaymentRepository
-      );
-      const refundRepo = dataSource.getRepository('refunds').manager.getCustomRepository(
-        RefundRepository
-      );
+      const paymentRepo = new PaymentRepository();
+      const refundRepo = new RefundRepository();
       const razorpayService = new RazorpayIntegrationService();
 
       paymentServices.payment = new PaymentProcessingService(paymentRepo, refundRepo, razorpayService);
