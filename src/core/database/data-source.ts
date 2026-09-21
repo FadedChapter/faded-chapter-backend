@@ -55,6 +55,16 @@ export async function initializeDatabase(): Promise<void> {
 }
 
 /**
+ * Get the data source instance
+ */
+export function getDataSource(): DataSource {
+  if (!AppDataSource.isInitialized) {
+    throw new Error('Database not initialized. Call initializeDatabase() first.');
+  }
+  return AppDataSource;
+}
+
+/**
  * Close database connection
  * Call this when the server shuts down
  */

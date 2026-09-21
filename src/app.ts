@@ -8,9 +8,9 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { env } from './core/config/env.js';
-import { logger } from './core/logging/logger.js';
-import { storeContextMiddleware } from './core/store/store-context.js';
+import { getConfig } from './core/config/env.js';
+import { getLogger } from './core/logging/logger.js';
+import { createStoreContextMiddleware } from './core/store/store-context.js';
 import { errorHandler } from './core/middleware/error-handler.middleware.js';
 import { registerCoreRoutes } from './core/routes/index.js';
 import { getDataSource } from './core/database/data-source.js';
@@ -26,12 +26,18 @@ import { WebhookHandlerService } from './core/services/webhook-handler.service.j
 export function createApp(): Express {
   const app = express();
 
+  const config = getConfig();
+  const logger = getLogger();
+
   // ============================================================================
   // Security Middleware
   // ============================================================================
   app.use(helmet());
+  const corsOrigins = typeof config.CORS_ORIGINS === 'string'
+    ? config.CORS_ORIGINS.split(',')
+    : config.CORS_ORIGINS || ['http://localhost:3000'];
   app.use(cors({
-    origin: env.get('CORS_ORIGINS')?.split(',') || ['http://localhost:3000'],
+    origin: corsOrigins,
     credentials: true,
   }));
 
@@ -56,7 +62,7 @@ export function createApp(): Express {
   // ============================================================================
   // Store Context Middleware (CRITICAL: Must be before routes)
   // ============================================================================
-  app.use(storeContextMiddleware);
+  app.use(createStoreContextMiddleware());
 
   // ============================================================================
   // Health Check Endpoint
@@ -122,16 +128,19 @@ export function createApp(): Express {
  */
 export async function startServer(): Promise<void> {
   const app = createApp();
-  const port = env.get('PORT') || 3000;
+  const config = getConfig();
+  const logger = getLogger();
+  const port = config.PORT || 3000;
 
   app.listen(port, () => {
-    logger.info(`Server started`, { port, environment: env.get('NODE_ENV') });
+    logger.info(`Server started`, { port, environment: config.NODE_ENV });
   });
 }
 
 // Start server if this is the main module
 if (import.meta.url === `file://${process.argv[1]}`) {
   startServer().catch((err) => {
+    const logger = getLogger();
     logger.error('Failed to start server', { error: err.message });
     process.exit(1);
   });

@@ -8,7 +8,7 @@
 import winston, { Logger } from 'winston';
 import { getConfig, isDevelopment } from '../config/env';
 
-let logger: Logger;
+export let logger: Logger;
 
 /**
  * Initialize Winston logger with appropriate transports
