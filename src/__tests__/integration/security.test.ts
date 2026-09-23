@@ -329,6 +329,9 @@ describe('Security Tests', () => {
         source: 'signup',
       });
 
+      // Small delay to ensure different timestamps
+      await new Promise(resolve => setTimeout(resolve, 10));
+
       // Withdraw consent - new record
       await consentRepo.recordConsent(customerId, store1Id, {
         consentType: 'marketing',

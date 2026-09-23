@@ -81,7 +81,7 @@ export class CustomerConsentRepository extends BaseRepository<CustomerConsentEnt
           customer_id: customerId,
           store_id: storeId,
         } as any,
-        order: { created_at: 'DESC' } as any,
+        order: { created_at: 'DESC', id: 'DESC' } as any,
       });
     } catch (error) {
       throw new Error(`Failed to get consent history: ${(error as Error).message}`);

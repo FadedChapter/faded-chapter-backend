@@ -4,17 +4,56 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
+import { Server } from 'http';
+import { createApp } from '../../app.js';
+import { loadConfig } from '../../core/config/env.js';
+import { initializeLogger } from '../../core/logging/logger.js';
+import { initializeDatabase, closeDatabase } from '../../core/database/postgres-data-source.js';
 
-describe.skip('Phase 10a - Admin Dashboard E2E Tests', () => {
+describe('Phase 10a - Admin Dashboard E2E Tests', () => {
   let api: AxiosInstance;
+  let server: Server;
   const BASE_URL = 'http://localhost:3000/api/v1';
   const STORE_ID = '550e8400-e29b-41d4-a716-446655440000';
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    // Initialize config and logger
+    loadConfig();
+    initializeLogger();
+
+    // Initialize database
+    await initializeDatabase();
+
+    // Create and start Express app
+    const app = createApp();
+
+    // Wait for server to start before continuing
+    await new Promise<void>((resolve, reject) => {
+      server = app.listen(3000, () => {
+        resolve();
+      });
+      server.once('error', (err) => {
+        reject(err);
+      });
+    });
+
+    // Create axios instance
     api = axios.create({
       baseURL: BASE_URL,
       validateStatus: () => true,
     });
+  }, 60000);
+
+  afterAll(async () => {
+    // Close server
+    if (server) {
+      await new Promise<void>((resolve) => {
+        server.close(() => resolve());
+      });
+    }
+
+    // Close database
+    await closeDatabase();
   });
 
   describe('✅ Endpoint 1: GET /dashboard/metrics', () => {
