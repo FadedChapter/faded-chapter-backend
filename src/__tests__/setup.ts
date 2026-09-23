@@ -59,6 +59,7 @@ export async function teardownTestDatabase(): Promise<void> {
 
 /**
  * Clear all data from tables (for test isolation)
+ * Retries on deadlock to handle concurrent test execution
  */
 export async function clearDatabase(): Promise<void> {
   const dataSource = getDataSource();
@@ -80,25 +81,49 @@ export async function clearDatabase(): Promise<void> {
     'stores',
   ];
 
+  // Retry logic for deadlock handling
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+
   for (const table of tables) {
-    await dataSource.query(`TRUNCATE TABLE ${table} CASCADE`);
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        await dataSource.query(`TRUNCATE TABLE ${table} CASCADE`);
+        break; // Success, move to next table
+      } catch (error: any) {
+        lastError = error;
+        // Check if it's a deadlock error (code 40P01)
+        if (error?.code === '40P01' && attempt < maxRetries - 1) {
+          // Wait a bit before retrying
+          await new Promise(resolve => setTimeout(resolve, 100 * (attempt + 1)));
+          continue;
+        }
+        throw error; // Other errors or last retry, throw immediately
+      }
+    }
   }
 
   console.log('✅ Database cleared');
 }
 
 /**
- * Create test store
+ * Create test store with unique slug and domain
  */
 export async function createTestStore(): Promise<string> {
   const dataSource = getDataSource();
+  // Generate unique slug and domain to avoid constraint violations
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substr(2, 9);
+  const uniqueSlug = `test-store-${timestamp}-${random}`;
+  const uniqueDomain = `test-${timestamp}-${random}.example.com`;
+
   const result = await dataSource.query(
     `
     INSERT INTO stores (id, name, slug, domain, owner_email, owner_name, status)
     VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)
     RETURNING id
     `,
-    ['Test Store', 'test-store', 'test.example.com', 'owner@test.com', 'Test Owner', 'active']
+    ['Test Store', uniqueSlug, uniqueDomain, `owner-${random}@test.com`, 'Test Owner', 'active']
   );
 
   return result[0].id;
@@ -153,8 +178,8 @@ afterAll(async () => {
   await teardownTestDatabase();
 });
 
-beforeEach(async () => {
-  await clearDatabase();
-});
+// Note: beforeEach with clearDatabase removed
+// Individual test suites should manage their own data cleanup to avoid
+// deadlocks and foreign key constraint issues from aggressive truncation
 
 export default { setupTestDatabase, teardownTestDatabase, clearDatabase, createTestStore, createTestCustomer, createTestCredentials };

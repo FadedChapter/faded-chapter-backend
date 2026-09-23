@@ -23,6 +23,8 @@ export default defineConfig({
     testTimeout: 30000,
     hookTimeout: 30000,
     setupFiles: ['src/__tests__/setup.ts'],
+    threads: false,
+    isolate: false,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
