@@ -11,7 +11,7 @@ export class CreateCustomerConsentTable1726350005000 implements MigrationInterfa
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'customer_consent',
+        name: 'customer_consents',
         columns: [
           {
             name: 'id',
@@ -81,7 +81,7 @@ export class CreateCustomerConsentTable1726350005000 implements MigrationInterfa
 
     // Add composite FK (RESTRICT to prevent accidental cascading deletes)
     await queryRunner.createForeignKey(
-      'customer_consent',
+      'customer_consents',
       new TableForeignKey({
         columnNames: ['customer_id', 'store_id'],
         referencedColumnNames: ['id', 'store_id'],
@@ -93,7 +93,7 @@ export class CreateCustomerConsentTable1726350005000 implements MigrationInterfa
 
     // Create indexes
     await queryRunner.createIndex(
-      'customer_consent',
+      'customer_consents',
       new TableIndex({
         columnNames: ['customer_id', 'store_id'],
         name: 'idx_customer_consent_customer',
@@ -101,7 +101,7 @@ export class CreateCustomerConsentTable1726350005000 implements MigrationInterfa
     );
 
     await queryRunner.createIndex(
-      'customer_consent',
+      'customer_consents',
       new TableIndex({
         columnNames: ['customer_id', 'store_id', 'consent_type'],
         name: 'idx_customer_consent_type',
@@ -125,7 +125,7 @@ export class CreateCustomerConsentTable1726350005000 implements MigrationInterfa
 
     await queryRunner.query(`
       CREATE TRIGGER prevent_customer_consent_mutation
-      BEFORE UPDATE OR DELETE ON customer_consent
+      BEFORE UPDATE OR DELETE ON customer_consents
       FOR EACH ROW
       EXECUTE FUNCTION prevent_customer_consent_mutation();
     `);
@@ -133,10 +133,10 @@ export class CreateCustomerConsentTable1726350005000 implements MigrationInterfa
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop trigger and function
-    await queryRunner.query('DROP TRIGGER IF EXISTS prevent_customer_consent_mutation ON customer_consent');
+    await queryRunner.query('DROP TRIGGER IF EXISTS prevent_customer_consent_mutation ON customer_consents');
     await queryRunner.query('DROP FUNCTION IF EXISTS prevent_customer_consent_mutation');
 
     // Drop table
-    await queryRunner.dropTable('customer_consent');
+    await queryRunner.dropTable('customer_consents');
   }
 }

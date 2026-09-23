@@ -71,7 +71,7 @@ export async function clearDatabase(): Promise<void> {
     'sessions',
     'verification_tokens',
     'password_reset_tokens',
-    'customer_consent',
+    'customer_consents',
     'customer_addresses',
     'customer_preferences',
     'customer_credentials',

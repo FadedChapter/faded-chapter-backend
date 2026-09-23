@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import { v4 as uuidv4 } from 'uuid';
 import { CustomerRepository } from '../../core/repositories/customer.repository.js';
 import { CustomerAddressRepository } from '../../core/repositories/customer-address.repository.js';
 import { createTestStore, createTestCustomer } from '../setup.js';
@@ -51,6 +52,7 @@ describe('Soft Delete Tests', () => {
     it('should allow email reuse after soft delete', async () => {
       const email = 'reusable@example.com';
       const customer1 = await customerRepo.repository.create({
+        id: uuidv4(),
         store_id: store1Id,
         email,
         email_normalized: email.toLowerCase(),
@@ -63,6 +65,7 @@ describe('Soft Delete Tests', () => {
 
       // Should be able to register with same email
       const customer2 = await customerRepo.repository.create({
+        id: uuidv4(),
         store_id: store1Id,
         email,
         email_normalized: email.toLowerCase(),
@@ -88,6 +91,7 @@ describe('Soft Delete Tests', () => {
     it('should not allow duplicate email when restoring', async () => {
       const email = 'test@example.com';
       const customer1 = await customerRepo.repository.create({
+        id: uuidv4(),
         store_id: store1Id,
         email,
         email_normalized: email.toLowerCase(),
@@ -95,6 +99,7 @@ describe('Soft Delete Tests', () => {
       await customerRepo.save(customer1);
 
       const customer2 = await customerRepo.repository.create({
+        id: uuidv4(),
         store_id: store1Id,
         email,
         email_normalized: email.toLowerCase(),
@@ -179,7 +184,9 @@ describe('Soft Delete Tests', () => {
       const email = 'unique@example.com';
 
       // Create first customer
+      const customerId1 = uuidv4();
       const customer1 = await customerRepo.repository.create({
+        id: customerId1,
         store_id: store1Id,
         email,
         email_normalized: email.toLowerCase(),
@@ -190,7 +197,9 @@ describe('Soft Delete Tests', () => {
       await customerRepo.softDelete(customer1.id, store1Id);
 
       // Create second customer with same email
+      const customerId2 = uuidv4();
       const customer2 = await customerRepo.repository.create({
+        id: customerId2,
         store_id: store1Id,
         email,
         email_normalized: email.toLowerCase(),
@@ -210,8 +219,8 @@ describe('Soft Delete Tests', () => {
       const customer = await createTestCustomer(store1Id);
       const customerId = customer.id;
 
-      const auditRepo = require('../../core/repositories/audit-log.repository.js').AuditLogRepository;
-      const repo = new auditRepo();
+      const { AuditLogRepository } = await import('../../core/repositories/audit-log.repository.js');
+      const repo = new AuditLogRepository();
 
       // Log customer creation
       await repo.createEntry(store1Id, {

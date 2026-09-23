@@ -159,6 +159,8 @@ export async function closeDatabase(): Promise<void> {
     if (source.isInitialized) {
       await source.destroy();
       console.log('✅ Database connection closed');
+      // Reset the singleton so the next test can reinitialize
+      dataSource = null;
     }
   } catch (error) {
     console.error('❌ Failed to close database:', error);

@@ -13,317 +13,90 @@ stdout | src/__tests__/db/order-numbering.test.ts
 stdout | src/__tests__/integration/soft-delete.test.ts
 ✅ faded_chapter_test connected
 
-stdout | src/__tests__/integration/auth-flow.test.ts
-✅ faded_chapter_test connected
+stderr | src/__tests__/db/order-numbering.test.ts
+❌ Migration failed: QueryFailedError: Connection terminated
+    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+    at MigrationExecutor.createMigrationsTableIfNotExist (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:513:13)
+    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:201:9)
+    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
+    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
+  query: 'CREATE TABLE "typeorm_migrations" ("id" SERIAL NOT NULL, "timestamp" bigint NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_bb2f075707dd300ba86d0208923" PRIMARY KEY ("id"))',
+  parameters: undefined,
+  driverError: Error: Connection terminated
+      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
+      at processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
+      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+      at MigrationExecutor.createMigrationsTableIfNotExist (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:513:13)
+      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:201:9)
+      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
+}
+❌ Failed to setup test database: QueryFailedError: Connection terminated
+    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+    at MigrationExecutor.createMigrationsTableIfNotExist (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:513:13)
+    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:201:9)
+    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
+    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
+  query: 'CREATE TABLE "typeorm_migrations" ("id" SERIAL NOT NULL, "timestamp" bigint NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_bb2f075707dd300ba86d0208923" PRIMARY KEY ("id"))',
+  parameters: undefined,
+  driverError: Error: Connection terminated
+      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
+      at processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
+      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+      at MigrationExecutor.createMigrationsTableIfNotExist (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:513:13)
+      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:201:9)
+      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
+}
 
 stdout | src/__tests__/db/order-numbering.test.ts
+✅ faded_chapter_test connected
 query failed: INSERT INTO stores (id, name, slug, owner_email, owner_name, status, created_at, updated_at)
      VALUES ($1, 'Numbering Test Store', $2, 'numbering@test.local', 'Test', 'active', now(), now())
-     ON CONFLICT (id) DO NOTHING -- PARAMETERS: ["9ec15875-e50f-44e0-b528-207422a113f5","numbering-test-9ec15875"]
+     ON CONFLICT (id) DO NOTHING -- PARAMETERS: ["145f7cc6-3faa-4a1d-a1a1-32b9e853782f","numbering-test-145f7cc6"]
 error: error: relation "stores" does not exist
+✅ Test database closed
+query failed: CREATE TABLE "typeorm_migrations" ("id" SERIAL NOT NULL, "timestamp" bigint NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_bb2f075707dd300ba86d0208923" PRIMARY KEY ("id"))
+error: Error: Connection terminated
 
- ❯ src/__tests__/db/order-numbering.test.ts  (18 tests) 123ms
 stdout | src/__tests__/integration/security.test.ts
 ✅ faded_chapter_test connected
 
-stdout | Module.initializeDatabase (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:145:15)
+stdout | src/__tests__/integration/auth-flow.test.ts
 ✅ faded_chapter_test connected
 
-stderr | Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:180:13)
-❌ Migration failed: Error: Cannot use a pool after calling end on the pool
-    at BoundPool.connect (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.0/node_modules/pg-pool/index.js:192:19)
-    at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresDriver.ts:1410:25
-    at new Promise (<anonymous>)
-    at PostgresDriver.obtainMasterConnection (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresDriver.ts:1409:16)
-    at PostgresQueryRunner.connect (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:114:18)
-    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:265:47)
-    at PostgresQueryRunner.hasTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:449:35)
-    at MigrationExecutor.createMigrationsTableIfNotExist (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:511:46)
-    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:201:20)
-    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:37)
-
-stderr | setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:40:13)
-❌ Failed to setup test database: Error: Cannot use a pool after calling end on the pool
-    at BoundPool.connect (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.0/node_modules/pg-pool/index.js:192:19)
-    at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresDriver.ts:1410:25
-    at new Promise (<anonymous>)
-    at PostgresDriver.obtainMasterConnection (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresDriver.ts:1409:16)
-    at PostgresQueryRunner.connect (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:114:18)
-    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:265:47)
-    at PostgresQueryRunner.hasTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:449:35)
-    at MigrationExecutor.createMigrationsTableIfNotExist (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:511:46)
-    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:201:20)
-    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:37)
-
-stdout | teardownTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:53:15)
-✅ Test database closed
-
-stdout | src/__tests__/integration/store-isolation.test.ts
-✅ faded_chapter_test connected
-
+ ❯ src/__tests__/db/order-numbering.test.ts  (18 tests)
 stdout | src/__tests__/integration/soft-delete.test.ts
 ✅ Migrations completed
 ✅ Test database initialized
 
- ❯ src/__tests__/integration/store-isolation.test.ts  (15 tests) 331ms
-stderr | src/__tests__/integration/store-isolation.test.ts
-❌ Migration failed: QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
-    at processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
-    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
-  query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
-  parameters: undefined,
-  driverError: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
-      at processTicksAndRejections (node:internal/process/task_queues:104:5)
-      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
-      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-      at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
-    length: 248,
-    severity: 'ERROR',
-    code: '23505',
-    detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-    hint: undefined,
-    position: undefined,
-    internalPosition: undefined,
-    internalQuery: undefined,
-    where: undefined,
-    schema: 'pg_catalog',
-    table: 'pg_type',
-    column: undefined,
-    dataType: undefined,
-    constraint: 'pg_type_typname_nsp_index',
-    file: 'nbtinsert.c',
-    line: '664',
-    routine: '_bt_check_unique'
-  },
-  length: 248,
-  severity: 'ERROR',
-  code: '23505',
-  detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: 'pg_catalog',
-  table: 'pg_type',
-  column: undefined,
-  dataType: undefined,
-  constraint: 'pg_type_typname_nsp_index',
-  file: 'nbtinsert.c',
-  line: '664',
-  routine: '_bt_check_unique'
-}
-❌ Failed to setup test database: QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
-    at processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
-    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
-  query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
-  parameters: undefined,
-  driverError: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
-      at processTicksAndRejections (node:internal/process/task_queues:104:5)
-      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
-      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-      at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
-    length: 248,
-    severity: 'ERROR',
-    code: '23505',
-    detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-    hint: undefined,
-    position: undefined,
-    internalPosition: undefined,
-    internalQuery: undefined,
-    where: undefined,
-    schema: 'pg_catalog',
-    table: 'pg_type',
-    column: undefined,
-    dataType: undefined,
-    constraint: 'pg_type_typname_nsp_index',
-    file: 'nbtinsert.c',
-    line: '664',
-    routine: '_bt_check_unique'
-  },
-  length: 248,
-  severity: 'ERROR',
-  code: '23505',
-  detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: 'pg_catalog',
-  table: 'pg_type',
-  column: undefined,
-  dataType: undefined,
-  constraint: 'pg_type_typname_nsp_index',
-  file: 'nbtinsert.c',
-  line: '664',
-  routine: '_bt_check_unique'
-}
-
-stdout | src/__tests__/integration/store-isolation.test.ts
-query failed: CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))
-error: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-Migration "CreateStoresTable1726350000000" failed, error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-✅ Test database closed
-
- ❯ src/__tests__/integration/security.test.ts  (19 tests) 451ms
-stderr | src/__tests__/integration/security.test.ts
-❌ Migration failed: QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
-    at processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
-    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
-  query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
-  parameters: undefined,
-  driverError: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
-      at processTicksAndRejections (node:internal/process/task_queues:104:5)
-      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
-      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-      at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
-    length: 248,
-    severity: 'ERROR',
-    code: '23505',
-    detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-    hint: undefined,
-    position: undefined,
-    internalPosition: undefined,
-    internalQuery: undefined,
-    where: undefined,
-    schema: 'pg_catalog',
-    table: 'pg_type',
-    column: undefined,
-    dataType: undefined,
-    constraint: 'pg_type_typname_nsp_index',
-    file: 'nbtinsert.c',
-    line: '664',
-    routine: '_bt_check_unique'
-  },
-  length: 248,
-  severity: 'ERROR',
-  code: '23505',
-  detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: 'pg_catalog',
-  table: 'pg_type',
-  column: undefined,
-  dataType: undefined,
-  constraint: 'pg_type_typname_nsp_index',
-  file: 'nbtinsert.c',
-  line: '664',
-  routine: '_bt_check_unique'
-}
-❌ Failed to setup test database: QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
-    at processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
-    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
-  query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
-  parameters: undefined,
-  driverError: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
-      at processTicksAndRejections (node:internal/process/task_queues:104:5)
-      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
-      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
-      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
-      at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
-      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
-      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
-      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
-    length: 248,
-    severity: 'ERROR',
-    code: '23505',
-    detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-    hint: undefined,
-    position: undefined,
-    internalPosition: undefined,
-    internalQuery: undefined,
-    where: undefined,
-    schema: 'pg_catalog',
-    table: 'pg_type',
-    column: undefined,
-    dataType: undefined,
-    constraint: 'pg_type_typname_nsp_index',
-    file: 'nbtinsert.c',
-    line: '664',
-    routine: '_bt_check_unique'
-  },
-  length: 248,
-  severity: 'ERROR',
-  code: '23505',
-  detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: 'pg_catalog',
-  table: 'pg_type',
-  column: undefined,
-  dataType: undefined,
-  constraint: 'pg_type_typname_nsp_index',
-  file: 'nbtinsert.c',
-  line: '664',
-  routine: '_bt_check_unique'
-}
-
 stdout | src/__tests__/integration/security.test.ts
 query failed: CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))
 error: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
 Migration "CreateStoresTable1726350000000" failed, error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-✅ Test database closed
 
- ❯ src/__tests__/integration/auth-flow.test.ts  (25 tests) 457ms
+stdout | src/__tests__/integration/auth-flow.test.ts
+query failed: CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))
+error: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+Migration "CreateStoresTable1726350000000" failed, error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+
+ ❯ src/__tests__/integration/auth-flow.test.ts  (25 tests) 409ms
 stderr | src/__tests__/integration/auth-flow.test.ts
 ❌ Migration failed: QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
     at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
@@ -333,7 +106,7 @@ stderr | src/__tests__/integration/auth-flow.test.ts
     at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
     at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
     at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
+    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
     at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
     at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
   query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
@@ -347,12 +120,12 @@ stderr | src/__tests__/integration/auth-flow.test.ts
       at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
       at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
       at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
+      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
       at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
     length: 248,
     severity: 'ERROR',
     code: '23505',
-    detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
+    detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
     hint: undefined,
     position: undefined,
     internalPosition: undefined,
@@ -370,7 +143,7 @@ stderr | src/__tests__/integration/auth-flow.test.ts
   length: 248,
   severity: 'ERROR',
   code: '23505',
-  detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
+  detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
   hint: undefined,
   position: undefined,
   internalPosition: undefined,
@@ -393,7 +166,7 @@ stderr | src/__tests__/integration/auth-flow.test.ts
     at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
     at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
     at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
+    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
     at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
     at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
   query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
@@ -407,12 +180,12 @@ stderr | src/__tests__/integration/auth-flow.test.ts
       at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
       at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
       at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
-      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)
+      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
       at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
     length: 248,
     severity: 'ERROR',
     code: '23505',
-    detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
+    detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
     hint: undefined,
     position: undefined,
     internalPosition: undefined,
@@ -430,7 +203,7 @@ stderr | src/__tests__/integration/auth-flow.test.ts
   length: 248,
   severity: 'ERROR',
   code: '23505',
-  detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.',
+  detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
   hint: undefined,
   position: undefined,
   internalPosition: undefined,
@@ -447,30 +220,143 @@ stderr | src/__tests__/integration/auth-flow.test.ts
 }
 
 stdout | src/__tests__/integration/auth-flow.test.ts
-query failed: CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))
-error: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
-Migration "CreateStoresTable1726350000000" failed, error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
 ✅ Test database closed
 
-stdout | src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should allow email reuse after soft delete
-query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, DEFAULT, DEFAULT, DEFAULT, $4, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "id", "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["14059c08-1c40-4ca4-9ae2-6f3220a3319d","reusable@example.com","reusable@example.com","active"]
-error: error: null value in column "id" of relation "customers" violates not-null constraint
+stderr | src/__tests__/integration/security.test.ts
+❌ Migration failed: QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
+    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
+    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
+    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
+  query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
+  parameters: undefined,
+  driverError: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
+      at processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
+      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+      at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
+      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
+      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
+    length: 248,
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'pg_catalog',
+    table: 'pg_type',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'pg_type_typname_nsp_index',
+    file: 'nbtinsert.c',
+    line: '664',
+    routine: '_bt_check_unique'
+  },
+  length: 248,
+  severity: 'ERROR',
+  code: '23505',
+  detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'pg_catalog',
+  table: 'pg_type',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'pg_type_typname_nsp_index',
+  file: 'nbtinsert.c',
+  line: '664',
+  routine: '_bt_check_unique'
+}
+❌ Failed to setup test database: QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
+    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
+    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)
+    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:174:3 {
+  query: `CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT 'active', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))`,
+  parameters: undefined,
+  driverError: error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+      at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17
+      at processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)
+      at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)
+      at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)
+      at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)
+      at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)
+      at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)
+      at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)
+      at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5) {
+    length: 248,
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'pg_catalog',
+    table: 'pg_type',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'pg_type_typname_nsp_index',
+    file: 'nbtinsert.c',
+    line: '664',
+    routine: '_bt_check_unique'
+  },
+  length: 248,
+  severity: 'ERROR',
+  code: '23505',
+  detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'pg_catalog',
+  table: 'pg_type',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'pg_type_typname_nsp_index',
+  file: 'nbtinsert.c',
+  line: '664',
+  routine: '_bt_check_unique'
+}
+
+stdout | src/__tests__/integration/security.test.ts
+✅ Test database closed
+
+ ❯ src/__tests__/integration/security.test.ts  (19 tests) 408ms
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ faded_chapter_test connected
+
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ Migrations completed
+✅ Test database initialized
 
 stdout | src/__tests__/security/phase0-authorization.test.ts
 ✅ faded_chapter_test connected
-
-stdout | src/__tests__/security/phase5-customers.test.ts
-✅ faded_chapter_test connected
-
-stdout | src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should not allow duplicate email when restoring
-query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "id", "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["4539c427-bcfd-447c-93a0-a7071898465e","test@example.com","test@example.com"]
-error: error: null value in column "id" of relation "customers" violates not-null constraint
-
- ✓ src/__tests__/security/phase5-customers.test.ts  (13 tests) 15ms
-stdout | src/__tests__/security/phase5-customers.test.ts
-✅ Migrations completed
-✅ Test database initialized
-✅ Test database closed
 
 stderr | src/__tests__/security/phase0-authorization.test.ts > Phase 0 gate — authentication > rejects a malformed token (401)
 [JWT] Verification failed: jwt malformed
@@ -481,11 +367,15 @@ stderr | src/__tests__/security/phase0-authorization.test.ts > Phase 0 gate — 
 stderr | src/__tests__/security/phase0-authorization.test.ts > Phase 0 gate — authentication > rejects a token signed with the wrong secret (401)
 [JWT] Verification failed: invalid signature
 
- ✓ src/__tests__/security/phase0-authorization.test.ts  (13 tests) 20ms
+ ✓ src/__tests__/security/phase0-authorization.test.ts  (13 tests) 16ms
 stdout | src/__tests__/security/phase0-authorization.test.ts
 ✅ Migrations completed
 ✅ Test database initialized
 ✅ Test database closed
+
+stdout | src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should not allow duplicate email when restoring
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES ($1, $2, $3, $4, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "id", "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["628f6292-5ef9-42d5-b926-cee3a54c53bb","937a3cdf-b6b6-469d-aff7-80323b069993","test@example.com","test@example.com"]
+error: error: duplicate key value violates unique constraint "idx_customers_email_normalized_active"
 
 stdout | src/__tests__/security/phase12-settings.test.ts
 ✅ faded_chapter_test connected
@@ -498,47 +388,11 @@ stdout | src/__tests__/security/phase12-settings.test.ts
 stdout | src/__tests__/security/phase12-settings.test.ts
 ✅ Test database closed
 
-stdout | src/__tests__/security/phase9-shipping.test.ts
-✅ faded_chapter_test connected
-
- ✓ src/__tests__/security/phase9-shipping.test.ts  (15 tests) 14ms
-stdout | src/__tests__/security/phase9-shipping.test.ts
-✅ Migrations completed
-✅ Test database initialized
-✅ Test database closed
-
-stdout | src/__tests__/security/phase6-payments.test.ts
-✅ faded_chapter_test connected
-
-stdout | src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Soft Delete with Unique Constraints > should respect unique constraint with deleted_at IS NULL
-query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "id", "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["247356ee-fd37-46cb-96a9-8438e25d4e05","unique@example.com","unique@example.com"]
-error: error: null value in column "id" of relation "customers" violates not-null constraint
-
- ✓ src/__tests__/security/phase6-payments.test.ts  (11 tests) 27ms
-stdout | src/__tests__/security/phase6-payments.test.ts
-✅ Migrations completed
-✅ Test database initialized
-✅ Test database closed
-
-stdout | src/__tests__/security/phase13-storefront-catalog.test.ts
-✅ faded_chapter_test connected
-
- ✓ src/__tests__/security/phase13-storefront-catalog.test.ts  (13 tests) 49ms
-stdout | src/__tests__/security/phase13-storefront-catalog.test.ts
-✅ Migrations completed
-✅ Test database initialized
-✅ Test database closed
-
-stdout | src/__tests__/integration/soft-delete.test.ts
-✅ Test database closed
-
- ❯ src/__tests__/integration/soft-delete.test.ts  (14 tests | 9 failed) 576ms
+ ❯ src/__tests__/integration/soft-delete.test.ts  (14 tests | 6 failed) 491ms
    ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should hide deleted customers from normal queries
      → expected CustomerEntity{ …(13) } to be null
-   ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should allow email reuse after soft delete
-     → Failed to save CustomerRepository
    ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should not allow duplicate email when restoring
-     → Failed to save CustomerRepository
+     → Duplicate entry: duplicate key value violates unique constraint "idx_customers_email_normalized_active"
    ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should soft delete address
      → Failed to soft delete CustomerAddressRepository
    ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should remove from list after soft delete
@@ -547,43 +401,90 @@ stdout | src/__tests__/integration/soft-delete.test.ts
      → Failed to soft delete CustomerAddressRepository
    ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should cascade delete addresses when customer deleted
      → expected [ Array(2) ] to have a length of +0 but got 2
-   ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Soft Delete with Unique Constraints > should respect unique constraint with deleted_at IS NULL
-     → Failed to save CustomerRepository
-   ❯ src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Audit Trail Preservation > should preserve deleted customer in audit logs
-     → Cannot find module '../../core/repositories/audit-log.repository.js'
-Require stack:
-- /Users/apple/Projects/faded-chapter-backend/src/__tests__/integration/soft-delete.test.ts
-stdout | src/__tests__/security/phase8-discounts.test.ts
+stdout | src/__tests__/integration/soft-delete.test.ts
+✅ Test database closed
+
+stdout | src/__tests__/security/phase5-customers.test.ts
 ✅ faded_chapter_test connected
 
- ✓ src/__tests__/security/phase8-discounts.test.ts  (16 tests) 34ms
-stdout | src/__tests__/security/phase8-discounts.test.ts
+ ✓ src/__tests__/security/phase5-customers.test.ts  (13 tests) 10ms
+stdout | src/__tests__/security/phase5-customers.test.ts
 ✅ Migrations completed
 ✅ Test database initialized
 ✅ Test database closed
 
-stdout | src/__tests__/security/phase7-analytics.test.ts
+stdout | src/__tests__/security/phase6-payments.test.ts
 ✅ faded_chapter_test connected
 
-stdout | src/__tests__/security/phase4-inventory.test.ts
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should enforce composite FK constraint
+query failed: INSERT INTO "customer_addresses"("id", "store_id", "customer_id", "type", "first_name", "last_name", "phone", "address_line_1", "address_line_2", "city", "state_province", "postal_code", "country_code", "is_default_shipping", "is_default_billing", "label", "created_at", "updated_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING "id", "type", "is_default_shipping", "is_default_billing", "created_at", "updated_at" -- PARAMETERS: ["589e8fcc-6f92-4c7a-a89d-1aec4760a3c9","e64238ee-93a9-4194-a6fb-f021c003f2e2","shipping","John","Doe","+14155552671","123 Main St","Suite 100","San Francisco","CA","94105","US",false,false,null,"2026-09-23T10:04:20.978Z","2026-09-23T10:04:20.978Z"]
+error: error: insert or update on table "customer_addresses" violates foreign key constraint "fk_customer_addresses_customer"
+
+ ✓ src/__tests__/security/phase6-payments.test.ts  (11 tests) 15ms
+stdout | src/__tests__/security/phase6-payments.test.ts
+✅ Migrations completed
+✅ Test database initialized
+✅ Test database closed
+
+stdout | src/__tests__/security/phase9-shipping.test.ts
 ✅ faded_chapter_test connected
+
+stdout | src/__tests__/security/phase9-shipping.test.ts
+✅ Migrations completed
+✅ Test database initialized
+✅ Test database closed
+
+ ✓ src/__tests__/security/phase9-shipping.test.ts  (15 tests) 10ms
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+query failed: INSERT INTO "audit_logs"("id", "store_id", "table_name", "record_id", "actor_id", "actor_type", "action", "changes", "ip_address", "user_agent", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING "id", "created_at" -- PARAMETERS: ["a0a26e73-2a74-4a9d-8d35-8d20614352af","customers","test-id","actor-1","customer","insert","{}",null,null,"2026-09-23T10:04:21.011Z"]
+error: error: invalid input syntax for type uuid: "test-id"
+
+ ❯ src/__tests__/integration/store-isolation.test.ts  (15 tests | 1 failed) 122ms
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+     → Failed to save AuditLogRepository
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ Test database closed
+
+stdout | src/__tests__/security/phase13-storefront-catalog.test.ts
+✅ faded_chapter_test connected
+
+stdout | src/__tests__/security/phase13-storefront-catalog.test.ts
+✅ Migrations completed
+✅ Test database initialized
+✅ Test database closed
+
+ ✓ src/__tests__/security/phase13-storefront-catalog.test.ts  (13 tests) 12ms
+stdout | src/__tests__/security/phase8-discounts.test.ts
+✅ faded_chapter_test connected
+
+ ✓ src/__tests__/security/phase8-discounts.test.ts  (16 tests) 13ms
+stdout | src/__tests__/security/phase8-discounts.test.ts
+✅ Migrations completed
+✅ Test database initialized
+✅ Test database closed
 
 stdout | src/__tests__/security/phase11-staff.test.ts
 ✅ faded_chapter_test connected
 
- ✓ src/__tests__/security/phase4-inventory.test.ts  (11 tests) 12ms
-stdout | src/__tests__/security/phase4-inventory.test.ts
-✅ Migrations completed
-✅ Test database initialized
-✅ Test database closed
-
- ✓ src/__tests__/security/phase7-analytics.test.ts  (13 tests) 13ms
  ✓ src/__tests__/security/phase11-staff.test.ts  (12 tests) 12ms
 stdout | src/__tests__/security/phase11-staff.test.ts
 ✅ Migrations completed
 ✅ Test database initialized
 ✅ Test database closed
 
+stdout | src/__tests__/security/phase4-inventory.test.ts
+✅ faded_chapter_test connected
+
+stdout | src/__tests__/security/phase7-analytics.test.ts
+✅ faded_chapter_test connected
+
+ ✓ src/__tests__/security/phase4-inventory.test.ts  (11 tests) 10ms
+ ✓ src/__tests__/security/phase7-analytics.test.ts  (13 tests) 11ms
+stdout | src/__tests__/security/phase4-inventory.test.ts
+✅ Migrations completed
+✅ Test database initialized
+✅ Test database closed
+
 stdout | src/__tests__/security/phase7-analytics.test.ts
 ✅ Migrations completed
 ✅ Test database initialized
@@ -592,39 +493,39 @@ stdout | src/__tests__/security/phase7-analytics.test.ts
 stdout | src/__tests__/e2e/dashboard.e2e.test.ts
 ✅ faded_chapter_test connected
 
-stdout | src/__tests__/security/phase2-orders.test.ts
-✅ faded_chapter_test connected
-
-stdout | src/__tests__/security/phase3-products.test.ts
-✅ faded_chapter_test connected
-
-stdout | src/__tests__/security/phase2-orders.test.ts
-✅ Migrations completed
-✅ Test database initialized
-✅ Test database closed
-
-stdout | src/__tests__/security/phase3-products.test.ts
-✅ Migrations completed
-✅ Test database initialized
-✅ Test database closed
-
- ✓ src/__tests__/security/phase3-products.test.ts  (9 tests) 15ms
- ✓ src/__tests__/security/phase2-orders.test.ts  (11 tests) 19ms
-stdout | src/__tests__/security/phase10-notifications.test.ts
-✅ faded_chapter_test connected
-
 stdout | src/__tests__/e2e/dashboard.e2e.test.ts
 ✅ Migrations completed
 ✅ Test database initialized
 
- ✓ src/__tests__/security/phase10-notifications.test.ts  (11 tests) 21ms
+stdout | src/__tests__/security/phase3-products.test.ts
+✅ faded_chapter_test connected
+
+stdout | src/__tests__/security/phase10-notifications.test.ts
+✅ faded_chapter_test connected
+
+ ✓ src/__tests__/security/phase3-products.test.ts  (9 tests) 10ms
+ ✓ src/__tests__/security/phase10-notifications.test.ts  (11 tests) 11ms
 stdout | src/__tests__/security/phase10-notifications.test.ts
 ✅ Migrations completed
 ✅ Test database initialized
 ✅ Test database closed
 
+stdout | src/__tests__/security/phase3-products.test.ts
+✅ Migrations completed
+✅ Test database initialized
+✅ Test database closed
+
+stdout | src/__tests__/security/phase2-orders.test.ts
+✅ faded_chapter_test connected
+
 stdout | src/__tests__/security/phase0-dto.test.ts
 ✅ faded_chapter_test connected
+
+ ✓ src/__tests__/security/phase2-orders.test.ts  (11 tests) 10ms
+stdout | src/__tests__/security/phase2-orders.test.ts
+✅ Migrations completed
+✅ Test database initialized
+✅ Test database closed
 
  ✓ src/__tests__/security/phase0-dto.test.ts  (8 tests) 10ms
 stdout | src/__tests__/security/phase0-dto.test.ts
@@ -632,7 +533,7 @@ stdout | src/__tests__/security/phase0-dto.test.ts
 ✅ Test database initialized
 ✅ Test database closed
 
- ❯ src/__tests__/e2e/dashboard.e2e.test.ts  (9 tests | 9 failed) 57ms
+ ❯ src/__tests__/e2e/dashboard.e2e.test.ts  (9 tests | 9 failed) 40ms
    ❯ src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 1: GET /dashboard/metrics > should return KPI metrics with proper numeric formatting
      → expected 404 to be 200 // Object.is equality
    ❯ src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 2: GET /dashboard/pending-refunds > should return paginated list of pending refunds
@@ -654,44 +555,21 @@ stdout | src/__tests__/security/phase0-dto.test.ts
 stdout | src/__tests__/e2e/dashboard.e2e.test.ts
 ✅ Test database closed
 
+ ❯ src/__tests__/db/order-numbering.test.ts  (18 tests) 30069ms
 
-⎯⎯⎯⎯⎯⎯ Failed Suites 6 ⎯⎯⎯⎯⎯⎯⎯
+⎯⎯⎯⎯⎯⎯ Failed Suites 5 ⎯⎯⎯⎯⎯⎯⎯
 
  FAIL  src/__tests__/payment.integration.test.ts [ src/__tests__/payment.integration.test.ts ]
 Error: Failed to load url ../entities/payment.entity.js (resolved id: ../entities/payment.entity.js) in /Users/apple/Projects/faded-chapter-backend/src/__tests__/payment.integration.test.ts. Does the file exist?
  ❯ loadAndTransform node_modules/.pnpm/vite@5.4.21_@types+node@20.19.43/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/22]⎯
 
  FAIL  src/__tests__/webhook.integration.test.ts [ src/__tests__/webhook.integration.test.ts ]
 Error: Failed to load url ../controllers/webhook.controller.js (resolved id: ../controllers/webhook.controller.js) in /Users/apple/Projects/faded-chapter-backend/src/__tests__/webhook.integration.test.ts. Does the file exist?
  ❯ loadAndTransform node_modules/.pnpm/vite@5.4.21_@types+node@20.19.43/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/25]⎯
-
- FAIL  src/__tests__/integration/auth-flow.test.ts [ src/__tests__/integration/auth-flow.test.ts ]
- FAIL  src/__tests__/integration/security.test.ts [ src/__tests__/integration/security.test.ts ]
- FAIL  src/__tests__/integration/store-isolation.test.ts [ src/__tests__/integration/store-isolation.test.ts ]
-QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
- ❯ PostgresQueryRunner.query node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19
- ❯ PostgresQueryRunner.executeQueries node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13
- ❯ PostgresQueryRunner.createTable node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9
- ❯ CreateStoresTable1726350000000.up dist/migrations/1726350000000-CreateStoresTable.js:10:9
- ❯ MigrationExecutor.executePendingMigrations node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17
- ❯ DataSource.runMigrations node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13
- ❯ Module.runMigrations src/core/database/postgres-data-source.ts:177:5
-    175|       await source.initialize();
-    176|     }
-    177|     await source.runMigrations();
-       |     ^
-    178|     console.log('✅ Migrations completed');
-    179|   } catch (error) {
- ❯ setupTestDatabase src/__tests__/setup.ts:37:5
- ❯ src/__tests__/setup.ts:174:3
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { query: 'CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT \'active\', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))', parameters: undefined, driverError: { stack: 'error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"\n    at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)\n    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)\n    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)\n    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)\n    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)\n    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)\n    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:177:5)\n    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)', message: 'duplicate key value violates unique constraint "pg_type_typname_nsp_index"', length: 248, name: 'error', severity: 'ERROR', code: '23505', detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.', hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: undefined, schema: 'pg_catalog', table: 'pg_type', column: undefined, dataType: undefined, constraint: 'pg_type_typname_nsp_index', file: 'nbtinsert.c', line: '664', routine: '_bt_check_unique', constructor: 'Function<DatabaseError>', toString: 'Function<toString>' }, length: 248, severity: 'ERROR', code: '23505', detail: 'Key (typname, typnamespace)=(stores, 684927) already exists.', hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: undefined, schema: 'pg_catalog', table: 'pg_type', column: undefined, dataType: undefined, constraint: 'pg_type_typname_nsp_index', file: 'nbtinsert.c', line: '664', routine: '_bt_check_unique' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/22]⎯
 
  FAIL  src/__tests__/db/order-numbering.test.ts [ src/__tests__/db/order-numbering.test.ts ]
 QueryFailedError: relation "stores" does not exist
@@ -707,166 +585,38 @@ QueryFailedError: relation "stores" does not exist
  ❯ src/__tests__/db/order-numbering.test.ts:83:3
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { query: 'INSERT INTO stores (id, name, slug, owner_email, owner_name, status, created_at, updated_at)\n     VALUES ($1, \'Numbering Test Store\', $2, \'numbering@test.local\', \'Test\', \'active\', now(), now())\n     ON CONFLICT (id) DO NOTHING', parameters: [ '9ec15875-e50f-44e0-b528-207422a113f5', 'numbering-test-9ec15875' ], driverError: { stack: 'error: relation "stores" does not exist\n    at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)\n    at DataSource.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:520:20)\n    at createFixtures (/Users/apple/Projects/faded-chapter-backend/src/__tests__/db/order-numbering.test.ts:54:3)\n    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/db/order-numbering.test.ts:83:3\n    at async Promise.all (index 1)\n    at callSuiteHook (file:///Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:700:23)\n    at runSuite (file:///Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:892:27)\n    at runFiles (file:///Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:958:5)', message: 'relation "stores" does not exist', length: 105, name: 'error', severity: 'ERROR', code: '42P01', detail: undefined, hint: undefined, position: '13', internalPosition: undefined, internalQuery: undefined, where: undefined, schema: undefined, table: undefined, column: undefined, dataType: undefined, constraint: undefined, file: 'parse_relation.c', line: '1392', routine: 'parserOpenTable', constructor: 'Function<DatabaseError>', toString: 'Function<toString>' }, length: 105, severity: 'ERROR', code: '42P01', detail: undefined, hint: undefined, position: '13', internalPosition: undefined, internalQuery: undefined, where: undefined, schema: undefined, table: undefined, column: undefined, dataType: undefined, constraint: undefined, file: 'parse_relation.c', line: '1392', routine: 'parserOpenTable' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/25]⎯
+Serialized Error: { query: 'INSERT INTO stores (id, name, slug, owner_email, owner_name, status, created_at, updated_at)\n     VALUES ($1, \'Numbering Test Store\', $2, \'numbering@test.local\', \'Test\', \'active\', now(), now())\n     ON CONFLICT (id) DO NOTHING', parameters: [ '145f7cc6-3faa-4a1d-a1a1-32b9e853782f', 'numbering-test-145f7cc6' ], driverError: { stack: 'error: relation "stores" does not exist\n    at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)\n    at DataSource.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:520:20)\n    at createFixtures (/Users/apple/Projects/faded-chapter-backend/src/__tests__/db/order-numbering.test.ts:54:3)\n    at /Users/apple/Projects/faded-chapter-backend/src/__tests__/db/order-numbering.test.ts:83:3\n    at async Promise.all (index 1)\n    at callSuiteHook (file:///Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:700:23)\n    at runSuite (file:///Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:892:27)\n    at runFiles (file:///Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:958:5)', message: 'relation "stores" does not exist', length: 105, name: 'error', severity: 'ERROR', code: '42P01', detail: undefined, hint: undefined, position: '13', internalPosition: undefined, internalQuery: undefined, where: undefined, schema: undefined, table: undefined, column: undefined, dataType: undefined, constraint: undefined, file: 'parse_relation.c', line: '1392', routine: 'parserOpenTable', constructor: 'Function<DatabaseError>', toString: 'Function<toString>' }, length: 105, severity: 'ERROR', code: '42P01', detail: undefined, hint: undefined, position: '13', internalPosition: undefined, internalQuery: undefined, where: undefined, schema: undefined, table: undefined, column: undefined, dataType: undefined, constraint: undefined, file: 'parse_relation.c', line: '1392', routine: 'parserOpenTable' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/22]⎯
 
  FAIL  src/__tests__/db/order-numbering.test.ts [ src/__tests__/db/order-numbering.test.ts ]
-Error: Cannot use a pool after calling end on the pool
- ❯ BoundPool.connect node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.0/node_modules/pg-pool/index.js:192:19
- ❯ node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresDriver.ts:1410:25
- ❯ PostgresDriver.obtainMasterConnection node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresDriver.ts:1409:16
- ❯ PostgresQueryRunner.connect node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:114:18
- ❯ PostgresQueryRunner.query node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:265:47
- ❯ DataSource.query node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:520:42
- ❯ clearStore src/__tests__/db/order-numbering.test.ts:74:25
-     72| 
-     73| async function clearStore(): Promise<void> {
-     74|   await getDataSource().query(`DELETE FROM orders WHERE store_id = $1`…
-       |                         ^
-     75|   await getDataSource().query(`DELETE FROM order_number_counters WHERE…
-     76| }
- ❯ src/__tests__/db/order-numbering.test.ts:89:9
+Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/22]⎯
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/25]⎯
-
-⎯⎯⎯⎯⎯⎯ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should hide deleted customers from normal queries
-AssertionError: expected CustomerEntity{ …(13) } to be null
- ❯ src/__tests__/integration/soft-delete.test.ts:48:21
-     46|       // findById should return null for deleted
-     47|       const found = await customerRepo.findById(customer.id, store1Id);
-     48|       expect(found).toBeNull();
-       |                     ^
-     49|     });
-     50| 
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/25]⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should allow email reuse after soft delete
-Error: Failed to save CustomerRepository
- ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
-     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
-     97|       }
-     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
-       |             ^
-     99|     }
-    100|   }
- ❯ src/__tests__/integration/soft-delete.test.ts:59:7
+ FAIL  src/__tests__/integration/auth-flow.test.ts [ src/__tests__/integration/auth-flow.test.ts ]
+ FAIL  src/__tests__/integration/security.test.ts [ src/__tests__/integration/security.test.ts ]
+QueryFailedError: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+ ❯ PostgresQueryRunner.query node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:345:19
+ ❯ PostgresQueryRunner.executeQueries node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13
+ ❯ PostgresQueryRunner.createTable node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9
+ ❯ CreateStoresTable1726350000000.up dist/migrations/1726350000000-CreateStoresTable.js:10:9
+ ❯ MigrationExecutor.executePendingMigrations node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17
+ ❯ DataSource.runMigrations node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13
+ ❯ Module.runMigrations src/core/database/postgres-data-source.ts:179:5
+    177|       await source.initialize();
+    178|     }
+    179|     await source.runMigrations();
+       |     ^
+    180|     console.log('✅ Migrations completed');
+    181|   } catch (error) {
+ ❯ setupTestDatabase src/__tests__/setup.ts:37:5
+ ❯ src/__tests__/setup.ts:174:3
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/25]⎯
+Serialized Error: { query: 'CREATE TABLE "stores" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" varchar(255) NOT NULL, "slug" varchar(255) NOT NULL, "domain" varchar(255), "owner_email" varchar(255) NOT NULL, "owner_name" varchar(255), "status" varchar(50) NOT NULL DEFAULT \'active\', "created_at" timestamptz NOT NULL DEFAULT NOW(), "updated_at" timestamptz NOT NULL DEFAULT NOW(), CONSTRAINT "UQ_790b2968701a6ff5ff383237765" UNIQUE ("slug"), CONSTRAINT "UQ_d8847d8fc379dd6b45b64712e01" UNIQUE ("domain"), CONSTRAINT "PK_7aa6e7d71fa7acdd7ca43d7c9cb" PRIMARY KEY ("id"))', parameters: undefined, driverError: { stack: 'error: duplicate key value violates unique constraint "pg_type_typname_nsp_index"\n    at /Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/pg@8.23.0/node_modules/pg/lib/client.js:694:17\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at PostgresQueryRunner.query (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:274:25)\n    at PostgresQueryRunner.executeQueries (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/query-runner/BaseQueryRunner.ts:799:13)\n    at PostgresQueryRunner.createTable (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/driver/postgres/PostgresQueryRunner.ts:673:9)\n    at CreateStoresTable1726350000000.up (file:///Users/apple/Projects/faded-chapter-backend/dist/migrations/1726350000000-CreateStoresTable.js:10:9)\n    at MigrationExecutor.executePendingMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/migration/MigrationExecutor.ts:341:17)\n    at DataSource.runMigrations (/Users/apple/Projects/faded-chapter-backend/node_modules/.pnpm/typeorm@1.1.1_better-sqlite3@12.11.1_pg@8.23.0_supports-color@7.2.0/src/data-source/DataSource.ts:377:13)\n    at Module.runMigrations (/Users/apple/Projects/faded-chapter-backend/src/core/database/postgres-data-source.ts:179:5)\n    at setupTestDatabase (/Users/apple/Projects/faded-chapter-backend/src/__tests__/setup.ts:37:5)', message: 'duplicate key value violates unique constraint "pg_type_typname_nsp_index"', length: 248, name: 'error', severity: 'ERROR', code: '23505', detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.', hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: undefined, schema: 'pg_catalog', table: 'pg_type', column: undefined, dataType: undefined, constraint: 'pg_type_typname_nsp_index', file: 'nbtinsert.c', line: '664', routine: '_bt_check_unique', constructor: 'Function<DatabaseError>', toString: 'Function<toString>' }, length: 248, severity: 'ERROR', code: '23505', detail: 'Key (typname, typnamespace)=(stores, 688517) already exists.', hint: undefined, position: undefined, internalPosition: undefined, internalQuery: undefined, where: undefined, schema: 'pg_catalog', table: 'pg_type', column: undefined, dataType: undefined, constraint: 'pg_type_typname_nsp_index', file: 'nbtinsert.c', line: '664', routine: '_bt_check_unique' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/22]⎯
 
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should not allow duplicate email when restoring
-Error: Failed to save CustomerRepository
- ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
-     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
-     97|       }
-     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
-       |             ^
-     99|     }
-    100|   }
- ❯ src/__tests__/integration/soft-delete.test.ts:95:7
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/25]⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should soft delete address
-Error: Failed to soft delete CustomerAddressRepository
- ❯ CustomerAddressRepository.softDelete src/core/repository/base-repository.ts:130:13
-    128|       );
-    129|     } catch (error) {
-    130|       throw new DatabaseError(`Failed to soft delete ${this.constructo…
-       |             ^
-    131|     }
-    132|   }
- ❯ src/__tests__/integration/soft-delete.test.ts:122:7
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'Property "deleted_at" was not found in "CustomerAddressEntity". Make sure your query is correct.' }, toResponse: 'Function<toResponse>' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/25]⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should remove from list after soft delete
-Error: Failed to soft delete CustomerAddressRepository
- ❯ CustomerAddressRepository.softDelete src/core/repository/base-repository.ts:130:13
-    128|       );
-    129|     } catch (error) {
-    130|       throw new DatabaseError(`Failed to soft delete ${this.constructo…
-       |             ^
-    131|     }
-    132|   }
- ❯ src/__tests__/integration/soft-delete.test.ts:136:7
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'Property "deleted_at" was not found in "CustomerAddressEntity". Make sure your query is correct.' }, toResponse: 'Function<toResponse>' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/25]⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should restore deleted address
-Error: Failed to soft delete CustomerAddressRepository
- ❯ CustomerAddressRepository.softDelete src/core/repository/base-repository.ts:130:13
-    128|       );
-    129|     } catch (error) {
-    130|       throw new DatabaseError(`Failed to soft delete ${this.constructo…
-       |             ^
-    131|     }
-    132|   }
- ❯ src/__tests__/integration/soft-delete.test.ts:146:7
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'Property "deleted_at" was not found in "CustomerAddressEntity". Make sure your query is correct.' }, toResponse: 'Function<toResponse>' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/25]⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should cascade delete addresses when customer deleted
-AssertionError: expected [ Array(2) ] to have a length of +0 but got 2
-
-- Expected
-+ Received
-
-- 0
-+ 2
-
- ❯ src/__tests__/integration/soft-delete.test.ts:167:25
-    165|       // Addresses should still exist in DB but should be hidden
-    166|       const addresses = await addressRepo.getCustomerAddresses(custome…
-    167|       expect(addresses).toHaveLength(0);
-       |                         ^
-    168| 
-    169|       // But if we query with soft-delete filtering removed, they're s…
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/25]⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Soft Delete with Unique Constraints > should respect unique constraint with deleted_at IS NULL
-Error: Failed to save CustomerRepository
- ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
-     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
-     97|       }
-     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
-       |             ^
-     99|     }
-    100|   }
- ❯ src/__tests__/integration/soft-delete.test.ts:187:7
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/25]⎯
-
- FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Audit Trail Preservation > should preserve deleted customer in audit logs
-Error: Cannot find module '../../core/repositories/audit-log.repository.js'
-Require stack:
-- /Users/apple/Projects/faded-chapter-backend/src/__tests__/integration/soft-delete.test.ts
- ❯ src/__tests__/integration/soft-delete.test.ts:213:25
-    211|       const customerId = customer.id;
-    212| 
-    213|       const auditRepo = require('../../core/repositories/audit-log.rep…
-       |                         ^
-    214|       const repo = new auditRepo();
-    215| 
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
-Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/apple/Projects/faded-chapter-backend/src/__tests__/integration/soft-delete.test.ts' ] }
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/25]⎯
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 1: GET /dashboard/metrics > should return KPI metrics with proper numeric formatting
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -885,7 +635,7 @@ AssertionError: expected 404 to be 200 // Object.is equality
      25|       expect(response.data.success).toBe(true);
      26|       expect(response.data.data).toBeDefined();
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 2: GET /dashboard/pending-refunds > should return paginated list of pending refunds
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -904,7 +654,7 @@ AssertionError: expected 404 to be 200 // Object.is equality
      47|       expect(response.data.success).toBe(true);
      48|       expect(Array.isArray(response.data.data.refunds)).toBe(true);
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 3: GET /dashboard/admin-actions > should return admin actions with pagination
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -923,7 +673,7 @@ AssertionError: expected 404 to be 200 // Object.is equality
      61|       expect(response.data.success).toBe(true);
      62|       expect(Array.isArray(response.data.data.actions)).toBe(true);
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 4: GET /dashboard/charts/revenue > should return revenue chart data with proper numeric formatting
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -942,7 +692,7 @@ AssertionError: expected 404 to be 200 // Object.is equality
      72|       expect(response.data.success).toBe(true);
      73|       expect(Array.isArray(response.data.data.data)).toBe(true);
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 5: GET /dashboard/charts/refunds > should return refund chart data
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -961,7 +711,7 @@ AssertionError: expected 404 to be 200 // Object.is equality
      88|       expect(response.data.success).toBe(true);
      89|       expect(Array.isArray(response.data.data.data)).toBe(true);
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ✅ Endpoint 6: GET /dashboard/refund-statistics > should return refund statistics by status
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -980,7 +730,7 @@ AssertionError: expected 404 to be 200 // Object.is equality
      98|       expect(response.data.success).toBe(true);
      99| 
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > 🔒 Security Tests > should enforce store isolation
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -999,7 +749,7 @@ AssertionError: expected 404 to be 200 // Object.is equality
     111|       expect(response.data.data).toBeDefined();
     112|     });
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > 📊 Data Integrity Tests > should have consistent metrics across endpoints
 TypeError: Cannot read properties of undefined (reading 'refunds')
@@ -1011,7 +761,7 @@ TypeError: Cannot read properties of undefined (reading 'refunds')
     124|       expect(metrics.refunds.approved_count).toBe(stats.approved);
     125|     });
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/22]⎯
 
  FAIL  src/__tests__/e2e/dashboard.e2e.test.ts > Phase 10a - Admin Dashboard E2E Tests > ⚡ Performance Tests > all endpoints should respond within 1 second
 AssertionError: expected 404 to be 200 // Object.is equality
@@ -1030,12 +780,227 @@ AssertionError: expected 404 to be 200 // Object.is equality
     143|         expect(duration).toBeLessThan(1000);
     144|       }
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/25]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/22]⎯
+
+ FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should hide deleted customers from normal queries
+AssertionError: expected CustomerEntity{ …(13) } to be null
+ ❯ src/__tests__/integration/soft-delete.test.ts:49:21
+     47|       // findById should return null for deleted
+     48|       const found = await customerRepo.findById(customer.id, store1Id);
+     49|       expect(found).toBeNull();
+       |                     ^
+     50|     });
+     51| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/22]⎯
+
+ FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Customer Soft Delete > should not allow duplicate email when restoring
+Error: Duplicate entry: duplicate key value violates unique constraint "idx_customers_email_normalized_active"
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:96:15
+     94|       const dbError = error as Error;
+     95|       if (dbError.message.includes('unique constraint')) {
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+       |               ^
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+ ❯ src/__tests__/integration/soft-delete.test.ts:107:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/22]⎯
+
+ FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should soft delete address
+Error: Failed to soft delete CustomerAddressRepository
+ ❯ CustomerAddressRepository.softDelete src/core/repository/base-repository.ts:130:13
+    128|       );
+    129|     } catch (error) {
+    130|       throw new DatabaseError(`Failed to soft delete ${this.constructo…
+       |             ^
+    131|     }
+    132|   }
+ ❯ src/__tests__/integration/soft-delete.test.ts:127:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'Property "deleted_at" was not found in "CustomerAddressEntity". Make sure your query is correct.' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/22]⎯
+
+ FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should remove from list after soft delete
+Error: Failed to soft delete CustomerAddressRepository
+ ❯ CustomerAddressRepository.softDelete src/core/repository/base-repository.ts:130:13
+    128|       );
+    129|     } catch (error) {
+    130|       throw new DatabaseError(`Failed to soft delete ${this.constructo…
+       |             ^
+    131|     }
+    132|   }
+ ❯ src/__tests__/integration/soft-delete.test.ts:141:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'Property "deleted_at" was not found in "CustomerAddressEntity". Make sure your query is correct.' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/22]⎯
+
+ FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should restore deleted address
+Error: Failed to soft delete CustomerAddressRepository
+ ❯ CustomerAddressRepository.softDelete src/core/repository/base-repository.ts:130:13
+    128|       );
+    129|     } catch (error) {
+    130|       throw new DatabaseError(`Failed to soft delete ${this.constructo…
+       |             ^
+    131|     }
+    132|   }
+ ❯ src/__tests__/integration/soft-delete.test.ts:151:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'Property "deleted_at" was not found in "CustomerAddressEntity". Make sure your query is correct.' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/22]⎯
+
+ FAIL  src/__tests__/integration/soft-delete.test.ts > Soft Delete Tests > Address Soft Delete > should cascade delete addresses when customer deleted
+AssertionError: expected [ Array(2) ] to have a length of +0 but got 2
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ src/__tests__/integration/soft-delete.test.ts:172:25
+    170|       // Addresses should still exist in DB but should be hidden
+    171|       const addresses = await addressRepo.getCustomerAddresses(custome…
+    172|       expect(addresses).toHaveLength(0);
+       |                         ^
+    173| 
+    174|       // But if we query with soft-delete filtering removed, they're s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/22]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+Error: Failed to save AuditLogRepository
+ ❯ AuditLogRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:251:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'invalid input syntax for type uuid: "test-id"' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/22]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 3 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+AssertionError: promise resolved "null" instead of rejecting
+
+- Expected: 
+[Error: rejected promise]
+
++ Received: 
+null
+
+ ❯ Assertion.__VITEST_REJECTS__ node_modules/.pnpm/@vitest+expect@1.6.1/node_modules/@vitest/expect/dist/index.js:1500:19
+ ❯ Assertion.propertyGetter node_modules/.pnpm/chai@4.5.0/node_modules/chai/lib/chai/utils/addProperty.js:62:29
+ ❯ Object.proxyGetter [as get] node_modules/.pnpm/chai@4.5.0/node_modules/chai/lib/chai/utils/proxify.js:98:22
+ ❯ src/__tests__/integration/store-isolation.test.ts:102:57
+    100| 
+    101|       // Cannot access from different store
+    102|       expect(addressRepo.findById(address1.id, store2Id)).rejects.toTh…
+       |                                                         ^
+    103| 
+    104|       // Can access from same store
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ runTest node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:781:11
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+
+This error originated in "src/__tests__/integration/store-isolation.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "should isolate addresses by store". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+AssertionError: promise resolved "null" instead of rejecting
+
+- Expected: 
+[Error: rejected promise]
+
++ Received: 
+null
+
+ ❯ Assertion.__VITEST_REJECTS__ node_modules/.pnpm/@vitest+expect@1.6.1/node_modules/@vitest/expect/dist/index.js:1500:19
+ ❯ Assertion.propertyGetter node_modules/.pnpm/chai@4.5.0/node_modules/chai/lib/chai/utils/addProperty.js:62:29
+ ❯ Object.proxyGetter [as get] node_modules/.pnpm/chai@4.5.0/node_modules/chai/lib/chai/utils/proxify.js:98:22
+ ❯ src/__tests__/integration/store-isolation.test.ts:154:50
+    152| 
+    153|       // Cannot access session from different store
+    154|       expect(repo.findById(session1.id, store2Id)).rejects.toThrow();
+       |                                                  ^
+    155| 
+    156|       // Can access from same store
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ runTest node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:781:11
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+
+This error originated in "src/__tests__/integration/store-isolation.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "should isolate sessions by store". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+AssertionError: promise resolved "CustomerEntity{ …(13) }" instead of rejecting
+
+- Expected
++ Received
+
+- [Error: rejected promise]
++ CustomerEntity {
++   "created_at": 2026-09-23T10:04:21.000Z,
++   "deleted_at": null,
++   "email": "user@example.com",
++   "email_normalized": "user@example.com",
++   "email_verified": false,
++   "email_verified_at": null,
++   "first_name": null,
++   "id": "bda2ca41-3e95-450a-a809-37dfad808893",
++   "last_name": null,
++   "phone": null,
++   "status": "active",
++   "store_id": "4fff3c17-f4ce-4180-826f-d97e64811c88",
++   "updated_at": 2026-09-23T10:04:21.000Z,
++ }
+
+ ❯ Assertion.__VITEST_REJECTS__ node_modules/.pnpm/@vitest+expect@1.6.1/node_modules/@vitest/expect/dist/index.js:1500:19
+ ❯ Assertion.propertyGetter node_modules/.pnpm/chai@4.5.0/node_modules/chai/lib/chai/utils/addProperty.js:62:29
+ ❯ Object.proxyGetter [as get] node_modules/.pnpm/chai@4.5.0/node_modules/chai/lib/chai/utils/proxify.js:98:22
+ ❯ src/__tests__/integration/store-isolation.test.ts:194:7
+    192|           email: 'user@example.com',
+    193|         })
+    194|       ).rejects.toThrow();
+       |       ^
+    195| 
+    196|       // But can reuse in different store
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ runTest node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:781:11
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+ ❯ runSuite node_modules/.pnpm/@vitest+runner@1.6.1/node_modules/@vitest/runner/dist/index.js:909:15
+
+This error originated in "src/__tests__/integration/store-isolation.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "should prevent soft delete escape". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 
  Test Files  8 failed | 14 passed (22)
-      Tests  18 failed | 179 passed (274)
-   Start at  15:24:36
-   Duration  1.18s (transform 301ms, setup 1.02s, collect 536ms, tests 2.28s, environment 0ms, prepare 236ms)
+      Tests  16 failed | 196 passed (274)
+     Errors  3 errors
+   Start at  15:34:20
+   Duration  30.38s (transform 249ms, setup 616ms, collect 415ms, tests 31.71s, environment 0ms, prepare 142ms)
 
 
  FAIL  Tests failed. Watching for file changes...
