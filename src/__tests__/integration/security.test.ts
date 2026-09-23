@@ -145,7 +145,7 @@ describe('Security Tests', () => {
     });
 
     it('should use bcrypt with cost factor 10', async () => {
-      await authService.register(store1Id, {
+      const result = await authService.register(store1Id, {
         email: testUser.email,
         password: testUser.password,
         ipAddress: '192.168.1.1',
@@ -154,7 +154,7 @@ describe('Security Tests', () => {
       // Extract cost from hash: $2b$10$...
       const { CustomerCredentialsRepository } = await import('../../core/repositories/customer-credentials.repository.js');
       const repo = new CustomerCredentialsRepository();
-      const creds = await repo.getByCustomerId(customerId, store1Id);
+      const creds = await repo.getByCustomerId(result.customer_id, store1Id);
 
       // Bcrypt rounds should be 10
       const hash = creds?.password_hash || '';

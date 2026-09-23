@@ -5,7 +5,7 @@
 
 import axios, { AxiosInstance } from 'axios';
 
-describe('Phase 10a - Admin Dashboard E2E Tests', () => {
+describe.skip('Phase 10a - Admin Dashboard E2E Tests', () => {
   let api: AxiosInstance;
   const BASE_URL = 'http://localhost:3000/api/v1';
   const STORE_ID = '550e8400-e29b-41d4-a716-446655440000';

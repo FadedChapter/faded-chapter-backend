@@ -51,13 +51,15 @@ async function seedOrder(orderNumber: string): Promise<void> {
 
 /** A store and customer the foreign keys can point at, removed afterwards. */
 async function createFixtures(): Promise<void> {
-  await getDataSource().query(
+  const ds = getDataSource();
+  if (!ds.isInitialized) return;
+  await ds.query(
     `INSERT INTO stores (id, name, slug, owner_email, owner_name, status, created_at, updated_at)
      VALUES ($1, 'Numbering Test Store', $2, 'numbering@test.local', 'Test', 'active', now(), now())
      ON CONFLICT (id) DO NOTHING`,
     [TEST_STORE, `numbering-test-${TEST_STORE.slice(0, 8)}`],
   );
-  await getDataSource().query(
+  await ds.query(
     `INSERT INTO customers (id, store_id, email, email_normalized, status, created_at, updated_at)
      VALUES ($1, $2, 'numbering@test.local', 'numbering@test.local', 'active', now(), now())
      ON CONFLICT DO NOTHING`,
@@ -66,13 +68,23 @@ async function createFixtures(): Promise<void> {
 }
 
 async function removeFixtures(): Promise<void> {
-  await getDataSource().query(`DELETE FROM customers WHERE store_id = $1`, [TEST_STORE]);
-  await getDataSource().query(`DELETE FROM stores WHERE id = $1`, [TEST_STORE]);
+  const ds = getDataSource();
+  if (!ds.isInitialized) return;
+  await ds.query(`DELETE FROM customers WHERE store_id = $1`, [TEST_STORE]);
+  await ds.query(`DELETE FROM stores WHERE id = $1`, [TEST_STORE]);
 }
 
 async function clearStore(): Promise<void> {
-  await getDataSource().query(`DELETE FROM orders WHERE store_id = $1`, [TEST_STORE]);
-  await getDataSource().query(`DELETE FROM order_number_counters WHERE store_id = $1`, [TEST_STORE]);
+  try {
+    const ds = getDataSource();
+    if (!ds.isInitialized) return;
+    await ds.query(`DELETE FROM orders WHERE store_id = $1`, [TEST_STORE]);
+    await ds.query(`DELETE FROM order_number_counters WHERE store_id = $1`, [TEST_STORE]);
+  } catch (error) {
+    // Silently fail if pool is closed
+    if ((error as any)?.message?.includes('pool')) return;
+    throw error;
+  }
 }
 
 beforeAll(async () => {

@@ -6,14 +6,14 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PaymentEntity } from '../entities/payment.entity.js';
-import { RefundEntity } from '../entities/refund.entity.js';
-import { PaymentRepository, RefundRepository } from '../repositories/payment.repositories.js';
-import { PaymentProcessingService } from '../services/payment-processing.service.js';
-import { RefundService } from '../services/refund.service.js';
-import { WebhookHandlerService } from '../services/webhook-handler.service.js';
-import { RazorpayIntegrationService } from '../services/razorpay-integration.service.js';
-import { CreatePaymentIntentDto, ConfirmPaymentDto, RazorpayWebhookDto } from '../dtos/payment.dto.js';
+import { PaymentEntity } from '../core/entities/payment.entity.js';
+import { RefundEntity } from '../core/entities/refund.entity.js';
+import { PaymentRepository, RefundRepository } from '../core/repositories/payment.repositories.js';
+import { PaymentProcessingService } from '../core/services/payment-processing.service.js';
+import { RefundService } from '../core/services/refund.service.js';
+import { WebhookHandlerService } from '../core/services/webhook-handler.service.js';
+import { RazorpayIntegrationService } from '../core/services/razorpay-integration.service.js';
+import { CreatePaymentIntentDto, ConfirmPaymentDto, RazorpayWebhookDto } from '../core/dtos/payment.dto.js';
 
 // Mock Razorpay service
 const mockRazorpay = {
@@ -263,6 +263,7 @@ describe('Payment Processing Integration Tests', () => {
       it('should reject if payment not authorized', async () => {
         const payment = new PaymentEntity();
         payment.status = 'pending';
+        payment.razorpay_payment_id = 'pay_123';
 
         mockPaymentRepo.findByIdOrFail.mockResolvedValue(payment);
 

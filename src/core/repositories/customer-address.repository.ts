@@ -64,10 +64,12 @@ export class CustomerAddressRepository extends BaseRepository<CustomerAddressEnt
    */
   async getCustomerAddresses(customerId: string, storeId: string): Promise<CustomerAddressEntity[]> {
     try {
+      const { IsNull } = await import('typeorm');
       return await this.repository.find({
         where: {
           customer_id: customerId,
           store_id: storeId,
+          deleted_at: IsNull(),
         } as any,
         order: { created_at: 'DESC' } as any,
       });

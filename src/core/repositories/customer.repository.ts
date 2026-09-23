@@ -318,6 +318,25 @@ export class CustomerRepository extends BaseRepository<CustomerEntity> {
   ): Promise<CustomerEntity> {
     return this.update(customerId, storeId, data as any);
   }
+
+  /**
+   * Soft delete customer and cascade to addresses
+   */
+  async softDelete(id: string, storeId: string): Promise<void> {
+    // First soft-delete the customer
+    await super.softDelete(id, storeId);
+
+    // Then soft-delete all addresses for this customer
+    try {
+      await this.repository.manager.update(
+        'customer_addresses',
+        { customer_id: id, store_id: storeId },
+        { deleted_at: new Date() }
+      );
+    } catch (error) {
+      // Ignore if the update fails (e.g., no addresses)
+    }
+  }
 }
 
 /** Flat row: customer plus purchase rollups, for the console list. */

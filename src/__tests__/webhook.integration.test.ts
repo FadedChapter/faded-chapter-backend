@@ -6,10 +6,10 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { WebhookController } from '../controllers/webhook.controller.js';
-import { WebhookHandlerService } from '../services/webhook-handler.service.js';
-import { RazorpayIntegrationService } from '../services/razorpay-integration.service.js';
-import { RazorpayWebhookDto } from '../dtos/payment.dto.js';
+import { WebhookController } from '../core/controllers/webhook.controller.js';
+import { WebhookHandlerService } from '../core/services/webhook-handler.service.js';
+import { RazorpayIntegrationService } from '../core/services/razorpay-integration.service.js';
+import { RazorpayWebhookDto } from '../core/dtos/payment.dto.js';
 
 // Mock services
 const mockWebhookHandler = {
