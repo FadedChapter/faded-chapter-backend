@@ -8,6 +8,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 import { SessionService } from '../../core/services/session.service.js';
 import { TokenService } from '../../core/services/token.service.js';
 import { AuthService } from '../../core/services/auth.service.js';
@@ -262,7 +263,7 @@ describe('Security Tests', () => {
 
       const log = await auditRepo.createEntry(store1Id, {
         tableName: 'customers',
-        recordId: 'test-id',
+        recordId: uuidv4(),
         actorId: customerId,
         actorType: 'customer',
         action: 'insert',
@@ -278,7 +279,7 @@ describe('Security Tests', () => {
 
       await auditRepo.createEntry(store1Id, {
         tableName: 'customers',
-        recordId: 'test-id',
+        recordId: uuidv4(),
         actorId: customerId,
         actorType: 'customer',
         action: 'insert',

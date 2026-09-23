@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import { v4 as uuidv4 } from 'uuid';
 import { CustomerService } from '../../core/services/customer.service.js';
 import { CustomerRepository } from '../../core/repositories/customer.repository.js';
 import { CustomerAddressRepository } from '../../core/repositories/customer-address.repository.js';
@@ -248,9 +249,10 @@ describe('Store Isolation Tests', () => {
       const repo = new AuditLogRepository();
 
       // Create audit log for store1
+      const testRecordId = uuidv4();
       const log1 = await repo.createEntry(store1Id, {
         tableName: 'customers',
-        recordId: 'test-id',
+        recordId: testRecordId,
         actorId: 'actor-1',
         actorType: 'customer',
         action: 'insert',
@@ -258,7 +260,7 @@ describe('Store Isolation Tests', () => {
       });
 
       // Get audit logs for store1
-      const logsStore1 = await repo.getRecordHistory(store1Id, 'customers', 'test-id');
+      const logsStore1 = await repo.getRecordHistory(store1Id, 'customers', testRecordId);
       expect(logsStore1).toContainEqual(expect.objectContaining({ id: log1.id }));
     });
   });
