@@ -5,6 +5,7 @@
  * Phase 2: Repository implementation
  */
 
+import { IsNull } from 'typeorm';
 import { BaseRepository } from '../repository/base-repository';
 import { VerificationTokenEntity } from '../entities/verification-token.entity';
 import { PasswordResetTokenEntity } from '../entities/password-reset-token.entity';
@@ -28,7 +29,7 @@ export class VerificationTokenRepository extends BaseRepository<VerificationToke
         where: {
           token_hash: tokenHash,
           store_id: storeId,
-          consumed_at: null,
+          consumed_at: IsNull(),
         } as any,
       });
 
@@ -118,7 +119,7 @@ export class PasswordResetTokenRepository extends BaseRepository<PasswordResetTo
         where: {
           token_hash: tokenHash,
           store_id: storeId,
-          consumed_at: null,
+          consumed_at: IsNull(),
         } as any,
       });
 

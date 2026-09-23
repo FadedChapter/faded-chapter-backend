@@ -234,10 +234,11 @@ describe('Store Isolation Tests', () => {
       // Can soft delete from correct store
       await customerRepo.softDelete(customer1.id, store1Id);
 
+      // After soft delete, findById returns null (soft-deleted records are hidden)
       const deleted = await customerRepo.findById(customer1.id, store1Id);
-      expect(deleted?.deleted_at).toBeDefined();
+      expect(deleted).toBeNull();
 
-      // Attempting delete from wrong store should not find the record
+      // Attempting to find from wrong store should also return null
       const notFound = await customerRepo.findById(customer1.id, store2Id);
       expect(notFound).toBeNull();
     });

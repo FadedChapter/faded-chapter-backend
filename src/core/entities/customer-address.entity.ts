@@ -120,4 +120,7 @@ export class CustomerAddressEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
+
+  @Column('timestamptz', { nullable: true })
+  deleted_at: Date | null;
 }

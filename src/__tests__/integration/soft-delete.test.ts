@@ -98,6 +98,10 @@ describe('Soft Delete Tests', () => {
       });
       await customerRepo.save(customer1);
 
+      // Soft delete customer1
+      await customerRepo.softDelete(customer1.id, store1Id);
+
+      // Create customer2 with same email (should succeed because customer1 is soft-deleted)
       const customer2 = await customerRepo.repository.create({
         id: uuidv4(),
         store_id: store1Id,
@@ -106,10 +110,8 @@ describe('Soft Delete Tests', () => {
       });
       await customerRepo.save(customer2);
 
-      // Soft delete and restore both - one should fail on unique constraint
-      await customerRepo.softDelete(customer2.id, store1Id);
-
-      expect(customerRepo.restore(customer2.id, store1Id)).rejects.toThrow();
+      // Try to restore customer1 - should fail because customer2 now has that email
+      expect(customerRepo.restore(customer1.id, store1Id)).rejects.toThrow();
     });
   });
 

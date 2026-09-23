@@ -115,6 +115,11 @@ export class CreateCustomerAddressesTable1726350003000 implements MigrationInter
             type: 'timestamptz',
             default: 'NOW()',
           },
+          {
+            name: 'deleted_at',
+            type: 'timestamptz',
+            isNullable: true,
+          },
         ],
       }),
       true

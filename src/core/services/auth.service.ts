@@ -61,6 +61,11 @@ export class AuthService {
       userAgent?: string;
     }
   ): Promise<LoginResponse> {
+    // Validate password strength
+    if (!data.password || data.password.length < 8) {
+      throw new ValidationError('Password must be at least 8 characters long');
+    }
+
     // Register customer
     const customer = await this.customerService.registerCustomer(storeId, {
       email: data.email,
