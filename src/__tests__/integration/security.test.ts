@@ -107,9 +107,8 @@ describe('Security Tests', () => {
         ipAddress: '192.168.1.1',
       });
 
-      const credentialsRepo = require('../../core/repositories/customer-credentials.repository.js')
-        .CustomerCredentialsRepository;
-      const repo = new credentialsRepo();
+      const { CustomerCredentialsRepository } = await import('../../core/repositories/customer-credentials.repository.js');
+      const repo = new CustomerCredentialsRepository();
       const creds = await repo.getByCustomerId(result.customer_id, store1Id);
 
       // Should not store raw password
@@ -153,9 +152,8 @@ describe('Security Tests', () => {
       });
 
       // Extract cost from hash: $2b$10$...
-      const credentialsRepo = require('../../core/repositories/customer-credentials.repository.js')
-        .CustomerCredentialsRepository;
-      const repo = new credentialsRepo();
+      const { CustomerCredentialsRepository } = await import('../../core/repositories/customer-credentials.repository.js');
+      const repo = new CustomerCredentialsRepository();
       const creds = await repo.getByCustomerId(customerId, store1Id);
 
       // Bcrypt rounds should be 10
@@ -225,9 +223,8 @@ describe('Security Tests', () => {
 
       const token = await authService.sendEmailVerification(result.customer_id, store1Id);
 
-      const verificationTokenRepo = require('../../core/repositories/token.repository.js')
-        .VerificationTokenRepository;
-      const repo = new verificationTokenRepo();
+      const { VerificationTokenRepository } = await import('../../core/repositories/token.repository.js');
+      const repo = new VerificationTokenRepository();
 
       // Token hash is stored, not raw token
       const storedToken = await repo.repository.findOne({
