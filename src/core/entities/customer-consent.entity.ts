@@ -23,12 +23,8 @@ import { CustomerEntity } from './customer.entity.js';
 
 @Entity('customer_consents')
 @Index('idx_customer_consents_customer_id', ['customer_id'])
-@Index('idx_customer_consents_created_at', ['created_at'], {
-  orderBy: { created_at: 'DESC' }
-})
-@Index('idx_customer_consents_lookup', ['store_id', 'customer_id', 'consent_type', 'created_at'], {
-  orderBy: { created_at: 'DESC' }
-})
+@Index('idx_customer_consents_created_at', ['created_at'])
+@Index('idx_customer_consents_lookup', ['store_id', 'customer_id', 'consent_type', 'created_at'])
 export class CustomerConsentEntity {
   // ============================================================================
   // Identity

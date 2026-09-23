@@ -48,7 +48,7 @@ function isValidTimezone(value: string): boolean {
  * message, because it is believed.
  */
 const ISO_4217_CODES: ReadonlySet<string> = new Set(
-  typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('currency') : [],
+  typeof (Intl as any).supportedValuesOf === 'function' ? (Intl as any).supportedValuesOf('currency') : [],
 );
 
 function isValidCurrency(value: string): boolean {

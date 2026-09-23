@@ -21,9 +21,7 @@ import { StoreEntity } from './store.entity.js';
 @Entity('customers')
 @Index('idx_customers_store_id', ['store_id'])
 @Index('idx_customers_status', ['store_id', 'status'])
-@Index('idx_customers_created_at', ['store_id', 'created_at'], {
-  orderBy: { created_at: 'DESC' }
-})
+@Index('idx_customers_created_at', ['store_id', 'created_at'])
 @Index('uq_customers_store_email_active', ['store_id', 'email_normalized'], {
   unique: true,
   where: 'deleted_at IS NULL'

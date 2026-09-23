@@ -14,8 +14,8 @@ export interface AddressDTO {
   addressLine1: string;
   addressLine2: string | null;
   city: string;
-  stateProvince: string;
-  postalCode: string;
+  stateProvince: string | null;
+  postalCode: string | null;
   countryCode: string;
   isDefaultShipping: boolean;
   isDefaultBilling: boolean;

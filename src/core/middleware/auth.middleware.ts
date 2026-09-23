@@ -9,7 +9,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { SessionService } from '../services/session.service';
 import { AuthenticationError } from '../errors/app-error';
-import { env } from '../config/env';
+import { getConfig } from '../config/env';
 
 export interface JWTPayload {
   customer_id: string;
@@ -33,7 +33,8 @@ export function requireAuth(sessionService: SessionService) {
       // Verify JWT signature
       let payload: JWTPayload;
       try {
-        payload = jwt.verify(token, env.get('JWT_SECRET')) as JWTPayload;
+        const config = getConfig();
+        payload = jwt.verify(token, config.JWT_SECRET) as JWTPayload;
       } catch (err) {
         throw new AuthenticationError('Invalid or expired token');
       }
@@ -86,7 +87,8 @@ export function optionalAuth(sessionService: SessionService) {
       // Verify JWT signature
       let payload: JWTPayload;
       try {
-        payload = jwt.verify(token, env.get('JWT_SECRET')) as JWTPayload;
+        const config = getConfig();
+        payload = jwt.verify(token, config.JWT_SECRET) as JWTPayload;
       } catch (err) {
         // Invalid token, but optional so continue
         return next();

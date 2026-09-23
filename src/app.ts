@@ -34,11 +34,8 @@ export function createApp(): Express {
   // Security Middleware
   // ============================================================================
   app.use(helmet());
-  const corsOrigins = typeof config.CORS_ORIGINS === 'string'
-    ? config.CORS_ORIGINS.split(',')
-    : config.CORS_ORIGINS || ['http://localhost:3000'];
   app.use(cors({
-    origin: corsOrigins,
+    origin: config.CORS_ORIGINS,
     credentials: true,
   }));
 

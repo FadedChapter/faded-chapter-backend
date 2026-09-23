@@ -67,5 +67,3 @@ export class ProductVariantEntity {
   // Relationships
   inventory?: InventoryEntity;
 }
-
-import { InventoryEntity } from './inventory.entity.js';

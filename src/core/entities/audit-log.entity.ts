@@ -21,12 +21,8 @@ import {
 @Index('idx_audit_logs_actor_id', ['actor_id'])
 @Index('idx_audit_logs_table_name', ['table_name'])
 @Index('idx_audit_logs_record_id', ['record_id'])
-@Index('idx_audit_logs_created_at', ['created_at'], {
-  orderBy: { created_at: 'DESC' }
-})
-@Index('idx_audit_logs_lookup', ['table_name', 'record_id', 'created_at'], {
-  orderBy: { created_at: 'DESC' }
-})
+@Index('idx_audit_logs_created_at', ['created_at'])
+@Index('idx_audit_logs_lookup', ['table_name', 'record_id', 'created_at'])
 export class AuditLogEntity {
   // ============================================================================
   // Identity
