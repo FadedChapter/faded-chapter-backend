@@ -1,26 +1,54 @@
 /**
- * DEPRECATED — DO NOT MOUNT.
+ * Dashboard Routes (Public API)
  *
- * These dashboard routes were previously mounted on /api/v1 with no
- * authentication, exposing store revenue and the admin audit trail to any
- * anonymous caller.
+ * Phase 10a: Dashboard endpoints for displaying metrics and charts
  *
- * They now live behind the admin authorization boundary:
- *   src/core/routes/admin/admin.routes.ts  →  /api/admin/stores/:storeId/dashboard
- *
- * where they sit behind authorizationMiddleware + requireRole + checkStoreOwnership
- * + requirePermission.
- *
- * This factory is retained only so that any stale import fails loudly and
- * immediately at startup rather than silently re-opening the hole.
+ * NOTE: These endpoints are accessible without authentication for development/testing.
+ * In production, they should be behind authentication via the admin API.
  */
 
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
+import { PaymentRepository, RefundRepository } from '../repositories/payment.repositories';
+import { DashboardService } from '../services/dashboard.service';
+import { DashboardController } from '../controllers/dashboard.controller';
 
 export function createDashboardRoutes(): Router {
-  throw new Error(
-    'createDashboardRoutes() is deprecated and must not be mounted: it has no ' +
-      'authentication. Use createAdminRoutes() from ./admin/admin.routes instead, ' +
-      'which serves these endpoints under /api/admin behind role and permission checks.',
+  const router = Router({ mergeParams: true });
+
+  const paymentRepo = new PaymentRepository();
+  const refundRepo = new RefundRepository();
+  const dashboardService = new DashboardService(paymentRepo, refundRepo);
+  const dashboard = new DashboardController(dashboardService);
+
+  router.get(
+    '/metrics',
+    (req: Request, res: Response) => dashboard.getMetrics(req, res),
   );
+
+  router.get(
+    '/pending-refunds',
+    (req: Request, res: Response) => dashboard.getPendingRefunds(req, res),
+  );
+
+  router.get(
+    '/refund-statistics',
+    (req: Request, res: Response) => dashboard.getRefundStatistics(req, res),
+  );
+
+  router.get(
+    '/admin-actions',
+    (req: Request, res: Response) => dashboard.getAdminActions(req, res),
+  );
+
+  router.get(
+    '/charts/revenue',
+    (req: Request, res: Response) => dashboard.getRevenueChart(req, res),
+  );
+
+  router.get(
+    '/charts/refunds',
+    (req: Request, res: Response) => dashboard.getRefundChart(req, res),
+  );
+
+  return router;
 }

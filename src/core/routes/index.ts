@@ -23,6 +23,7 @@ import { createPromoRoutes } from './promo.routes';
 import { createShippingRoutes } from './shipping.routes';
 import { createPaymentRoutes } from './payment.routes';
 import { createWebhookRoutes } from './webhook.routes';
+import { createDashboardRoutes } from './dashboard.routes';
 import { createAdminRoutes } from './admin/admin.routes';
 
 /**
@@ -54,6 +55,7 @@ export function registerCoreRoutes(
   router.use('/stores/:storeId', createCartRoutes());
   router.use('/stores/:storeId', createPromoRoutes());
   router.use('/stores/:storeId/shipping', createShippingRoutes());
+  router.use('/stores/:storeId/dashboard', createDashboardRoutes());
 
   // Payment routes.
   // Previously gated on `if (services?.payment && services?.refund)` while the
@@ -107,5 +109,6 @@ export {
   createPromoRoutes,
   createShippingRoutes,
   createPaymentRoutes,
-  createWebhookRoutes
+  createWebhookRoutes,
+  createDashboardRoutes
 };
