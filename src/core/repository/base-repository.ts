@@ -12,7 +12,7 @@
  * Phase 1: Used by all 11 Core Domain repositories
  */
 
-import { Repository, SelectQueryBuilder, FindManyOptions, UpdateResult, DeleteResult } from 'typeorm';
+import { Repository, SelectQueryBuilder, FindManyOptions, UpdateResult, DeleteResult, IsNull } from 'typeorm';
 import { getDataSource } from '../database/postgres-data-source';
 import { StoreIsolationError, NotFoundError, DatabaseError } from '../errors/app-error';
 import { logError, createChildLogger } from '../logging/logger';
@@ -52,6 +52,21 @@ export abstract class BaseRepository<T extends { id: string; store_id: string }>
    * Find one record by ID (with store isolation)
    */
   async findById(id: string, storeId: string): Promise<T | null> {
+    try {
+      const record = await this.repository.findOne({
+        where: { id, store_id: storeId, deleted_at: IsNull() } as any,
+      });
+      return record;
+    } catch (error) {
+      throw new DatabaseError(`Failed to find ${this.constructor.name} by ID`, error as Error);
+    }
+  }
+
+  /**
+   * Find by ID including soft-deleted records (internal use only)
+   * Used by softDelete and restore operations
+   */
+  protected async findByIdIncludingDeleted(id: string, storeId: string): Promise<T | null> {
     try {
       const record = await this.repository.findOne({
         where: { id, store_id: storeId } as any,
@@ -121,7 +136,13 @@ export abstract class BaseRepository<T extends { id: string; store_id: string }>
    */
   async softDelete(id: string, storeId: string): Promise<void> {
     try {
-      const existing = await this.findByIdOrFail(id, storeId);
+      const existing = await this.findByIdIncludingDeleted(id, storeId);
+      if (!existing) {
+        throw new Error(`${this.constructor.name} not found`);
+      }
+      if ((existing as any).store_id !== storeId) {
+        throw new Error('Store isolation violation');
+      }
       await this.repository.update(
         { id, store_id: storeId } as any,
         { deleted_at: new Date() } as any
@@ -136,7 +157,13 @@ export abstract class BaseRepository<T extends { id: string; store_id: string }>
    */
   async restore(id: string, storeId: string): Promise<T> {
     try {
-      const existing = await this.findByIdOrFail(id, storeId);
+      const existing = await this.findByIdIncludingDeleted(id, storeId);
+      if (!existing) {
+        throw new Error(`${this.constructor.name} not found`);
+      }
+      if ((existing as any).store_id !== storeId) {
+        throw new Error('Store isolation violation');
+      }
       await this.repository.update(
         { id, store_id: storeId } as any,
         { deleted_at: null } as any
