@@ -254,8 +254,13 @@ export class CustomerRepository extends BaseRepository<CustomerEntity> {
     // Normalize email
     const normalized = data.email ? data.email.toLowerCase().trim() : '';
 
+    // Generate UUID if not provided
+    const { v4: uuidv4 } = await import('uuid');
+    const customerId = data.id || uuidv4();
+
     const customer = this.repository.create({
       ...data,
+      id: customerId,
       store_id: storeId,
       email_normalized: normalized,
       email_verified: false,
