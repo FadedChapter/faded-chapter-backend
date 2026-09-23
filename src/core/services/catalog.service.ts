@@ -49,13 +49,13 @@ export class ProductService {
     product.store_id = storeId;
     product.name = dto.name;
     product.slug = dto.slug;
-    product.description = dto.description;
-    product.sku = dto.sku;
+    product.description = dto.description || null;
+    product.sku = dto.sku || null;
     product.status = dto.status || 'draft';
     product.is_featured = dto.is_featured || false;
     product.display_order = dto.display_order || 0;
     product.metadata = dto.metadata || {};
-    product.created_by = dto.created_by;
+    product.created_by = dto.created_by || null;
     product.created_at = new Date();
     product.updated_at = new Date();
 
@@ -130,8 +130,8 @@ export class CategoryService {
     category.store_id = storeId;
     category.name = dto.name;
     category.slug = dto.slug;
-    category.description = dto.description;
-    category.parent_category_id = dto.parent_category_id;
+    category.description = dto.description || null;
+    category.parent_category_id = dto.parent_category_id || null;
     category.display_order = dto.display_order || 0;
     category.is_active = dto.is_active !== false;
     category.metadata = dto.metadata || {};

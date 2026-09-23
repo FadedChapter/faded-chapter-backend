@@ -27,10 +27,10 @@ export class CategoryEntity {
   slug: string;
 
   @Column('text', { nullable: true })
-  description: string;
+  description: string | null;
 
   @Column('uuid', { nullable: true })
-  parent_category_id: string;
+  parent_category_id: string | null;
 
   @Column('integer', { default: 0 })
   display_order: number;

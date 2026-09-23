@@ -27,10 +27,10 @@ export class ProductEntity {
   slug: string;
 
   @Column('text', { nullable: true })
-  description: string;
+  description: string | null;
 
   @Column('varchar', { length: 100, nullable: true })
-  sku: string;
+  sku: string | null;
 
   @Column('varchar', { length: 50, default: 'active' })
   status: string; // active, draft, archived, discontinued
@@ -45,7 +45,7 @@ export class ProductEntity {
   metadata: Record<string, any>; // Custom fields
 
   @Column('uuid', { nullable: true })
-  created_by: string;
+  created_by: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
