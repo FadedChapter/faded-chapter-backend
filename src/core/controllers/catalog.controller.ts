@@ -130,7 +130,7 @@ export class ProductController {
         return;
       }
 
-      const variant = await this.variantRepo.create({
+      const variant = await (this.variantRepo as any).create({
         product_id: productId,
         store_id: storeId,
         ...dto,
@@ -150,7 +150,7 @@ export class ProductController {
       // Ensure product exists
       await this.productService.getProduct(storeId, productId);
 
-      const image = await this.imageRepo.create({
+      const image = await (this.imageRepo as any).create({
         product_id: productId,
         store_id: storeId,
         ...dto,

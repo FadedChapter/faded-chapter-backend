@@ -108,7 +108,7 @@ export abstract class BaseRepository<T extends { id: string; store_id: string }>
 
     // Update
     try {
-      await this.repository.update({ id, store_id: storeId } as any, updates);
+      await this.repository.update({ id, store_id: storeId } as any, updates as any);
       return { ...existing, ...updates } as T;
     } catch (error) {
       throw new DatabaseError(`Failed to update ${this.constructor.name}`, error as Error);

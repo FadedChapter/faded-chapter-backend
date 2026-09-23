@@ -119,14 +119,14 @@ export function getDataSource(): DataSource {
         },
         ssl: config.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
         ...baseConfig,
-      });
+      } as any);
     } else {
       // SQLite configuration (using better-sqlite3 driver)
       dataSource = new DataSource({
         type: 'better-sqlite3',
         database: config.DATABASE_URL.replace('sqlite:', ''),
         ...baseConfig,
-      });
+      } as any);
     }
   }
 

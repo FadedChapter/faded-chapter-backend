@@ -131,7 +131,7 @@ export class ShippingRateRepository extends BaseRepository<ShippingRateEntity> {
   }
 
   async createBatch(storeId: string, rates: Omit<ShippingRateEntity, 'id' | 'store_id' | 'created_at' | 'updated_at' | 'store' | 'shippingMethod'>[]): Promise<ShippingRateEntity[]> {
-    const entities = rates.map((rate) => {
+    const entities = (rates as any[]).map((rate) => {
       const entity = new ShippingRateEntity();
       Object.assign(entity, rate, { id: this.generateId(), store_id: storeId });
       return entity;

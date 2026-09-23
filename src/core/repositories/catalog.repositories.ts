@@ -113,7 +113,7 @@ export class VariantRepository extends BaseRepository<ProductVariantEntity> {
       weight: data.weight,
       attributes: data.attributes,
       status: data.status,
-    } as any);
+    } as any) as ProductVariantEntity;
     await this.repository.save(variant);
     return variant;
   }

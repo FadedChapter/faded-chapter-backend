@@ -14,7 +14,7 @@
  *     page that only lists green ticks trains people to stop reading it.
  */
 
-import { env } from '../config/env';
+import { getConfig } from '../config/env';
 import { DEFAULT_SESSION_CONFIG } from '../session/session.types';
 import { ROLE_PERMISSIONS, type AuthContext } from '../middleware/authorization.middleware';
 import { getDataSource } from '../database/postgres-data-source';
@@ -115,7 +115,8 @@ const KNOWN_GAPS: readonly SecurityGap[] = [
  */
 function signingKeyLength(): number {
   try {
-    return env.get('JWT_SECRET').length;
+    const config = getConfig();
+    return config.JWT_SECRET.length;
   } catch {
     return 0;
   }
@@ -160,7 +161,7 @@ export async function getSecurityPosture(): Promise<SecurityPosture> {
       key: 'token-lifetime',
       label: 'Token lifetime',
       state: 'attention',
-      detail: `Admin tokens expire after ${env.get('JWT_EXPIRY')}, and that is the only limit — there is no idle timeout and no way to revoke a token before it expires.`,
+      detail: `Admin tokens expire after ${getConfig().JWT_EXPIRY}, and that is the only limit — there is no idle timeout and no way to revoke a token before it expires.`,
     },
     {
       key: 'session-handling',

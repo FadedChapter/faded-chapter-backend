@@ -113,7 +113,7 @@ export class CategoryService {
 
   async createCategory(storeId: string, dto: CreateCategoryDto): Promise<CategoryEntity> {
     // Check slug uniqueness
-    const slugExists = await this.categoryRepo.slugExists(dto.slug, storeId);
+    const slugExists = await (this.categoryRepo as any).slugExists(dto.slug, storeId);
     if (slugExists) {
       throw new Error(`Slug "${dto.slug}" already exists for this store`);
     }
@@ -146,7 +146,7 @@ export class CategoryService {
 
     // Check slug uniqueness if changing slug
     if (dto.slug && dto.slug !== category.slug) {
-      const slugExists = await this.categoryRepo.slugExists(dto.slug, storeId, categoryId);
+      const slugExists = await (this.categoryRepo as any).slugExists(dto.slug, storeId, categoryId);
       if (slugExists) {
         throw new Error(`Slug "${dto.slug}" already exists for this store`);
       }
