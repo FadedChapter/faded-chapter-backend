@@ -31,12 +31,22 @@ export class CreateCustomerPreferencesTable1726350004000 implements MigrationInt
             isNullable: false,
           },
           {
-            name: 'email_newsletter',
+            name: 'email_order_confirmation',
+            type: 'boolean',
+            default: true,
+          },
+          {
+            name: 'email_order_updates',
+            type: 'boolean',
+            default: true,
+          },
+          {
+            name: 'email_promotions',
             type: 'boolean',
             default: false,
           },
           {
-            name: 'email_promotions',
+            name: 'email_newsletter',
             type: 'boolean',
             default: false,
           },
@@ -49,6 +59,11 @@ export class CreateCustomerPreferencesTable1726350004000 implements MigrationInt
             name: 'email_transactional',
             type: 'boolean',
             default: true,
+          },
+          {
+            name: 'sms_order_updates',
+            type: 'boolean',
+            default: false,
           },
           {
             name: 'sms_marketing',
