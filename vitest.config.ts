@@ -7,6 +7,12 @@
 
 import { defineConfig } from 'vitest/config';
 import path from 'path';
+import dotenv from 'dotenv';
+
+// Load test environment variables early
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test' });
+}
 
 export default defineConfig({
   test: {

@@ -6,16 +6,29 @@
  */
 
 import { describe, beforeAll, afterAll, beforeEach } from 'vitest';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { initializeDatabase, closeDatabase, runMigrations, getDataSource } from '../core/database/postgres-data-source.js';
-import { env } from '../core/config/env.js';
+import { loadConfig, getConfig } from '../core/config/env.js';
+import { initializeLogger } from '../core/logging/logger.js';
+
+// Load .env.test for test environment
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.resolve(__dirname, '../../.env.test');
+dotenv.config({ path: envPath });
 
 /**
  * Database setup for tests
  * Runs migrations before tests and cleans up after
  */
 export async function setupTestDatabase(): Promise<void> {
+  // Load configuration and logger first
+  loadConfig();
+  initializeLogger();
+
   // Ensure we're in test mode
-  if (!env.get('NODE_ENV')?.includes('test')) {
+  if (!getConfig().NODE_ENV?.includes('test')) {
     throw new Error('NODE_ENV must be set to "test"');
   }
 
