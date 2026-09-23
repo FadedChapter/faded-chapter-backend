@@ -1402,3 +1402,423 @@ Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/apple/Proj
 
  FAIL  Tests failed. Watching for file changes...
        press h to show help, press q to quit
+[3Jc
+ RERUN  src/__tests__/integration/store-isolation.test.ts x1
+
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ faded_chapter_test connected
+
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ Migrations completed
+✅ Test database initialized
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should allow same email in different stores
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["27c3e1c9-4a4f-460a-8251-42a07724fd8e","testuser@example.com","testuser@example.com","Store1",null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should prevent duplicate email in same store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["29127b51-983c-4224-b29b-8b4b09e390d1","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should not find customer from different store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["96a9e661-49d8-45c6-9a18-e806782255b9","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should filter customers by store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["6029d8b0-8801-4baa-9b4e-eb6dec67827b","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should isolate addresses by store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["c847c47e-4aa1-4cda-8c0c-ecdfdc170b36","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should prevent cross-store address retrieval
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["22c42c8f-afa9-4694-828d-18961c23080c","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should enforce composite FK constraint
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["7d9b2d42-6221-44c5-ad7c-27e5aba36fef","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Session Isolation > should isolate sessions by store
+query failed: INSERT INTO "sessions"("id", "store_id", "customer_id", "token_hash", "ip_address", "user_agent", "device_type", "device_name", "is_active", "created_at", "last_activity_at", "expires_at", "revoked_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING "is_active", "created_at" -- PARAMETERS: ["745f93ad-ac33-4374-8d53-89ead6d1cf7c","747669be-7b35-4eb3-afee-c55e89bd6c70","test-hash-1","192.168.1.1",null,null,null,true,"2026-09-23T09:35:44.831Z","2026-09-23T09:35:44.831Z","2026-09-24T09:35:44.831Z",null]
+error: error: duplicate key value violates unique constraint "UQ_abaa9e068cdd390bc5210f79884"
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["7f6a9d2d-1a01-48d5-ab27-fd7fe0cedc1e","user@example.com","user@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["67b0529c-c73c-4c06-befe-f066c1b2446d","user@example.com","user@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ Test database closed
+
+ ❯ src/__tests__/integration/store-isolation.test.ts  (15 tests | 10 failed) 1234ms
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should allow same email in different stores
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should prevent duplicate email in same store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should not find customer from different store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should filter customers by store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should isolate addresses by store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should prevent cross-store address retrieval
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should enforce composite FK constraint
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Session Isolation > should isolate sessions by store
+     → Duplicate entry: duplicate key value violates unique constraint "UQ_abaa9e068cdd390bc5210f79884"
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+     → Cannot find module '../../core/repositories/audit-log.repository.js'
+Require stack:
+- /Users/apple/Projects/faded-chapter-backend/src/__tests__/integration/store-isolation.test.ts
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should allow same email in different stores
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:32:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should prevent duplicate email in same store
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:46:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should not find customer from different store
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:58:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should filter customers by store
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:66:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should isolate addresses by store
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should prevent cross-store address retrieval
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should enforce composite FK constraint
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:88:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Session Isolation > should isolate sessions by store
+Error: Duplicate entry: duplicate key value violates unique constraint "UQ_abaa9e068cdd390bc5210f79884"
+ ❯ SessionRepository.save src/core/repository/base-repository.ts:96:15
+     94|       const dbError = error as Error;
+     95|       if (dbError.message.includes('unique constraint')) {
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+       |               ^
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+ ❯ src/__tests__/integration/store-isolation.test.ts:147:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:197:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+Error: Cannot find module '../../core/repositories/audit-log.repository.js'
+Require stack:
+- /Users/apple/Projects/faded-chapter-backend/src/__tests__/integration/store-isolation.test.ts
+ ❯ src/__tests__/integration/store-isolation.test.ts:247:25
+    245|   describe('Audit Log Isolation', () => {
+    246|     it('should scope audit logs to store', async () => {
+    247|       const auditRepo = require('../../core/repositories/audit-log.rep…
+       |                         ^
+    248|       const repo = new auditRepo();
+    249| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/Users/apple/Projects/faded-chapter-backend/src/__tests__/integration/store-isolation.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 5 passed (15)
+   Start at  15:05:44
+   Duration  1.48s
+
+
+ FAIL  Tests failed. Watching for file changes...
+       press h to show help, press q to quit
+       rerun x1
+[2K[1A[2K[G[3Jc
+ RERUN  src/__tests__/integration/store-isolation.test.ts x2
+
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ faded_chapter_test connected
+
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ Migrations completed
+✅ Test database initialized
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should allow same email in different stores
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["808cc616-6677-4900-8b54-c95174968e5f","testuser@example.com","testuser@example.com","Store1",null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should prevent duplicate email in same store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["32f81bf5-8e71-4bc1-a6c0-a85801beb88c","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should not find customer from different store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["e6306e36-5eb3-49b5-9977-168ded159e9a","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should filter customers by store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["bcde79ab-c190-46e2-9803-002c33842a80","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should isolate addresses by store
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["8cbaf999-3ddc-4120-88a8-441f540c73bf","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should prevent cross-store address retrieval
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["51d22f70-0125-46df-8835-a26a0548b22a","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should enforce composite FK constraint
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["62e1c55f-a7ec-41e7-8456-d18d2c4cab79","testuser@example.com","testuser@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Session Isolation > should isolate sessions by store
+query failed: INSERT INTO "sessions"("id", "store_id", "customer_id", "token_hash", "ip_address", "user_agent", "device_type", "device_name", "is_active", "created_at", "last_activity_at", "expires_at", "revoked_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING "is_active", "created_at" -- PARAMETERS: ["ce9007fd-53a8-413d-b1fb-72a67f281462","fecf4c46-73eb-4f3e-a593-9f8fbe2598a9","test-hash-1","192.168.1.1",null,null,null,true,"2026-09-23T09:35:48.990Z","2026-09-23T09:35:48.990Z","2026-09-24T09:35:48.990Z",null]
+error: error: duplicate key value violates unique constraint "UQ_abaa9e068cdd390bc5210f79884"
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["bdb82b50-4cbe-4d66-9e1b-41288ad38bd1","user@example.com","user@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+query failed: INSERT INTO "customers"("id", "store_id", "email", "email_normalized", "first_name", "last_name", "phone", "status", "email_verified", "email_verified_at", "created_at", "updated_at", "deleted_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, DEFAULT, DEFAULT, DEFAULT, DEFAULT) RETURNING "status", "email_verified", "created_at", "updated_at" -- PARAMETERS: ["7f36bcc7-52f7-44d2-b1be-3d6db6eaf58a","user@example.com","user@example.com",null,null,null,"active",false]
+error: error: null value in column "id" of relation "customers" violates not-null constraint
+
+stdout | src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+query failed: INSERT INTO "audit_logs"("id", "store_id", "table_name", "record_id", "actor_id", "actor_type", "action", "changes", "ip_address", "user_agent", "created_at") VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING "created_at" -- PARAMETERS: ["ed41856a-9c0e-4025-8c4e-4f56ca029218","customers","test-id","actor-1","customer","insert","{}",null,null,"2026-09-23T09:35:49.112Z"]
+error: error: invalid input syntax for type uuid: "test-id"
+
+stdout | src/__tests__/integration/store-isolation.test.ts
+✅ Test database closed
+
+ ❯ src/__tests__/integration/store-isolation.test.ts  (15 tests | 10 failed) 269ms
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should allow same email in different stores
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should prevent duplicate email in same store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should not find customer from different store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should filter customers by store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should isolate addresses by store
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should prevent cross-store address retrieval
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should enforce composite FK constraint
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Session Isolation > should isolate sessions by store
+     → Duplicate entry: duplicate key value violates unique constraint "UQ_abaa9e068cdd390bc5210f79884"
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+     → Failed to save CustomerRepository
+   ❯ src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+     → Failed to save AuditLogRepository
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should allow same email in different stores
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:32:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should prevent duplicate email in same store
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:46:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should not find customer from different store
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:58:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Customer Isolation > should filter customers by store
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:66:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should isolate addresses by store
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should prevent cross-store address retrieval
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Address Isolation > should enforce composite FK constraint
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:88:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Session Isolation > should isolate sessions by store
+Error: Duplicate entry: duplicate key value violates unique constraint "UQ_abaa9e068cdd390bc5210f79884"
+ ❯ SessionRepository.save src/core/repository/base-repository.ts:96:15
+     94|       const dbError = error as Error;
+     95|       if (dbError.message.includes('unique constraint')) {
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+       |               ^
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+ ❯ src/__tests__/integration/store-isolation.test.ts:147:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Cross-Store Attack Prevention > should prevent soft delete escape
+Error: Failed to save CustomerRepository
+ ❯ CustomerRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:197:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'null value in column "id" of relation "customers" violates not-null constraint' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/__tests__/integration/store-isolation.test.ts > Store Isolation Tests > Audit Log Isolation > should scope audit logs to store
+Error: Failed to save AuditLogRepository
+ ❯ AuditLogRepository.save src/core/repository/base-repository.ts:98:13
+     96|         throw new Error(`Duplicate entry: ${dbError.message}`);
+     97|       }
+     98|       throw new DatabaseError(`Failed to save ${this.constructor.name}…
+       |             ^
+     99|     }
+    100|   }
+ ❯ src/__tests__/integration/store-isolation.test.ts:251:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'DATABASE_ERROR', statusCode: 500, details: { originalError: 'invalid input syntax for type uuid: "test-id"' }, toResponse: 'Function<toResponse>' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 5 passed (15)
+   Start at  15:05:48
+   Duration  416ms
+
+
+ FAIL  Tests failed. Watching for file changes...
+       press h to show help, press q to quit
+       rerun x2
+[2K[1A[2K[G

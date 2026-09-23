@@ -140,8 +140,8 @@ describe('Store Isolation Tests', () => {
     });
 
     it('should isolate sessions by store', async () => {
-      const sessionRepo = require('../../core/repositories/session.repository.js').SessionRepository;
-      const repo = new sessionRepo();
+      const { SessionRepository } = await import('../../core/repositories/session.repository.js');
+      const repo = new SessionRepository();
 
       // Create session for customer1 in store1
       const session1 = await repo.createSession(customer1Id, store1Id, {
@@ -244,8 +244,8 @@ describe('Store Isolation Tests', () => {
 
   describe('Audit Log Isolation', () => {
     it('should scope audit logs to store', async () => {
-      const auditRepo = require('../../core/repositories/audit-log.repository.js').AuditLogRepository;
-      const repo = new auditRepo();
+      const { AuditLogRepository } = await import('../../core/repositories/audit-log.repository.js');
+      const repo = new AuditLogRepository();
 
       // Create audit log for store1
       const log1 = await repo.createEntry(store1Id, {
