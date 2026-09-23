@@ -65,7 +65,7 @@ const SELECT_COLUMNS = `
 
 const FROM_CLAUSE = `
   FROM audit_logs a
-  LEFT JOIN staff_users s ON s.id = a.actor_id
+  LEFT JOIN staff_users s ON s.id = a.actor_id::uuid
 `;
 
 export class AuditService {
@@ -106,7 +106,7 @@ export class AuditService {
     resourceType?: string,
     limit = 100,
   ): Promise<AdminActionRecord[]> {
-    const conditions = ['a.store_id = $1'];
+    const conditions = ['(a.store_id = $1 OR a.store_id IS NULL)'];
     const params: unknown[] = [storeId];
 
     if (resourceType) {
