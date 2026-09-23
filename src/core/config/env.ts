@@ -45,9 +45,9 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().transform(val => val.split(',')).default('http://localhost:4200,http://localhost:3000'),
 
   // Feature flags
-  FEATURE_EMAIL_VERIFICATION: z.boolean().default(true),
-  FEATURE_PASSWORD_RESET: z.boolean().default(true),
-  FEATURE_SESSION_TRACKING: z.boolean().default(true),
+  FEATURE_EMAIL_VERIFICATION: z.string().transform(v => v === 'true' || v === '1' || v === 'yes').default('true'),
+  FEATURE_PASSWORD_RESET: z.string().transform(v => v === 'true' || v === '1' || v === 'yes').default('true'),
+  FEATURE_SESSION_TRACKING: z.string().transform(v => v === 'true' || v === '1' || v === 'yes').default('true'),
 
   // Store configuration
   DEFAULT_STORE_ID: z.string().uuid('DEFAULT_STORE_ID must be a valid UUID'),
