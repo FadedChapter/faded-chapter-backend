@@ -8,9 +8,9 @@
 import { BaseRepository } from '../repository/base-repository';
 import { AuditLogEntity } from '../entities/audit-log.entity';
 
-export class AuditLogRepository extends BaseRepository<AuditLogEntity> {
+export class AuditLogRepository extends BaseRepository<AuditLogEntity & { id: string; store_id: string }> {
   constructor() {
-    super(AuditLogEntity);
+    super(AuditLogEntity as any);
   }
 
   /**

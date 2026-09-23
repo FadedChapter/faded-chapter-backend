@@ -113,7 +113,7 @@ export class VariantRepository extends BaseRepository<ProductVariantEntity> {
       weight: data.weight,
       attributes: data.attributes,
       status: data.status,
-    } as any) as ProductVariantEntity;
+    } as any) as unknown as ProductVariantEntity;
     await this.repository.save(variant);
     return variant;
   }
@@ -395,7 +395,7 @@ export class InventoryRepository extends BaseRepository<InventoryEntity> {
       quantity_reserved: 0,
       reorder_level: 0,
       reorder_quantity: 0,
-    } as any);
+    } as any) as unknown as InventoryEntity;
     await this.repository.save(inventory);
     return inventory;
   }
@@ -490,7 +490,7 @@ export class ProductImageRepository extends BaseRepository<ProductImageEntity> {
       alt_text: altText,
       display_order: displayOrder,
       is_primary: isPrimary,
-    } as any);
+    } as any) as unknown as ProductImageEntity;
     await this.repository.save(image);
     return image;
   }

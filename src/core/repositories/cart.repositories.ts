@@ -20,7 +20,7 @@ export class CartRepository extends BaseRepository<CartEntity> {
   async findByCustomer(customerId: string, storeId: string): Promise<CartEntity | null> {
     return this.repository.findOne({
       where: { customer_id: customerId, store_id: storeId } as any,
-      relations: ['lines'],
+      relations: ['lines'] as any,
     });
   }
 

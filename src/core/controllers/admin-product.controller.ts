@@ -367,8 +367,8 @@ export class AdminProductController {
       await this.products.deleteProduct(productId, storeId);
 
       // Also soft delete all variants for consistency
-      if (this.dataSource) {
-        await this.dataSource.query(
+      if ((this as any).dataSource) {
+        await (this as any).dataSource.query(
           `UPDATE product_variants SET deleted_at = NOW(), updated_at = NOW()
            WHERE product_id = $1 AND store_id = $2 AND deleted_at IS NULL`,
           [productId, storeId],

@@ -403,7 +403,7 @@ export class OrderRepository extends BaseRepository<OrderEntity> {
   async updateStatus(orderId: string, storeId: string, status: string): Promise<OrderEntity> {
     await this.repository.update(
       { id: orderId, store_id: storeId } as any,
-      { status, updated_at: new Date() }
+      { status: status as any, updated_at: new Date() }
     );
 
     return this.findByIdOrFail(orderId, storeId);

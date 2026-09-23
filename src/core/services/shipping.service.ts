@@ -108,7 +108,7 @@ export class ShippingRateService {
       active: true,
     }));
 
-    return this.rateRepo.createBatch(storeId, rateEntities);
+    return this.rateRepo.createBatch(storeId, rateEntities as any);
   }
 
   async getZones(storeId: string): Promise<string[]> {

@@ -182,7 +182,7 @@ export class DiscountApplicationRepository extends BaseRepository<DiscountApplic
   async moveCartDiscountsToOrder(cartId: string, orderId: string, storeId: string): Promise<void> {
     await this.repository.update(
       { cart_id: cartId, store_id: storeId } as any,
-      { order_id: orderId, cart_id: null, created_at: new Date() }
+      { order_id: orderId, cart_id: null as any, created_at: new Date() }
     );
   }
 }

@@ -295,7 +295,7 @@ export class ProductRepository extends BaseRepository<ProductEntity> {
         status: data.status,
         is_featured: data.isFeatured,
         category_id: data.categoryId ?? null,
-      } as any);
+      } as any) as unknown as ProductEntity;
 
       await this.repository.save(product);
       return product;
