@@ -11,6 +11,7 @@
 import {
   Entity,
   PrimaryColumn,
+  Generated,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
@@ -36,6 +37,7 @@ export class SessionEntity {
   // ============================================================================
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   @Column('uuid', { nullable: false })

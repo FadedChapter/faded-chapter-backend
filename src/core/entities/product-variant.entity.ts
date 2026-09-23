@@ -5,19 +5,23 @@
  * Phase 4: Catalog Domain
  */
 
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Relation } from 'typeorm';
+import { Entity, PrimaryColumn,
+  Generated, Column, ManyToOne, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Relation } from 'typeorm';
 import { ProductEntity } from './product.entity.js';
 import { InventoryEntity } from './inventory.entity.js';
 
 @Entity('product_variants')
 export class ProductVariantEntity {
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   product_id: string;
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   store_id: string;
 
   @ManyToOne(() => ProductEntity, { onDelete: 'CASCADE' })

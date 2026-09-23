@@ -9,6 +9,7 @@
 import {
   Entity,
   PrimaryColumn,
+  Generated,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
@@ -23,6 +24,7 @@ export class StoreEntity {
   // ============================================================================
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   @Column('varchar', { length: 255, nullable: false })

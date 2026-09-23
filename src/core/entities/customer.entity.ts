@@ -15,6 +15,7 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
+  Generated,
 } from 'typeorm';
 import { StoreEntity } from './store.entity.js';
 
@@ -32,6 +33,7 @@ export class CustomerEntity {
   // ============================================================================
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   @Column('uuid', { nullable: false })

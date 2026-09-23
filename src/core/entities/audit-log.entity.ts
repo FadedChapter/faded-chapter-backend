@@ -12,6 +12,7 @@
 import {
   Entity,
   PrimaryColumn,
+  Generated,
   Column,
   CreateDateColumn,
   Index,
@@ -29,6 +30,7 @@ export class AuditLogEntity {
   // ============================================================================
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   // ============================================================================

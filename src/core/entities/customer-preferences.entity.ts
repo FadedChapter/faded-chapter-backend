@@ -9,6 +9,7 @@
 import {
   Entity,
   PrimaryColumn,
+  Generated,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
@@ -27,6 +28,7 @@ export class CustomerPreferencesEntity {
   // ============================================================================
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   @Column('uuid', { nullable: false })

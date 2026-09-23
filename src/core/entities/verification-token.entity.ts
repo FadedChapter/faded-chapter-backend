@@ -12,6 +12,7 @@
 import {
   Entity,
   PrimaryColumn,
+  Generated,
   Column,
   CreateDateColumn,
   ManyToOne,
@@ -31,6 +32,7 @@ export class VerificationTokenEntity {
   // ============================================================================
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   @Column('uuid', { nullable: false })

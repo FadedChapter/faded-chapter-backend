@@ -17,13 +17,15 @@
  * Columns are added back when a feature needs them, not in advance.
  */
 
-import { Entity, PrimaryColumn, Column, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn,
+  Generated, Column, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { StoreEntity } from './store.entity.js';
 
 @Entity('store_settings')
 export class StoreSettingsEntity {
   /** Settings are 1:1 with a store, so the store is the identity. */
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   store_id: string;
 
   @ManyToOne(() => StoreEntity, { onDelete: 'CASCADE' })

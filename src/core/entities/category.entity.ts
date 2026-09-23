@@ -5,15 +5,18 @@
  * Phase 4: Catalog Domain
  */
 
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn,
+  Generated, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { StoreEntity } from './store.entity.js';
 
 @Entity('categories')
 export class CategoryEntity {
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   id: string;
 
   @PrimaryColumn('uuid')
+  @Generated('uuid')
   store_id: string;
 
   @ManyToOne(() => StoreEntity, { onDelete: 'RESTRICT' })
