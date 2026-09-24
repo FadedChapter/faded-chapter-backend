@@ -1,0 +1,77 @@
+config:
+  target: '{{ $processEnvironment.API_BASE_URL | default("http://localhost:3000/api/v1") }}'
+  phases:
+    # Warmup phase: gradually ramp up
+    - duration: 30
+      arrivalRate: 1
+      name: "Warmup"
+    # Sustained load phase
+    - duration: 120
+      arrivalRate: 10
+      name: "Sustained Load"
+    # Ramp down
+    - duration: 30
+      arrivalRate: 2
+      name: "Ramp Down"
+
+  variables:
+    storeId: "550e8400-e29b-41d4-a716-446655440000"
+    authToken: "{{ $processEnvironment.AUTH_TOKEN | default("") }}"
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ authToken }}"
+
+  timeout: 10
+  http:
+    timeout: 10
+
+scenarios:
+  - name: "Dashboard Overview Flow"
+    flow:
+      - get:
+          url: "/stores/{{ storeId }}/dashboard/metrics"
+          capture:
+            json: "$.data.revenue.total"
+            as: "totalRevenue"
+          expect:
+            - statusCode: 200
+            - contentType: json
+
+      - think: 2
+
+      - get:
+          url: "/stores/{{ storeId }}/dashboard/admin-actions?page=1&limit=50"
+          expect:
+            - statusCode: 200
+
+      - think: 1
+
+      - get:
+          url: "/stores/{{ storeId }}/dashboard/refund-statistics"
+          expect:
+            - statusCode: 200
+
+      - think: 2
+
+  - name: "Charts Data Load"
+    flow:
+      - get:
+          url: "/stores/{{ storeId }}/dashboard/charts/revenue"
+          expect:
+            - statusCode: 200
+
+      - think: 1
+
+      - get:
+          url: "/stores/{{ storeId }}/dashboard/charts/refunds"
+          expect:
+            - statusCode: 200
+
+  - name: "Pending Refunds List"
+    flow:
+      - get:
+          url: "/stores/{{ storeId }}/dashboard/pending-refunds?page=1&limit=20"
+          expect:
+            - statusCode: 200

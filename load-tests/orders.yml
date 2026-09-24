@@ -1,0 +1,89 @@
+config:
+  target: '{{ $processEnvironment.API_BASE_URL | default("http://localhost:3000/api/v1") }}'
+  phases:
+    # Realistic order traffic: peak times see higher throughput
+    - duration: 60
+      arrivalRate: 5
+      name: "Normal Traffic"
+    - duration: 120
+      arrivalRate: 15
+      name: "Peak Load"
+    - duration: 60
+      arrivalRate: 2
+      name: "Recovery"
+
+  variables:
+    storeId: "550e8400-e29b-41d4-a716-446655440000"
+    customerId: "{{ $randomString(36) }}"
+    authToken: "{{ $processEnvironment.AUTH_TOKEN | default("") }}"
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{ authToken }}"
+
+  timeout: 15
+  http:
+    timeout: 15
+
+scenarios:
+  - name: "Order Creation Flow"
+    weight: 30
+    flow:
+      # Get available inventory before order
+      - get:
+          url: "/stores/{{ storeId }}/inventory?page=1&limit=10"
+          expect:
+            - statusCode: 200
+
+      - think: 2
+
+      # Create order
+      - post:
+          url: "/stores/{{ storeId }}/orders"
+          json:
+            customer_id: "{{ customerId }}"
+            items:
+              - sku: "TEST-001"
+                quantity: 2
+                price: 29.99
+            shipping_method: "standard"
+          capture:
+            json: "$.data.order_number"
+            as: "orderNumber"
+          expect:
+            - statusCode: 201
+
+      - think: 1
+
+  - name: "Order Search & Filter"
+    weight: 50
+    flow:
+      - get:
+          url: "/stores/{{ storeId }}/orders?status=pending&page=1&limit=20"
+          expect:
+            - statusCode: 200
+
+      - think: 1
+
+      - get:
+          url: "/stores/{{ storeId }}/orders?payment_status=paid&page=1&limit=20"
+          expect:
+            - statusCode: 200
+
+      - think: 1
+
+      - get:
+          url: "/stores/{{ storeId }}/orders?fulfillment_status=unfulfilled&page=1&limit=20"
+          expect:
+            - statusCode: 200
+
+  - name: "Order Detail View"
+    weight: 20
+    flow:
+      - get:
+          url: "/stores/{{ storeId }}/orders/550e8400-e29b-41d4-a716-446655440001"
+          expect:
+            - statusCode: [200, 404]
+
+      - think: 2

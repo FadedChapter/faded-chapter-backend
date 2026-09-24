@@ -1,0 +1,55 @@
+config:
+  target: '{{ $processEnvironment.API_BASE_URL | default("http://localhost:3000/api/v1") }}'
+  phases:
+    # Gradual stress increase to find breaking point
+    - duration: 60
+      arrivalRate: 5
+      name: "Baseline"
+    - duration: 60
+      arrivalRate: 15
+      name: "Increased Load"
+    - duration: 60
+      arrivalRate: 25
+      name: "High Load"
+    - duration: 60
+      arrivalRate: 40
+      name: "Stress"
+    - duration: 60
+      arrivalRate: 50
+      name: "Spike"
+    - duration: 120
+      arrivalRate: 10
+      name: "Recovery"
+
+  variables:
+    storeId: "550e8400-e29b-41d4-a716-446655440000"
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+  timeout: 20
+  http:
+    timeout: 20
+
+scenarios:
+  - name: "Mixed API Load"
+    flow:
+      - get:
+          url: "/stores/{{ storeId }}/dashboard/metrics"
+          expect:
+            - statusCode: [200, 429, 503]
+
+      - think: 1
+
+      - get:
+          url: "/stores/{{ storeId }}/orders?page=1&limit=10"
+          expect:
+            - statusCode: [200, 429, 503]
+
+      - think: 2
+
+      - get:
+          url: "/stores/{{ storeId }}/customers?page=1&limit=10"
+          expect:
+            - statusCode: [200, 429, 503]
