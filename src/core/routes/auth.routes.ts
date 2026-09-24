@@ -28,6 +28,12 @@ export function createAuthRoutes(): Router {
   router.post('/register', asyncHandler((req: Request, res: Response) => authController.register(req, res)));
 
   /**
+   * POST /auth/signup
+   * Alias for /register (frontend uses this endpoint)
+   */
+  router.post('/signup', asyncHandler((req: Request, res: Response) => authController.register(req, res)));
+
+  /**
    * POST /auth/login
    * Login with email and password
    */
