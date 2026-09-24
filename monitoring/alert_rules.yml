@@ -1,0 +1,172 @@
+groups:
+  - name: backend_alerts
+    interval: 15s
+    rules:
+      # HTTP errors
+      - alert: HighErrorRate
+        expr: |
+          (sum(rate(http_requests_total{status_code=~"5.."}[5m])) by (route))
+          /
+          (sum(rate(http_requests_total[5m])) by (route))
+          > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate on {{ $labels.route }}"
+          description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.route }}"
+
+      # Slow API responses
+      - alert: SlowAPIResponse
+        expr: |
+          histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+          > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow API response detected"
+          description: "95th percentile latency is {{ $value }}s"
+
+      # Database connection issues
+      - alert: DatabaseConnectionFailed
+        expr: |
+          increase(errors_total{type="database"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection failures detected"
+          description: "{{ $value }} database errors in last 5 minutes"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (process_resident_memory_bytes / node_memory_MemTotal_bytes) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      # Database is unreachable
+      - alert: DatabaseDown
+        expr: |
+          up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL has been unreachable for more than 1 minute"
+
+      # High rate of authentication failures
+      - alert: HighAuthenticationFailures
+        expr: |
+          increase(authentication_failures_total[5m]) > 50
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High authentication failure rate"
+          description: "{{ $value }} authentication failures in last 5 minutes"
+
+      # Rate limit being exceeded frequently
+      - alert: FrequentRateLimiting
+        expr: |
+          increase(rate_limit_exceeded_total[5m]) > 100
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Rate limiting is being exceeded"
+          description: "{{ $value }} rate limit exceeded events in last 5 minutes"
+
+      # High latency on database queries
+      - alert: SlowDatabaseQueries
+        expr: |
+          histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m]))
+          > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow database queries detected"
+          description: "95th percentile query latency is {{ $value }}s"
+
+      # Application restart detected (low uptime)
+      - alert: ApplicationRestart
+        expr: |
+          time() - process_start_time_seconds < 300
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Application has recently restarted"
+          description: "Application uptime is only {{ $value }}s"
+
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: |
+          rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | humanize }}%"
+
+  - name: business_alerts
+    interval: 15s
+    rules:
+      # No orders created in a while
+      - alert: NoOrdersCreated
+        expr: |
+          increase(orders_created_total[1h]) == 0
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "No orders created in the last hour"
+          description: "Order creation pipeline may be blocked"
+
+      # Payment processing failures
+      - alert: PaymentProcessingFailures
+        expr: |
+          (sum(rate(payments_processed_total{status="failed"}[5m])) by (payment_method))
+          /
+          (sum(rate(payments_processed_total[5m])) by (payment_method))
+          > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High payment failure rate for {{ $labels.payment_method }}"
+          description: "Failure rate is {{ $value | humanizePercentage }}"
+
+  - name: infrastructure_alerts
+    interval: 15s
+    rules:
+      # Disk usage warning
+      - alert: HighDiskUsage
+        expr: |
+          (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})
+          < 0.15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space"
+          description: "{{ $value | humanizePercentage }} disk space remaining"
+
+      # Node down
+      - alert: NodeDown
+        expr: |
+          up{job="node-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node is down"
+          description: "Node exporter has been unreachable for more than 2 minutes"
