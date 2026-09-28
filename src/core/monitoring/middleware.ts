@@ -41,9 +41,10 @@ export function metricsMiddleware(req: Request, res: Response, next: NextFunctio
     const duration = (Date.now() - startTime) / 1000;
     const statusCode = res.statusCode;
 
-    // Record metrics
-    httpRequestDuration.labels(req.method, normalizedRoute, statusCode).observe(duration);
-    httpRequestTotal.labels(req.method, normalizedRoute, statusCode).inc();
+    // Record metrics. Prometheus label values are strings.
+    const statusLabel = String(statusCode);
+    httpRequestDuration.labels(req.method, normalizedRoute, statusLabel).observe(duration);
+    httpRequestTotal.labels(req.method, normalizedRoute, statusLabel).inc();
 
     // Track errors
     if (statusCode >= 400) {

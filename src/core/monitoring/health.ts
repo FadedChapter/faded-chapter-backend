@@ -44,10 +44,11 @@ export function getLiveness(): {
  * Checks database connectivity and resource availability
  */
 export async function getReadiness(): Promise<HealthCheckResult> {
-  const startTime = Date.now();
-  const checks = {
-    database: 'healthy' as const,
-    memory: 'healthy' as const,
+  // Annotated rather than `as const`: these start healthy but are narrowed to
+  // that single literal by inference, so the downgrades below won't assign.
+  const checks: HealthCheckResult['checks'] = {
+    database: 'healthy',
+    memory: 'healthy',
   };
   const services: HealthCheckResult['services'] = {};
 
@@ -108,10 +109,7 @@ export async function getReadiness(): Promise<HealthCheckResult> {
   };
 }
 
-/**
- * Detailed health status - comprehensive diagnostics
- */
-export async function getDetailedHealth(): Promise<{
+export interface DetailedHealthResult {
   status: 'healthy' | 'unhealthy' | 'degraded';
   version: string;
   environment: string;
@@ -132,13 +130,19 @@ export async function getDetailedHealth(): Promise<{
     version: string;
     platform: string;
   };
-}> {
+}
+
+/**
+ * Detailed health status - comprehensive diagnostics
+ */
+export async function getDetailedHealth(): Promise<DetailedHealthResult> {
   const memUsage = process.memoryUsage();
 
-  let dbStatus = {
+  // Annotated for the same reason as `checks` above: initialising the optional
+  // fields to undefined infers them as type undefined, so neither the latency
+  // nor the error message can be assigned later.
+  let dbStatus: DetailedHealthResult['database'] = {
     connected: false,
-    latency_ms: undefined,
-    error: undefined,
   };
 
   try {

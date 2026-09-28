@@ -98,8 +98,11 @@ export const appUptime = new Gauge({
   help: 'Application uptime in seconds',
 });
 
-// Export metrics in Prometheus format
-export function getMetrics(): string {
+// Export metrics in Prometheus format.
+// register.metrics() is async as of prom-client v13, so this cannot return a
+// plain string — awaiting it is what makes the scrape body the metrics text
+// rather than a serialized Promise.
+export function getMetrics(): Promise<string> {
   return register.metrics();
 }
 

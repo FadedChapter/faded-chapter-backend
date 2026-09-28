@@ -80,9 +80,9 @@ router.get('/health/detailed', async (req: Request, res: Response) => {
  * Prometheus metrics in text format
  * Use with Prometheus scraper
  */
-router.get('/metrics', (req: Request, res: Response) => {
+router.get('/metrics', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/plain; charset=utf-8; version=0.0.4');
-  res.send(getMetrics());
+  res.send(await getMetrics());
 });
 
 /**
