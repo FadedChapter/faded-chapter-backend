@@ -23,11 +23,8 @@ export function initializeSentry(): void {
     dsn,
     environment,
     tracesSampleRate,
-    integrations: [
-      new Sentry.Integrations.Http({ tracing: true }),
-      new Sentry.Integrations.OnUncaughtException(),
-      new Sentry.Integrations.OnUnhandledRejection(),
-    ],
+    // http, onUncaughtException and onUnhandledRejection are all part of
+    // getDefaultIntegrations() in v8+, so listing them explicitly is redundant.
     // Ignore certain errors that are expected
     ignoreErrors: [
       // Browser extensions
@@ -50,22 +47,17 @@ export function initializeSentry(): void {
 }
 
 /**
- * Attach Sentry middleware to Express
- */
-export function attachSentryMiddleware(app: Express): void {
-  // Request handler must be the first middleware
-  app.use(Sentry.Handlers.requestHandler());
-
-  // Transaction middleware for APM
-  app.use(Sentry.Handlers.tracingHandler());
-}
-
-/**
- * Attach Sentry error handler (must be after other handlers)
+ * Attach Sentry's Express error handler.
+ *
+ * Register after all routes but before any other error middleware, otherwise a
+ * handler that ends the response first will stop the error ever reaching Sentry.
+ *
+ * There is no longer a request/tracing middleware to attach: v8+ instruments
+ * Express automatically, provided initializeSentry() runs before Express is
+ * imported.
  */
 export function attachSentryErrorHandler(app: Express): void {
-  // Error handler must be after all other middleware
-  app.use(Sentry.Handlers.errorHandler());
+  Sentry.setupExpressErrorHandler(app);
 }
 
 /**
@@ -79,13 +71,14 @@ export function captureException(
     return null;
   }
 
-  const eventId = Sentry.captureException(error);
-
-  if (context) {
-    Sentry.setContext('custom', context);
-  }
-
-  return eventId;
+  // Context has to be set on the scope before the event is captured. The
+  // previous version called setContext afterwards, so it never attached.
+  return Sentry.withScope((scope) => {
+    if (context) {
+      scope.setContext('custom', context);
+    }
+    return Sentry.captureException(error);
+  });
 }
 
 /**
@@ -150,18 +143,16 @@ export function addBreadcrumb(
 }
 
 /**
- * Start a transaction for APM
+ * Wrap an operation in a span for APM.
+ *
+ * Replaces the old startTransaction(): v8+ removed free-standing transaction
+ * objects, so a span's lifetime is the callback rather than something the
+ * caller ends by hand.
  */
-export function startTransaction(
-  name: string,
-  op: string = 'http.request'
-): Sentry.Transaction | null {
+export function withSpan<T>(name: string, op: string, callback: () => T): T {
   if (!process.env.SENTRY_DSN) {
-    return null;
+    return callback();
   }
 
-  return Sentry.startTransaction({
-    name,
-    op,
-  });
+  return Sentry.startSpan({ name, op }, () => callback());
 }
