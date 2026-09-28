@@ -7,6 +7,7 @@
 
 import { Request, Response } from 'express';
 import { AuthService } from '../services/index';
+import { getStoreId } from '../store/store-context';
 import {
   RegisterRequest,
   LoginRequest,
@@ -31,7 +32,7 @@ export class AuthController {
    * POST /auth/register
    */
   async register(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const ipAddress = req.ip || 'unknown';
 
     const body: RegisterRequest = req.body;
@@ -73,7 +74,7 @@ export class AuthController {
    * POST /auth/login
    */
   async login(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const ipAddress = req.ip || 'unknown';
 
     const body: LoginRequest = req.body;
@@ -108,7 +109,7 @@ export class AuthController {
    * Requires: Authentication
    */
   async logout(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const sessionId = req.sessionId;
 
     if (!sessionId) {
@@ -130,7 +131,7 @@ export class AuthController {
    * Requires: Authentication
    */
   async logoutEverywhere(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const customerId = req.customerId;
 
     if (!customerId) {
@@ -152,7 +153,7 @@ export class AuthController {
    * Requires: Authentication
    */
   async sendEmailVerification(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const customerId = req.customerId;
 
     if (!customerId) {
@@ -171,7 +172,7 @@ export class AuthController {
    * POST /email-verification/verify
    */
   async verifyEmail(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const body: VerifyEmailRequest = req.body;
 
     if (!body.token) {
@@ -190,7 +191,7 @@ export class AuthController {
    * POST /password/forgot
    */
   async forgotPassword(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const ipAddress = req.ip || 'unknown';
     const body: ForgotPasswordRequest = req.body;
 
@@ -211,7 +212,7 @@ export class AuthController {
    * POST /password/reset
    */
   async resetPassword(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const ipAddress = req.ip || 'unknown';
     const body: ResetPasswordRequest = req.body;
 
@@ -236,7 +237,7 @@ export class AuthController {
    * Requires: Authentication
    */
   async changePassword(req: Request, res: Response): Promise<void> {
-    const storeId = req.storeId;
+    const storeId = getStoreId(req);
     const customerId = req.customerId;
     const body: ChangePasswordRequest = req.body;
 

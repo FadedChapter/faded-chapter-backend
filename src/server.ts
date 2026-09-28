@@ -19,6 +19,7 @@ import { InMemorySessionStore } from './core/session/adapters/inmemory-session-s
 import { DEFAULT_SESSION_CONFIG } from './core/session/session.types.js';
 import { PostgresUserStore } from './core/user/adapters/postgres-user-store.js';
 import { createCsrfMiddleware, csrfTokenHandler } from './core/security/middleware/csrf.middleware.js';
+import { createStoreContextMiddleware } from './core/store/store-context.js';
 
 // Routes & Services (Phase 9 & 10a: Payment Processing & Admin Dashboard)
 import { createAuthRoutes } from './routes/auth.routes.js';
@@ -66,6 +67,9 @@ loadConfig();
 
 // Initialize logger
 initializeLogger();
+
+// Store context middleware FIRST - must run before all routes
+app.use(createStoreContextMiddleware());
 
 // Initialize TypeORM DataSource for payment/refund services
 import { initializeDatabase } from './core/database/postgres-data-source.js';
