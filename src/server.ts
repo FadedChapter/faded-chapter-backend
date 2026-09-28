@@ -20,6 +20,7 @@ import { DEFAULT_SESSION_CONFIG } from './core/session/session.types.js';
 import { PostgresUserStore } from './core/user/adapters/postgres-user-store.js';
 import { createCsrfMiddleware, csrfTokenHandler } from './core/security/middleware/csrf.middleware.js';
 import { createStoreContextMiddleware } from './core/store/store-context.js';
+import { AppError } from './core/errors/app-error.js';
 
 // Routes & Services (Phase 9 & 10a: Payment Processing & Admin Dashboard)
 import { createAuthRoutes } from './routes/auth.routes.js';
@@ -171,6 +172,15 @@ app.use((_req: Request, res: Response) => {
 
 // Error handler (must be last)
 app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
+  // AppError carries the status and code the caller needs to act on: a wrong
+  // password is a 401, a duplicate email a 409. Collapsing these into 500 left
+  // the client unable to tell a rejected credential from a broken server.
+  if (error instanceof AppError) {
+    console.warn('[Server] %s (%d): %s', error.code, error.statusCode, error.message);
+    res.status(error.statusCode).json(error.toResponse());
+    return;
+  }
+
   console.error('[Server] Error:', error);
   res.status(500).json({
     ok: false,
